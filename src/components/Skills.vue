@@ -34,7 +34,7 @@
             >
               <div class="skill-header">
                 <div class="skill-icon">
-                  <span>{{ skill.icon }}</span>
+                  <component :is="iconMap[skill.icon]" size="24" />
                 </div>
                 <h3 class="skill-name">{{ skill.name }}</h3>
               </div>
@@ -63,7 +63,7 @@
             class="tool-item"
             :style="{ animationDelay: `${index * 0.1}s` }"
           >
-            <span class="tool-icon">{{ tool.icon }}</span>
+            <component :is="iconMap[tool.icon]" size="28" class="tool-icon" />
             <span class="tool-name">{{ tool.name }}</span>
           </div>
         </div>
@@ -74,6 +74,26 @@
 
 <script setup>
 import { ref, onMounted, watch, nextTick, onBeforeUnmount } from 'vue'
+import {
+  Zap,
+  Globe,
+  Code2,
+  Palette,
+  Server,
+  Code,
+  Database,
+  Link,
+  Layers,
+  RefreshCw,
+  Cloud,
+  GitBranch,
+  GitMerge,
+  Layout,
+  Package,
+  Wind,
+  Send,
+  Search
+} from 'lucide-vue-next'
 
 const activeCategory = ref('frontend')
 
@@ -84,28 +104,28 @@ const skillCategories = ref([
     skills: [
       {
         name: 'Vue.js',
-        icon: '⚡',
+        icon: 'zap',
         description: '构建现代化的单页应用程序和用户界面',
         level: 90,
         levelText: '精通'
       },
       {
         name: 'React',
-        icon: '⚛️',
+        icon: 'globe',
         description: '开发可复用的组件和复杂的前端应用',
         level: 85,
         levelText: '熟练'
       },
       {
         name: 'TypeScript',
-        icon: '📘',
+        icon: 'code2',
         description: '提供类型安全的 JavaScript 开发体验',
         level: 88,
         levelText: '熟练'
       },
       {
         name: 'CSS3/SCSS',
-        icon: '🎨',
+        icon: 'palette',
         description: '创建响应式和美观的用户界面设计',
         level: 92,
         levelText: '精通'
@@ -118,28 +138,28 @@ const skillCategories = ref([
     skills: [
       {
         name: 'Node.js',
-        icon: '🟢',
+        icon: 'server',
         description: '构建高性能的服务器端应用程序',
         level: 85,
         levelText: '熟练'
       },
       {
         name: 'Python',
-        icon: '🐍',
+        icon: 'python',
         description: '开发数据分析和后端服务',
         level: 80,
         levelText: '熟练'
       },
       {
         name: '数据库',
-        icon: '🗄️',
+        icon: 'database',
         description: 'MySQL, MongoDB, Redis 等数据库管理',
         level: 82,
         levelText: '熟练'
       },
       {
         name: 'API 设计',
-        icon: '🔗',
+        icon: 'link',
         description: 'RESTful API 和 GraphQL 设计',
         level: 85,
         levelText: '熟练'
@@ -152,28 +172,28 @@ const skillCategories = ref([
     skills: [
       {
         name: 'Docker',
-        icon: '🐳',
+        icon: 'layers',
         description: '容器化应用部署和管理',
         level: 78,
         levelText: '掌握'
       },
       {
         name: 'CI/CD',
-        icon: '🔄',
+        icon: 'refreshCw',
         description: '自动化构建和部署流程',
         level: 75,
         levelText: '掌握'
       },
       {
         name: 'AWS',
-        icon: '☁️',
+        icon: 'cloud',
         description: '云服务管理和部署',
         level: 70,
         levelText: '掌握'
       },
       {
         name: 'Git',
-        icon: '📝',
+        icon: 'gitBranch',
         description: '版本控制和团队协作',
         level: 90,
         levelText: '精通'
@@ -183,14 +203,37 @@ const skillCategories = ref([
 ])
 
 const tools = ref([
-  { name: 'VS Code', icon: '💻' },
-  { name: 'Git', icon: '📊' },
-  { name: 'Figma', icon: '🎯' },
-  { name: 'Webpack', icon: '📦' },
-  { name: 'Vite', icon: '⚡' },
-  { name: 'Postman', icon: '📮' },
-  { name: 'Edge DevTools', icon: '🔍' },
+  { name: 'VS Code', icon: 'code' },
+  { name: 'Git', icon: 'gitMerge' },
+  { name: 'Figma', icon: 'layout' },
+  { name: 'Webpack', icon: 'package' },
+  { name: 'Vite', icon: 'wind' },
+  { name: 'Postman', icon: 'send' },
+  { name: 'Edge DevTools', icon: 'search' },
 ])
+
+// 图标映射表
+const iconMap = {
+  zap: Zap,
+  globe: Globe,
+  code2: Code2,
+  palette: Palette,
+  server: Server,
+  python: Code,
+  database: Database,
+  link: Link,
+  layers: Layers,
+  refreshCw: RefreshCw,
+  cloud: Cloud,
+  gitBranch: GitBranch,
+  code: Code,
+  gitMerge: GitMerge,
+  layout: Layout,
+  package: Package,
+  wind: Wind,
+  send: Send,
+  search: Search
+};
 
 // 使用 IntersectionObserver：在元素进入视口时添加 animate-in（只播放一次）
 let observer = null
@@ -276,17 +319,39 @@ onBeforeUnmount(() => {
   color: var(--text-secondary);
   transition: all 0.3s ease;
   border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-tab::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
 .category-tab:hover {
   color: var(--primary-color);
   background: var(--bg-secondary);
+  transform: translateY(-2px);
+}
+
+.category-tab:hover::before {
+  transform: scaleX(1);
 }
 
 .category-tab.active {
   color: var(--primary-color);
-  background: var(--bg-secondary);
-  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-tab.active::before {
+  transform: scaleX(1);
 }
 
 .skills-grid {
@@ -302,6 +367,24 @@ onBeforeUnmount(() => {
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.skill-card:hover::before {
+  transform: scaleX(1);
 }
 
 .skill-card.animate-in {
@@ -310,7 +393,8 @@ onBeforeUnmount(() => {
 
 .skill-card:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
 }
 
 .skill-card.animate-in:hover {
@@ -330,9 +414,17 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   border-radius: 0.5rem;
   font-size: 1.5rem;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.skill-card:hover .skill-icon {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .skill-name {
@@ -428,50 +520,27 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: var(--bg-card);
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background: var(--bg-primary);
   border-radius: 0.75rem;
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
   opacity: 0;
   transform: scale(0.8);
   position: relative;
-  z-index: 2;
+  overflow: hidden;
 }
 
-@property --angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.tool-item::after,.tool-item::before{
-  content: "";
+.tool-item::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0.75rem;
-  background: conic-gradient(from var(--angle),#f7f4f5ce 0%,#7c7b7c80 50%,#0d0d0dcc 100%);
-  opacity: 0.1;
-  z-index: -1;
-  animation: 3s spin linear infinite;
-}
-
-.tool-item::after{
-  filter: blur(1.5rem);
-  transform: scale(1.1);
-}
-
-@keyframes spin {
-  from {
-    --angle: 0deg;
-  }
-  to {
-    --angle: 360deg;
-  }
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), transparent);
+  transition: opacity 0.3s ease;
 }
 
 .tool-item.animate-in {
@@ -479,21 +548,39 @@ onBeforeUnmount(() => {
 }
 
 .tool-item:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
 }
 
 .tool-item.animate-in:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px) scale(1.02);
 }
 
 .tool-icon {
-  font-size: 2rem;
+  color: var(--primary-color);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.tool-item:hover .tool-icon {
+  color: white;
+  background: var(--gradient-primary);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .tool-name {
   font-weight: 500;
   color: var(--text-primary);
+  text-align: center;
+  font-size: 0.875rem;
 }
 
 /* 动画关键帧 */
