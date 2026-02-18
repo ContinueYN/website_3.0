@@ -38,9 +38,9 @@
         <div class="footer-section">
           <h4>联系信息</h4>
           <div class="contact-info">
-            <p>📧 3258664928@qq.com</p>
-            <p>📱 +86 183 1686 5751</p>
-            <p>📍 中国，汕头市</p>
+            <p><Mail :size="16" class="inline-icon" /> 3258664928@qq.com</p>
+            <p><Phone :size="16" class="inline-icon" /> +86 183 1686 5751</p>
+            <p><MapPin :size="16" class="inline-icon" /> 中国，汕头市</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-// Footer 组件逻辑
+import { Mail, Phone, MapPin } from 'lucide-vue-next'
 </script>
 
 <style scoped>
@@ -124,6 +124,13 @@
 .contact-info p {
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inline-icon {
+  color: var(--primary-color);
 }
 
 .footer-bottom {

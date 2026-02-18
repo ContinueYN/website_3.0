@@ -1,7 +1,7 @@
 <template>
   <section id="projects" class="projects">
     <div class="container">
-      <div class="section-header" data-aos="fade-up">
+      <div class="section-header">
         <h2 class="section-title">我的项目</h2>
         <p class="section-subtitle">近期作品展示</p>
       </div>
@@ -14,9 +14,6 @@
           :data-id="project.id"
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
-          :data-aos="project.id % 2 === 0 ? 'flip-right' : 'flip-left'"
-          :data-aos-delay="(project.id % 3) * 100"
-          data-aos-duration="800"
         >
           <div class="card-inner">
             <!-- 水波纹效果 - 动态定位 -->
@@ -32,7 +29,7 @@
             <!-- 正面 -->
             <div class="card-face card-front">
               <div class="project-image">
-                <img :src="project.image" :alt="project.title" />
+                <img :src="project.image" :alt="project.title" loading="lazy" />
               </div>
               <h3 class="project-title">{{ project.title }}</h3>
               <p class="project-description">{{ project.description }}</p>
@@ -51,7 +48,7 @@
               <div class="video-section">
                 <div class="video-container" @click="openFullscreen(project.id)">
                   <video :ref="el => setVideoRef(project.id, el)" :src="project.video" :poster="project.image"
-                    preload="metadata" muted class="project-video">
+                    preload="none" muted class="project-video">
                     您的浏览器不支持视频播放
                   </video>
                   <div class="video-overlay">
@@ -100,7 +97,6 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import AOS from 'aos'
 import project1 from '../assets/images/1.png'
 import project2 from '../assets/images/2.png'
 import project3 from '../assets/images/3.png'
@@ -264,14 +260,7 @@ const handleKeydown = (event) => {
   }
 }
 
-onMounted(() => {
-  // 确保 AOS 在组件挂载后刷新
-  setTimeout(() => {
-    AOS.refresh()
-  }, 100)
-  
-  document.addEventListener('keydown', handleKeydown)
-})
+
 
 // 在组件卸载时清理所有定时器
 onUnmounted(() => {
@@ -382,7 +371,7 @@ const projects = ref([
 }
 
 .card-front {
-  background: var(--bg-primary);
+  background: var(--bg-card);
   color: var(--text-primary);
   backdrop-filter: blur(15px);
 }
@@ -666,8 +655,13 @@ audio {
 }
 
 @media (max-width: 768px) {
+  .projects {
+    padding: 3rem 0;
+  }
+
   .projects-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .card {

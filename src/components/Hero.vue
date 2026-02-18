@@ -63,7 +63,7 @@
         <div class="hero-visual">
           <div class="avatar-container">
             <div class="avatar">
-              <img src="@/assets/images/user.jpg" alt="个人头像" />
+              <img src="@/assets/images/user.jpg" alt="个人头像" loading="lazy" />
             </div>
             <div class="avatar-decoration"></div>
           </div>
@@ -403,6 +403,60 @@ onBeforeUnmount(() => {
   
   .hero-description {
     font-size: 1.125rem;
+  }
+  
+  .yu, .nuo {
+    width: 100px;
+  }
+  
+  .hero-content {
+    gap: 3rem;
+  }
+  
+  .hero-stats {
+    gap: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .hero-description {
+    font-size: 1rem;
+  }
+  
+  .yu, .nuo {
+    width: 80px;
+  }
+  
+  .hero-stats {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .stat {
+    min-width: 80px;
+  }
+  
+  .avatar-container {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .avatar {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .avatar-decoration {
+    width: 230px;
+    height: 230px;
   }
 }
 </style>

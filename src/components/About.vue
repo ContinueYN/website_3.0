@@ -37,7 +37,7 @@
 
           <div class="about-actions">
             <a href="/resume.pdf" class="btn" download>
-              📄 下载简历
+              <FileText :size="18" class="mr-2" /> 下载简历
             </a>
           </div>
         </div>
@@ -46,19 +46,25 @@
           <div class="experience-cards">
             <div class="card">
               <div class="card-glare"></div>
-              <div class="card-icon">💼</div>
+              <div class="card-icon">
+                <Briefcase :size="30" />
+              </div>
               <h3 class="card-title">工作经验</h3>
               <p class="card-content">2周以上全栈开发经验</p>
             </div>
             <div class="card">
               <div class="card-glare"></div>
-              <div class="card-icon">🎓</div>
+              <div class="card-icon">
+                <GraduationCap :size="30" />
+              </div>
               <h3 class="card-title">教育背景</h3>
               <p class="card-content">计算机科学学位</p>
             </div>
             <div class="card">
               <div class="card-glare"></div>
-              <div class="card-icon">🚀</div>
+              <div class="card-icon">
+                <Rocket :size="30" />
+              </div>
               <h3 class="card-title">AI应用</h3>
               <p class="card-content">运维 测试 网安</p>
             </div>
@@ -70,7 +76,7 @@
 </template>
 
 <script setup>
-// 关于我的逻辑
+import { FileText, Briefcase, GraduationCap, Rocket } from 'lucide-vue-next'
 </script>
 
 <style scoped>
@@ -134,6 +140,10 @@
 
 .detail-item span {
   color: var(--text-secondary);
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
 }
 
 .about-actions {

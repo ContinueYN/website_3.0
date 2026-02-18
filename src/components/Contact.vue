@@ -13,21 +13,27 @@
           
           <div class="contact-methods">
             <div class="contact-method">
-              <div class="contact-icon">📧</div>
+              <div class="contact-icon">
+                <Mail :size="20" />
+              </div>
               <div>
                 <h4>邮箱</h4>
                 <p>3258664928@qq.com</p>
               </div>
             </div>
             <div class="contact-method">
-              <div class="contact-icon">📱</div>
+              <div class="contact-icon">
+                <Phone :size="20" />
+              </div>
               <div>
                 <h4>电话</h4>
                 <p>+86 181 3686 5751</p>
               </div>
             </div>
             <div class="contact-method">
-              <div class="contact-icon">📍</div>
+              <div class="contact-icon">
+                <MapPin :size="20" />
+              </div>
               <div>
                 <h4>地址</h4>
                 <p>中国，汕头市</p>
@@ -100,6 +106,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { Mail, Phone, MapPin } from 'lucide-vue-next'
 
 interface ContactForm {
   name: string

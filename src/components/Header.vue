@@ -6,20 +6,29 @@
       </div>
       
       <ul class="nav-links">
-        <li><a href="#home" class="nav-link">首页</a></li>
-        <li><a href="#about" class="nav-link">关于</a></li>
-        <li><a href="#skills" class="nav-link">技能</a></li>
-        <li><a href="#projects" class="nav-link">项目</a></li>
-        <li><a href="#contact" class="nav-link">联系</a></li>
+        <li><a href="#home" class="nav-link" @click.prevent="scrollToSection('#home')">首页</a></li>
+        <li><a href="#about" class="nav-link" @click.prevent="scrollToSection('#about')">关于</a></li>
+        <li><a href="#skills" class="nav-link" @click.prevent="scrollToSection('#skills')">技能</a></li>
+        <li><a href="#projects" class="nav-link" @click.prevent="scrollToSection('#projects')">项目</a></li>
+        <li><a href="#contact" class="nav-link" @click.prevent="scrollToSection('#contact')">联系</a></li>
       </ul>
       
       <div class="nav-actions">
         <button @click="handleThemeToggle" class="theme-toggle" aria-label="切换主题" :class="{ 'animating': isAnimating }">
           <!-- 图片切换效果 -->
           <div class="theme-icon-image">
-            <img :src="currentIcon" :alt="isDark ? '切换到日间模式' : '切换到夜间模式'" class="theme-icon current">
-            <img :src="isDark ? lightIcon : darkIcon" :alt="isDark ? '日间模式' : '夜间模式'" class="theme-icon next">
+            <img :src="currentIcon" :alt="isDark ? '切换到日间模式' : '切换到夜间模式'" class="theme-icon current" loading="lazy">
+            <img :src="isDark ? lightIcon : darkIcon" :alt="isDark ? '日间模式' : '夜间模式'" class="theme-icon next" loading="lazy">
           </div>
+        </button>
+        
+        <button 
+          @click="scrollToTop" 
+          class="back-to-top" 
+          aria-label="回到顶部" 
+          :class="{ 'show': showBackToTop }"
+        >
+          <ArrowUp size="20" />
         </button>
         
         <button class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="切换菜单">
@@ -32,21 +41,33 @@
     
     <!-- 移动端菜单 -->
     <div v-if="mobileMenuOpen" class="mobile-menu">
-      <a href="#home" class="mobile-nav-link" @click="closeMobileMenu">首页</a>
-      <a href="#about" class="mobile-nav-link" @click="closeMobileMenu">关于</a>
-      <a href="#skills" class="mobile-nav-link" @click="closeMobileMenu">技能</a>
-      <a href="#projects" class="mobile-nav-link" @click="closeMobileMenu">项目</a>
-      <a href="#contact" class="mobile-nav-link" @click="closeMobileMenu">联系</a>
+      <a href="#home" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#home'); closeMobileMenu(); }">首页</a>
+      <a href="#about" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#about'); closeMobileMenu(); }">关于</a>
+      <a href="#skills" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#skills'); closeMobileMenu(); }">技能</a>
+      <a href="#projects" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#projects'); closeMobileMenu(); }">项目</a>
+      <a href="#contact" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#contact'); closeMobileMenu(); }">联系</a>
     </div>
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { ArrowUp } from 'lucide-vue-next'
 
 // 导入图片
 import lightIcon from '../assets/images/light.png'
 import darkIcon from '../assets/images/dark.png'
+
+// 平滑滚动到指定元素
+const scrollToSection = (sectionId) => {
+  const element = document.querySelector(sectionId)
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
+  }
+}
 
 const props = defineProps({
   isDark: Boolean
@@ -57,6 +78,7 @@ const emit = defineEmits(['toggle-theme'])
 const mobileMenuOpen = ref(false)
 const poemContent = ref('') // 诗词内容
 const isAnimating = ref(false) // 新增：动画状态
+const showBackToTop = ref(false) // 回到顶部按钮显示状态
 
 // 计算当前显示的图标
 const currentIcon = computed(() => {
@@ -84,6 +106,14 @@ const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
 
+// 回到顶部方法
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
 // 加载诗词
 const loadPoem = () => {
   if (window.jinrishici) {
@@ -107,7 +137,7 @@ const loadPoemSDK = () => {
 onMounted(() => {
   loadPoemSDK()
   
-  // 滚动时添加阴影
+  // 滚动时添加阴影和控制回到顶部按钮
   window.addEventListener('scroll', () => {
     const header = document.querySelector('.header')
     if (header) {
@@ -116,6 +146,13 @@ onMounted(() => {
       } else {
         header.classList.remove('scrolled')
       }
+    }
+    
+    // 控制回到顶部按钮显示
+    if (window.scrollY > 300) {
+      showBackToTop.value = true
+    } else {
+      showBackToTop.value = false
     }
   })
 })
@@ -287,6 +324,40 @@ onMounted(() => {
 .theme-toggle:active .theme-icon.next {
   opacity: 1;
   transform: scale(1.5);
+}
+
+/* 回到顶部按钮 */
+.back-to-top {
+  background: var(--primary-color);
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.back-to-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.back-to-top:active {
+  transform: translateY(0);
 }
 
 .mobile-menu-btn {

@@ -1,5 +1,13 @@
 <template>
   <div id="app" :class="{ 'dark': isDark }">
+    <!-- 页面加载动画 -->
+    <div v-if="isLoading" class="loading-screen" :class="{ 'loading-hidden': !isLoading }">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">加载中...</p>
+      </div>
+    </div>
+    
     <ParticleBackground 
       :particle-count="isDark ? 120 : 60" 
       :connect-distance="isDark ? 150 : 100"
@@ -30,6 +38,7 @@ import Footer from './components/Footer.vue'
 import ParticleBackground from './components/ParticleBackground.vue'
 
 const isDark = ref(false)
+const isLoading = ref(true)
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
@@ -40,6 +49,11 @@ onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
   const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   isDark.value = savedTheme ? savedTheme === 'dark' : systemPrefersDark
+  
+  // 模拟加载过程，1.5秒后隐藏加载动画
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1500)
 })
 </script>
 
@@ -57,5 +71,52 @@ onMounted(() => {
   z-index: 1;
 }
 
+/* 加载动画样式 */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: all 0.5s ease;
+}
+
+.loading-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 </style>
