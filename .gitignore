@@ -29,9 +29,9 @@ server/.env
 server/node_modules
 
 # Media files (uncomment to ignore)
-src/assets/audio/
-src/assets/images/
-src/assets/videos/
+# src/assets/audio/
+# src/assets/images/
+# src/assets/videos/
 
 # System files
 .DS_Store
