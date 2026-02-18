@@ -384,7 +384,6 @@ const projects = ref([
 .card-front {
   background: var(--bg-primary);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
   backdrop-filter: blur(15px);
 }
 

@@ -299,7 +299,6 @@ onBeforeUnmount(() => {
   background: var(--bg-primary);
   padding: 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--border-color);
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(20px);
