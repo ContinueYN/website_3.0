@@ -28,10 +28,10 @@ coverage
 server/.env
 server/node_modules
 
-# Media files 
-src/assets/audio/
-src/assets/images/
-src/assets/videos/
+# Media files (uncomment to ignore)
+# src/assets/audio/
+# src/assets/images/
+# src/assets/videos/
 
 # System files
 .DS_Store
