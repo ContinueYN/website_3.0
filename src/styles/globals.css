@@ -1,0 +1,180 @@
+/* 全局样式和CSS变量 */
+:root {
+  --primary-color: #75fabec9;
+  --primary-dark: #25eb9f;
+  --secondary-color: #64748b;
+  --accent-color: #f59e0b;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --bg-primary: linear-gradient(135deg, #f1f1f11d 0%,#66e3ea27 50%, #f1f77633 100%);
+  --bg-secondary: linear-gradient(135deg, #ffffff1d 0%,#dfea662f 50%, #76ddf730 100%);
+  --bg-card: #ffffff;
+  --border-color: #e5e7eb;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* 渐变 */
+  --gradient-primary: linear-gradient(135deg, #f7f4f5ce 0%,#7c7b7c80 50%,#0d0d0dcc 100%);
+  --gradient-accent: radial-gradient(circle, #c7f08de8 0%, #f3f4f3 100%);
+  
+  /* 滚动条变量 - 浅色模式  */
+  --scrollbar-thumb: #f5f5f5;
+  --scrollbar-thumb-hover: #a858f8;
+  --scrollbar-track: rgba(173, 234, 243, 0.491);
+}
+
+/* 深色模式变量 */
+.dark {
+  --primary-color: #aa7ef7d1;
+  --primary-dark: #7d3bf6;
+  --secondary-color: #94a3b8;
+  --accent-color: #fbbf24;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --bg-primary: linear-gradient(135deg, #1616169e 0%,#3e0ffb23 50%, #dc4bf95e 100%);
+  --bg-secondary: linear-gradient(135deg, #161616a3 0%,#c80ffb28 50%, #3019fc48 100%);
+  --bg-card: #1e293b;
+  --border-color: #334155;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  --gradient-accent: radial-gradient(circle, #ee7bf7b5 0%, #313030 100%);
+  
+  /* 滚动条变量 - 深色模式  */
+  --scrollbar-thumb-dark: #8f72f7;  
+  --scrollbar-thumb-hover-dark: #a98fff;
+  --scrollbar-track-dark: rgba(255, 255, 255, 0.05);
+}
+
+html{
+  user-select: none;
+}
+
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: all 0.3s ease;
+  min-height: 100vh;
+}
+
+/* 容器 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* 工具类 */
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* 动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+
+/* 针对 Webkit 浏览器 */
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-dark); /* 显式指定深色模式样式 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-dark);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-dark);
+}
+
+/* 针对 Firefox */
+@supports (scrollbar-width: thin) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+  
+  .dark {
+    scrollbar-color: var(--scrollbar-thumb-dark) var(--scrollbar-track-dark);
+  }
+}

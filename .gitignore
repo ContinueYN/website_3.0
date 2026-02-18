@@ -1,0 +1,59 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+dist-ssr
+
+# Testing
+coverage
+/cypress/videos/
+/cypress/screenshots/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Server-side files
+server/.env
+server/node_modules
+
+# Media files 
+src/assets/audio/
+src/assets/images/
+src/assets/videos/
+
+# System files
+.DS_Store
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# TypeScript
+*.tsbuildinfo
