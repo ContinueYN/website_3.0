@@ -41,8 +41,8 @@
             一名偏向前端设计的全栈开发者，专注于创造优雅、高效的数字化解决方案。
           </p>
           <div class="hero-actions fade-in-up" style="animation-delay: 0.4s">
-            <a href="#projects" class="btn">查看作品</a>
-            <a href="#contact" class="btn btn-outline">联系我</a>
+            <a href="#projects" class="btn" @click.prevent="scrollToSection('#projects')">查看作品</a>
+            <a href="#contact" class="btn btn-outline" @click.prevent="scrollToSection('#contact')">联系我</a>
           </div>
           <div class="hero-stats fade-in-up" style="animation-delay: 0.6s">
             <div class="stat">
@@ -76,6 +76,24 @@
 <script setup>
 // 这里可以添加交互逻辑
 import { onMounted, onBeforeUnmount } from 'vue'
+
+// 平滑滚动到指定元素
+const scrollToSection = (sectionId) => {
+  // 检查当前是否在首页
+  if (window.location.pathname !== '/') {
+    // 如果不在首页，先导航到首页，然后在页面加载后滚动到指定部分
+    window.location.href = `/#${sectionId.substring(1)}`
+  } else {
+    // 如果在首页，直接滚动到指定部分
+    const element = document.querySelector(sectionId)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }
+}
 
 // 使用 IntersectionObserver 在元素进入视口时添加类以触发动画
 onMounted(() => {

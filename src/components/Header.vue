@@ -2,15 +2,16 @@
   <header class="header">
     <nav class="nav container">
       <div class="logo">
-        <a href="#home" class="logo-text">{{ poemContent || 'ContinueYN' }}</a>
+        <RouterLink to="/" class="logo-text">{{ poemContent || 'ContinueYN' }}</RouterLink>
       </div>
       
       <ul class="nav-links">
-        <li><a href="#home" class="nav-link" @click.prevent="scrollToSection('#home')">首页</a></li>
+        <li><router-link to="/" class="nav-link">首页</router-link></li>
         <li><a href="#about" class="nav-link" @click.prevent="scrollToSection('#about')">关于</a></li>
         <li><a href="#skills" class="nav-link" @click.prevent="scrollToSection('#skills')">技能</a></li>
         <li><a href="#projects" class="nav-link" @click.prevent="scrollToSection('#projects')">项目</a></li>
         <li><a href="#contact" class="nav-link" @click.prevent="scrollToSection('#contact')">联系</a></li>
+        <li><router-link to="/blog" class="nav-link">博客</router-link></li>
       </ul>
       
       <div class="nav-actions">
@@ -41,17 +42,19 @@
     
     <!-- 移动端菜单 -->
     <div v-if="mobileMenuOpen" class="mobile-menu">
-      <a href="#home" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#home'); closeMobileMenu(); }">首页</a>
+      <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu()">首页</router-link>
       <a href="#about" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#about'); closeMobileMenu(); }">关于</a>
       <a href="#skills" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#skills'); closeMobileMenu(); }">技能</a>
       <a href="#projects" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#projects'); closeMobileMenu(); }">项目</a>
       <a href="#contact" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#contact'); closeMobileMenu(); }">联系</a>
+      <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu()">博客</router-link>
     </div>
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import { ArrowUp } from 'lucide-vue-next'
 
 // 导入图片
@@ -60,12 +63,19 @@ import darkIcon from '../assets/images/dark.png'
 
 // 平滑滚动到指定元素
 const scrollToSection = (sectionId) => {
-  const element = document.querySelector(sectionId)
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
+  // 检查当前是否在首页
+  if (window.location.pathname !== '/') {
+    // 如果不在首页，先导航到首页，然后在页面加载后滚动到指定部分
+    window.location.href = `/#${sectionId.substring(1)}`
+  } else {
+    // 如果在首页，直接滚动到指定部分
+    const element = document.querySelector(sectionId)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
   }
 }
 

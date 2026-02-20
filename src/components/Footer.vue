@@ -17,11 +17,11 @@
         <div class="footer-section">
           <h4>快速链接</h4>
           <ul class="footer-links">
-            <li><a href="#home">首页</a></li>
-            <li><a href="#about">关于</a></li>
-            <li><a href="#skills">技能</a></li>
-            <li><a href="#projects">项目</a></li>
-            <li><a href="#contact">联系</a></li>
+            <li><a href="#home" @click.prevent="scrollToSection('#home')">首页</a></li>
+            <li><a href="#about" @click.prevent="scrollToSection('#about')">关于</a></li>
+            <li><a href="#skills" @click.prevent="scrollToSection('#skills')">技能</a></li>
+            <li><a href="#projects" @click.prevent="scrollToSection('#projects')">项目</a></li>
+            <li><a href="#contact" @click.prevent="scrollToSection('#contact')">联系</a></li>
           </ul>
         </div>
         
@@ -54,6 +54,24 @@
 
 <script setup>
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
+
+// 平滑滚动到指定元素
+const scrollToSection = (sectionId) => {
+  // 检查当前是否在首页
+  if (window.location.pathname !== '/') {
+    // 如果不在首页，先导航到首页，然后在页面加载后滚动到指定部分
+    window.location.href = `/#${sectionId.substring(1)}`
+  } else {
+    // 如果在首页，直接滚动到指定部分
+    const element = document.querySelector(sectionId)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>

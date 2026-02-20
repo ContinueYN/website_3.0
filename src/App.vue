@@ -8,26 +8,39 @@
       </div>
     </div>
     
-    <ParticleBackground 
-      :particle-count="isDark ? 120 : 60" 
-      :connect-distance="isDark ? 150 : 100"
-      :is-dark="isDark"
-    />
-    <Header :isDark="isDark" @toggle-theme="toggleTheme" />
-    <main>
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
-    </main>
-    <Footer />
+    <!-- 博客相关页面 -->
+    <template v-if="isBlogPath">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </template>
+    
+    <!-- 首页内容 -->
+    <template v-else>
+      <ParticleBackground 
+        :particle-count="isDark ? 120 : 60" 
+        :connect-distance="isDark ? 150 : 100"
+        :is-dark="isDark"
+      />
+      <Header :isDark="isDark" @toggle-theme="toggleTheme" />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Projects />
+        <Contact />
+      </main>
+      <Footer />
+    </template>
   </div>
 </template>
 
 <script setup>
 import '@/styles/globals.css'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
+import { useRoute } from 'vue-router'
 import Header from './components/Header.vue'
 import Hero from './components/Hero.vue'
 import About from './components/About.vue'
@@ -39,11 +52,23 @@ import ParticleBackground from './components/ParticleBackground.vue'
 
 const isDark = ref(false)
 const isLoading = ref(true)
+const route = useRoute()
+
+// 计算是否是博客相关路径
+const isBlogPath = computed(() => {
+  return route.path.startsWith('/blog')
+})
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
+
+// 提供主题状态和切换函数给所有子组件
+provide('theme', {
+  isDark,
+  toggleTheme
+})
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')

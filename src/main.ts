@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import { createApp } from 'vue'
 import App from './App.vue'
+import router from './router'
 
 // 导入 AOS
 import AOS from 'aos'
@@ -26,6 +27,9 @@ if (window.matchMedia) {
 }
 
 const app = createApp(App)
+
+// 集成路由
+app.use(router)
 
 // 初始化 AOS
 app.mixin({
