@@ -31,7 +31,7 @@
 
 <script setup>
 import '@/styles/globals.css'
-import { computed, provide, watch } from 'vue'
+import { ref, onMounted, computed, provide, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from './components/Header.vue'
 import Hero from './components/Hero.vue'
@@ -56,6 +56,24 @@ const isBlogPath = computed(() => {
 provide('theme', {
   isDark,
   toggleTheme
+})
+
+onMounted(() => {
+  // 初始化 AOS
+  AOS.init({
+    duration: 800,
+    offset: 100,
+    once: false,
+    mirror: true,
+    easing: 'ease-in-out'
+  })
+})
+
+// 监听路由变化，刷新 AOS
+watch(route, () => {
+  setTimeout(() => {
+    AOS.refresh()
+  }, 300)
 })
 </script>
 
