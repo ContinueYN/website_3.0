@@ -1,5 +1,6 @@
 <template>
   <header class="header">
+    <div class="scroll-progress" :style="{ width: scrollProgress + '%' }"></div>
     <nav class="nav container">
       <div class="logo">
         <RouterLink to="/" class="logo-text">{{ poemContent || 'ContinueYN' }}</RouterLink>
@@ -16,7 +17,6 @@
       
       <div class="nav-actions">
         <button @click="handleThemeToggle" class="theme-toggle" aria-label="切换主题" :class="{ 'animating': isAnimating }">
-          <!-- 图片切换效果 -->
           <div class="theme-icon-image">
             <img :src="currentIcon" :alt="isDark ? '切换到日间模式' : '切换到夜间模式'" class="theme-icon current" loading="lazy">
             <img :src="isDark ? lightIcon : darkIcon" :alt="isDark ? '日间模式' : '夜间模式'" class="theme-icon next" loading="lazy">
@@ -40,7 +40,6 @@
       </div>
     </nav>
     
-    <!-- 移动端菜单 -->
     <div v-if="mobileMenuOpen" class="mobile-menu">
       <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu()">首页</router-link>
       <a href="#about" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#about'); closeMobileMenu(); }">关于</a>
@@ -86,9 +85,10 @@ const props = defineProps({
 const emit = defineEmits(['toggle-theme'])
 
 const mobileMenuOpen = ref(false)
-const poemContent = ref('') // 诗词内容
-const isAnimating = ref(false) // 新增：动画状态
-const showBackToTop = ref(false) // 回到顶部按钮显示状态
+const poemContent = ref('')
+const isAnimating = ref(false)
+const showBackToTop = ref(false)
+const scrollProgress = ref(0)
 
 // 计算当前显示的图标
 const currentIcon = computed(() => {
@@ -164,6 +164,11 @@ onMounted(() => {
     } else {
       showBackToTop.value = false
     }
+    
+    // 计算滚动进度
+    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+    const scrolled = (window.scrollY / windowHeight) * 100
+    scrollProgress.value = Math.min(100, Math.max(0, scrolled))
   })
 })
 </script>
@@ -172,10 +177,21 @@ onMounted(() => {
 .header {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   background: var(--bg-primary);
   z-index: 1000;
   transition: all 0.3s ease;
+}
+
+.scroll-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  transition: width 0.1s ease-out;
+  box-shadow: var(--shadow-glow);
 }
 
 .header {

@@ -82,7 +82,7 @@ import { FileText, Briefcase, GraduationCap, Rocket } from 'lucide-vue-next'
 <style scoped>
 .about {
   padding: 5rem 0;
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 .section-header {
@@ -161,15 +161,17 @@ import { FileText, Briefcase, GraduationCap, Rocket } from 'lucide-vue-next'
   width: 500px;
   height: 180px;
   border-radius: 20px;
-  background: rgba(54, 216, 237, 0.078);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transform-style: preserve-3d;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -188,8 +190,8 @@ import { FileText, Briefcase, GraduationCap, Rocket } from 'lucide-vue-next'
 
 .card:hover {
   transform: translateY(-15px) rotateX(5deg) rotateY(-5deg) scale(1.03);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-glow);
+  border-color: var(--primary-color);
 }
 
 .card:hover::before {

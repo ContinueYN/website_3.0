@@ -92,68 +92,16 @@ import { ref, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
+import { useBlogPosts } from '../composables/useBlogPosts'
 
 const router = useRouter()
 const selectedCategory = ref('全部')
 
-// 注入主题状态和切换函数
 const { isDark, toggleTheme } = inject('theme')
-
-// 模拟博客文章数据
-const blogPosts = ref([
-  {
-    id: 1,
-    title: 'Vue 3 Composition API 最佳实践',
-    excerpt: '探索 Vue 3 Composition API 的强大功能和使用技巧，提升代码质量和开发效率。',
-    date: '2026-02-15',
-    category: '技术',
-    readingTime: 8,
-    bgColor: 'rgba(0, 0, 0, 0.15)'
-  },
-  {
-    id: 2,
-    title: '前端性能优化实战指南',
-    excerpt: '从网络请求到渲染优化，全面讲解前端性能优化的实用技巧和最佳实践。',
-    date: '2026-02-10',
-    category: '性能',
-    readingTime: 10,
-    bgColor: 'rgba(0, 0, 0, 0.15)'
-  },
-  {
-    id: 3,
-    title: 'TypeScript 进阶技巧',
-    excerpt: '掌握 TypeScript 的高级特性，编写更安全、更可维护的代码。',
-    date: '2026-02-05',
-    category: '技术',
-    readingTime: 12,
-    bgColor: 'rgba(0, 0, 0, 0.15)'
-  },
-  {
-    id: 4,
-    title: '响应式设计原则与实践',
-    excerpt: '学习现代响应式设计的核心原则，创建适应各种设备的用户界面。',
-    date: '2026-01-30',
-    category: '设计',
-    readingTime: 9,
-    bgColor: 'rgba(0, 0, 0, 0.15)'
-  }
-])
-
-// 计算属性
-const uniqueCategories = computed(() => {
-  const categories = new Set(blogPosts.value.map(post => post.category))
-  return Array.from(categories)
-})
-
-const totalReadingTime = computed(() => {
-  return blogPosts.value.reduce((total, post) => total + post.readingTime, 0)
-})
+const { blogPosts, uniqueCategories, totalReadingTime, filterByCategory } = useBlogPosts()
 
 const filteredPosts = computed(() => {
-  if (selectedCategory.value === '全部') {
-    return blogPosts.value
-  }
-  return blogPosts.value.filter(post => post.category === selectedCategory.value)
+  return filterByCategory(selectedCategory.value)
 })
 
 const navigateToPost = (id) => {
@@ -172,7 +120,7 @@ const navigateToPost = (id) => {
 .blog-header {
   padding: 8rem 0 5rem;
   text-align: center;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, var(--blog-left) 0%, var(--blog-right) 100%);
   color: white;
   position: relative;
   overflow: hidden;

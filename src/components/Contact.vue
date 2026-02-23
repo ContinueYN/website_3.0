@@ -130,7 +130,7 @@ const handleSubmit = async () => {
   loading.value = true
 
   try {
-    const API_URL = 'http://localhost:3001/api'
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
     
     const response = await fetch(`${API_URL}/contact`, {
       method: 'POST',
@@ -167,7 +167,7 @@ const handleSubmit = async () => {
 <style scoped>
 .contact {
   padding: 5rem 0;
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 .contact-content {
@@ -242,11 +242,13 @@ const handleSubmit = async () => {
 }
 
 .contact-form {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
 }
 
 .form-group {

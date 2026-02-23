@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
   align-items: center;
   position: relative;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: transparent;
   padding-top: 80px;
 }
 

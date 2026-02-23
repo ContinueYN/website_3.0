@@ -453,7 +453,7 @@ onBeforeUnmount(() => {
 
 .skills{
   padding: 5rem 0;
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 .skills-categories {

@@ -3,8 +3,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-// 导入 AOS
-import AOS from 'aos'
+// 导入 AOS 样式
 import 'aos/dist/aos.css'
 
 // 主题初始化.
@@ -28,20 +27,14 @@ if (window.matchMedia) {
 
 const app = createApp(App)
 
+// 全局错误处理器
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Global error:', err)
+  console.error('Error info:', info)
+  console.error('Vue instance:', instance)
+}
+
 // 集成路由
 app.use(router)
-
-// 初始化 AOS
-app.mixin({
-  mounted() {
-    AOS.init({
-      duration: 800,
-      offset: 100,
-      once: false, 
-	  mirror: true, // 让元素滚动回来时也触发动画
-      easing: 'ease-in-out'
-    })
-  }
-})
 
 app.mount('#app')

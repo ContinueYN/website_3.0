@@ -40,6 +40,8 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const ctx = ref<CanvasRenderingContext2D | null>(null)
 const particles = ref<Particle[]>([])
 const animationFrameId = ref<number>(0)
+const mouseX = ref<number>(-1000)
+const mouseY = ref<number>(-1000)
 
 // 计算样式
 const canvasStyle = computed<CSSProperties>(() => ({
@@ -52,35 +54,35 @@ const canvasStyle = computed<CSSProperties>(() => ({
   pointerEvents: 'none'
 }))
 
-// 白天模式颜色配置
+// 白天模式颜色配置 - 优雅美学设计
 const lightModeColors = {
   particles: [
-    'rgba(255, 255, 255, 0.8)',
-    'rgba(255, 255, 255, 0.6)',
-    'rgba(255, 255, 255, 0.4)'
+    'rgba(99, 179, 237, 0.7)',   // 淡蓝色
+    'rgba(167, 254, 215, 0.6)',  // 淡青绿色
+    'rgba(196, 167, 255, 0.5)',  // 淡紫色
+    'rgba(251, 191, 36, 0.4)'    // 淡金色点缀
   ],
-  lines: 'rgba(255, 255, 255, 0.2)',
+  lines: 'rgba(99, 179, 237, 0.15)',
   glows: [
-    'rgba(255, 215, 0, 0.4)',    // 白金光晕
-    'rgba(255, 235, 150, 0.2)',  // 淡白金光晕
-    'rgba(255, 250, 200, 0.2)'   // 更淡的白金光晕
+    'rgba(99, 179, 237, 0.3)',   // 淡蓝色光晕
+    'rgba(167, 254, 215, 0.25)',  // 淡青绿色光晕
+    'rgba(196, 167, 255, 0.2)'   // 淡紫色光晕
   ]
 }
 
-// 夜间模式颜色配置
+// 夜间模式颜色配置 - 基于原有紫色系
 const darkModeColors = {
   particles: [
-    'rgba(255, 255, 255, 0.9)',      // 白色星星
-    'rgba(255, 255, 255, 0.7)',
-    'rgba(255, 255, 255, 0.5)',
-    'rgba(200, 170, 255, 0.8)',      // 淡紫色星星
-    'rgba(230, 210, 255, 0.8)'       // 更淡的紫色星星
+    'rgba(170, 126, 247, 0.9)',      // 紫色
+    'rgba(125, 59, 246, 0.8)',       // 深紫色
+    'rgba(196, 167, 255, 0.7)',      // 淡紫色
+    'rgba(251, 191, 36, 0.6)'       // 金色点缀
   ],
-  lines: 'rgba(180, 146, 239, 0.3)', // 保持紫色连线
+  lines: 'rgba(170, 126, 247, 0.3)',
   glows: [
-    'rgba(180, 146, 239, 0.4)',      // 淡紫色光晕
-    'rgba(200, 170, 255, 0.3)',      // 淡紫色
-    'rgba(150, 120, 220, 0.3)'       // 稍深的紫色
+    'rgba(170, 126, 247, 0.4)',      // 紫色光晕
+    'rgba(196, 167, 255, 0.3)',      // 淡紫色光晕
+    'rgba(251, 191, 36, 0.25)'       // 金色光晕
   ]
 }
 
@@ -96,15 +98,25 @@ const getRandomColor = (colorPalette: string[]): string => {
 
 // 初始化画布
 const initCanvas = () => {
-  if (!canvasRef.value) return
+  if (!canvasRef.value) {
+    console.error('Canvas element not found')
+    return
+  }
   
   const canvas = canvasRef.value
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-  ctx.value = canvas.getContext('2d')
+  const context = canvas.getContext('2d')
+  
+  if (!context) {
+    console.error('Failed to get 2D context')
+    return
+  }
+  
+  ctx.value = context
 }
 
-// 创建粒子 - 白天模式（光晕效果）
+// 创建粒子 - 白天模式（优雅美学）
 const createLightParticles = () => {
   particles.value = []
   const colors = props.isDark ? darkModeColors : lightModeColors
@@ -113,13 +125,13 @@ const createLightParticles = () => {
     particles.value.push({
       x: Math.random() * (canvasRef.value?.width || window.innerWidth),
       y: Math.random() * (canvasRef.value?.height || window.innerHeight),
-      size: Math.random() * 4 + 5, // 稍大的粒子
-      speedX: Math.random() * 0.5 - 0.25, // 缓慢移动
-      speedY: Math.random() * 0.5 - 0.25,
+      size: Math.random() * 3 + 2, // 更精致的小粒子
+      speedX: Math.random() * 0.3 - 0.15, // 更柔和的移动
+      speedY: Math.random() * 0.3 - 0.15,
       color: getRandomColor(colors.particles),
-      opacity: Math.random() * 0.4 + 0.3, // 较高的基础透明度
-      pulseSpeed: Math.random() * 0.02 + 0.01, // 脉动速度
-      pulsePhase: Math.random() * Math.PI * 2 // 脉动相位
+      opacity: Math.random() * 0.5 + 0.2, // 更淡雅的透明度
+      pulseSpeed: Math.random() * 0.015 + 0.005, // 更慢的脉动
+      pulsePhase: Math.random() * Math.PI * 2
     })
   }
 }
@@ -189,6 +201,22 @@ const updateParticles = () => {
   const time = Date.now() * 0.001
   
   particles.value.forEach(particle => {
+    // 浅色模式下的鼠标交互效果
+    if (!props.isDark && mouseX.value > -500 && mouseY.value > -500) {
+      const dx = mouseX.value - particle.x
+      const dy = mouseY.value - particle.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      const interactionRadius = 200
+      
+      if (distance < interactionRadius) {
+        const force = (interactionRadius - distance) / interactionRadius
+        const attractionStrength = 0.02
+        
+        particle.x += dx * force * attractionStrength
+        particle.y += dy * force * attractionStrength
+      }
+    }
+    
     // 更新位置
     particle.x += particle.speedX
     particle.y += particle.speedY
@@ -207,7 +235,7 @@ const updateParticles = () => {
   })
 }
 
-// 绘制光晕效果
+// 绘制光晕效果 - 优雅美学
 const drawLightParticles = () => {
   if (!ctx.value || !canvasRef.value) return
   
@@ -217,8 +245,26 @@ const drawLightParticles = () => {
   
   ctx.value.clearRect(0, 0, canvas.width, canvas.height)
   
-  // 绘制连线
+  // 绘制鼠标周围的柔和光晕
+  if (mouseX.value > -500 && mouseY.value > -500) {
+    const mouseGradient = ctx.value.createRadialGradient(
+      mouseX.value, mouseY.value, 0,
+      mouseX.value, mouseY.value, 180
+    )
+    mouseGradient.addColorStop(0, 'rgba(99, 179, 237, 0.08)')
+    mouseGradient.addColorStop(0.5, 'rgba(167, 254, 215, 0.04)')
+    mouseGradient.addColorStop(1, 'transparent')
+    
+    ctx.value.fillStyle = mouseGradient
+    ctx.value.globalAlpha = 1
+    ctx.value.beginPath()
+    ctx.value.arc(mouseX.value, mouseY.value, 180, 0, Math.PI * 2)
+    ctx.value.fill()
+  }
+  
+  // 绘制优雅的连线
   ctx.value.strokeStyle = colors.lines
+  ctx.value.lineWidth = 0.5
   for (let i = 0; i < particles.value.length; i++) {
     for (let j = i + 1; j < particles.value.length; j++) {
       const pI = particles.value[i]
@@ -229,10 +275,10 @@ const drawLightParticles = () => {
       const dy = pI.y - pJ.y
       const distance = Math.sqrt(dx * dx + dy * dy)
       
-      if (distance < props.connectDistance) {
+      if (distance < props.connectDistance * 0.8) {
+        const alpha = (1 - distance / (props.connectDistance * 0.8)) * 0.2
         ctx.value.beginPath()
-        ctx.value.globalAlpha = (1 - distance / props.connectDistance) * 0.3
-        ctx.value.lineWidth = 1
+        ctx.value.globalAlpha = alpha
         ctx.value.moveTo(pI.x, pI.y)
         ctx.value.lineTo(pJ.x, pJ.y)
         ctx.value.stroke()
@@ -240,30 +286,39 @@ const drawLightParticles = () => {
     }
   }
   
-  // 绘制粒子光晕
+  // 绘制优雅的粒子光晕
   particles.value.forEach(particle => {
-    const pulse = Math.sin(particle.pulsePhase) * 0.3 + 0.7
+    const pulse = Math.sin(particle.pulsePhase) * 0.2 + 0.8
     const currentOpacity = particle.opacity * pulse
     
-    // 绘制光晕
+    // 绘制柔和的光晕
     const gradient = ctx.value!.createRadialGradient(
       particle.x, particle.y, 0,
-      particle.x, particle.y, particle.size * 3
+      particle.x, particle.y, particle.size * 2.5
     )
-    gradient.addColorStop(0, particle.color.replace('0.8', currentOpacity.toString()))
+    
+    const colorMatch = particle.color.match(/rgba?\([^)]+\)/)
+    if (colorMatch) {
+      const baseColor = colorMatch[0]
+      gradient.addColorStop(0, baseColor.replace(/[\d.]+\)$/, (currentOpacity * 0.8).toString()))
+      gradient.addColorStop(0.5, baseColor.replace(/[\d.]+\)$/, (currentOpacity * 0.3).toString()))
+    } else {
+      gradient.addColorStop(0, particle.color)
+      gradient.addColorStop(0.5, particle.color)
+    }
     gradient.addColorStop(1, 'transparent')
     
     ctx.value!.fillStyle = gradient
     ctx.value!.globalAlpha = 1
     ctx.value!.beginPath()
-    ctx.value!.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2)
+    ctx.value!.arc(particle.x, particle.y, particle.size * 2.5, 0, Math.PI * 2)
     ctx.value!.fill()
     
-    // 绘制核心粒子
+    // 绘制核心粒子 - 更精致
     ctx.value!.fillStyle = particle.color
     ctx.value!.globalAlpha = currentOpacity
     ctx.value!.beginPath()
-    ctx.value!.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
+    ctx.value!.arc(particle.x, particle.y, particle.size * 0.6, 0, Math.PI * 2)
     ctx.value!.fill()
   })
 }
@@ -395,6 +450,11 @@ const drawParticles = () => {
 
 // 动画循环
 const animate = () => {
+  if (!canvasRef.value || !ctx.value) {
+    console.error('Canvas or context not available in animate')
+    return
+  }
+  
   updateParticles()
   drawParticles()
   animationFrameId.value = requestAnimationFrame(animate)
@@ -406,11 +466,28 @@ const handleResize = () => {
   createParticles()
 }
 
+// 鼠标移动处理
+const handleMouseMove = (e: MouseEvent) => {
+  mouseX.value = e.clientX
+  mouseY.value = e.clientY
+}
+
+// 鼠标离开窗口处理
+const handleMouseLeave = () => {
+  mouseX.value = -1000
+  mouseY.value = -1000
+}
+
 onMounted(() => {
-  initCanvas()
-  createParticles()
-  animate()
+  setTimeout(() => {
+    initCanvas()
+    createParticles()
+    animate()
+  }, 100)
+  
   window.addEventListener('resize', handleResize)
+  window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('mouseleave', handleMouseLeave)
 })
 
 onUnmounted(() => {
@@ -418,6 +495,8 @@ onUnmounted(() => {
     cancelAnimationFrame(animationFrameId.value)
   }
   window.removeEventListener('resize', handleResize)
+  window.removeEventListener('mousemove', handleMouseMove)
+  window.removeEventListener('mouseleave', handleMouseLeave)
 })
 
 // 监听主题变化

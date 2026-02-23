@@ -29,7 +29,10 @@
             <!-- 正面 -->
             <div class="card-face card-front">
               <div class="project-image">
-                <img :src="project.image" :alt="project.title" loading="lazy" />
+                <picture>
+                  <source :srcset="project.imageWebp" type="image/webp">
+                  <img :src="project.image" :alt="project.title" loading="lazy" />
+                </picture>
               </div>
               <h3 class="project-title">{{ project.title }}</h3>
               <p class="project-description">{{ project.description }}</p>
@@ -102,6 +105,11 @@ import project2 from '../assets/images/2.png'
 import project3 from '../assets/images/3.png'
 import project4 from '../assets/images/4.png'
 import project5 from '../assets/images/5.png'
+import project1Webp from '../assets/images/1.webp'
+import project2Webp from '../assets/images/2.webp'
+import project3Webp from '../assets/images/3.webp'
+import project4Webp from '../assets/images/4.webp'
+import project5Webp from '../assets/images/5.webp'
 
 // 导入视频文件
 import video1 from '../assets/videos/1.mp4'
@@ -276,6 +284,7 @@ const projects = ref([
     title: 'My-website_1.0',
     description: '一个最初版本的个人网站，包含个人简介、技能学习经历等内容。',
     image: project1,
+    imageWebp: project1Webp,
     video: video1,
     demoUrl: '#',
     githubUrl: '#',
@@ -286,6 +295,7 @@ const projects = ref([
     title: 'My-website_2.0',
     description: '一个经过迭代的个人网站，经过设计，添加流畅动画。',
     image: project2,
+    imageWebp: project2Webp,
     video: video2,
     demoUrl: '#',
     githubUrl: '#',
@@ -296,6 +306,7 @@ const projects = ref([
     title: '食堂网站',
     description: '一个最初项目，自制弹幕功能、点赞及排行榜功能和进度跟踪。',
     image: project3,
+    imageWebp: project3Webp,
     video: video3,
     demoUrl: '#',
     githubUrl: '#',
@@ -306,6 +317,7 @@ const projects = ref([
     title: '3D古诗词',
     description: '基于Three.js和Tween.js构建的古诗词展览，拥有3d建模。',
     image: project4,
+    imageWebp: project4Webp,
     video: video4,
     demoUrl: '#',
     githubUrl: '#',
@@ -316,6 +328,7 @@ const projects = ref([
     title: '表单注册',
     description: '全新自设计UI界面，搭载多功能(加水印，听歌，ai问答，后台管理)。',
     image: project5,
+    imageWebp: project5Webp,
     video: video5,
     demoUrl: '#',
     githubUrl: '#',
@@ -327,7 +340,7 @@ const projects = ref([
 <style scoped>
 .projects {
   padding: 5rem 0;
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 .projects-grid {
