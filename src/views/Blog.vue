@@ -6,7 +6,7 @@
       <section class="blog-header">
         <div class="container">
           <div class="blog-header-content">
-            <h1 data-aos="fade-up" data-aos-duration="800">我的博客</h1>
+            <h1 data-aos="fade-up" data-aos-duration="800">文章</h1>
             <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">分享我的学习心得、技术见解和生活感悟</p>
             <div class="blog-header-stats">
               <div class="stat-item" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
@@ -55,7 +55,6 @@
               data-aos-duration="800"
               :data-aos-delay="(index + 1) * 100"
               @click="navigateToPost(post.id)"
-              :style="{ '--card-bg': post.bgColor }"
             >
               <div class="blog-card-category-badge">{{ post.category }}</div>
               <div class="blog-card-content">
@@ -198,8 +197,9 @@ const navigateToPost = (id) => {
 }
 
 .category-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   color: var(--text-primary);
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
@@ -207,19 +207,22 @@ const navigateToPost = (id) => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow);
 }
 
 .category-btn:hover {
-  background: var(--primary-color);
-  color: white;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
   border-color: var(--primary-color);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 .category-btn.active {
-  background: var(--primary-color);
-  color: white;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
   border-color: var(--primary-color);
+  box-shadow: var(--shadow-glow);
 }
 
 /* 博客列表 */
@@ -261,7 +264,7 @@ const navigateToPost = (id) => {
   top: 0;
   bottom: 0;
   width: 80px;
-  background-color: var(--card-bg, var(--bg-secondary));
+  background-color: var(--blog-card-bg, var(--bg-secondary));
   z-index: 1;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -281,7 +284,7 @@ const navigateToPost = (id) => {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   color: var(--card-bg, var(--text-primary));
   padding: 0.25rem 0.75rem;
   border-radius: 12px;

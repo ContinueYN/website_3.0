@@ -28,7 +28,7 @@
   --bg-card: rgba(255, 255, 255, 0.95);
   
   /* 玻璃拟态效果 */
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgb(225 246 249);
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-blur: blur(20px);
   
@@ -47,6 +47,9 @@
     radial-gradient(at 100% 100%, rgba(167, 254, 215, 0.08) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
   
+  /* 博客卡片背景颜色 - 统一所有文章的颜色 */
+  --blog-card-bg: rgba(0, 0, 0, 0.15);
+
   /* 滚动条 */
   --scrollbar-thumb: rgba(167, 254, 215, 0.6);
   --scrollbar-thumb-hover: rgba(66, 239, 172, 0.8);

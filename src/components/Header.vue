@@ -12,7 +12,7 @@
         <li><a href="#skills" class="nav-link" @click.prevent="scrollToSection('#skills')">技能</a></li>
         <li><a href="#projects" class="nav-link" @click.prevent="scrollToSection('#projects')">项目</a></li>
         <li><a href="#contact" class="nav-link" @click.prevent="scrollToSection('#contact')">联系</a></li>
-        <li><router-link to="/blog" class="nav-link">博客</router-link></li>
+        <li><router-link to="/blog" class="nav-link">文章</router-link></li>
       </ul>
       
       <div class="nav-actions">

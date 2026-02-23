@@ -154,7 +154,7 @@ const nextPost = computed(() => {
   top: 0;
   bottom: 0;
   width: 100px;
-  background-color: var(--hero-bg, var(--primary-color));
+  background-color: var(--blog-card-bg, var(--primary-color));
   z-index: 1;
 }
 
@@ -298,17 +298,22 @@ const nextPost = computed(() => {
 
 .blog-post-tag {
   font-size: 0.875rem;
-  color: var(--primary-color);
-  background: var(--bg-secondary);
+  color: var(--text-primary);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   padding: 0.375rem 1rem;
   border-radius: 20px;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow);
 }
 
 .blog-post-tag:hover {
-  background: var(--primary-color);
-  color: white;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--primary-color);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 .blog-post-share {
@@ -323,8 +328,9 @@ const nextPost = computed(() => {
 }
 
 .share-button {
-  background: var(--bg-secondary);
-  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   padding: 0.75rem;
   border-radius: 50%;
   cursor: pointer;
@@ -333,13 +339,15 @@ const nextPost = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow);
 }
 
 .share-button:hover {
-  background: var(--primary-color);
-  color: white;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--primary-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-glow);
 }
 
 /* 文章导航 */
