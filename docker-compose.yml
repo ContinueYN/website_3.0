@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: website_3.0
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    working_dir: /app
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped

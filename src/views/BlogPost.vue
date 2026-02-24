@@ -5,7 +5,7 @@
       <!-- 博客文章内容 -->
       <section v-if="currentPost" class="blog-post-content">
         <!-- 文章头部 -->
-        <div class="blog-post-hero" :style="{ '--hero-bg': currentPost.bgColor }">
+        <div class="blog-post-hero">
           <div class="container">
             <div class="blog-post-hero-content">
               <div class="blog-post-meta" data-aos="fade-up" data-aos-duration="800">
@@ -104,18 +104,19 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import { useBlogPosts } from '../composables/useBlogPosts'
+import { useReadingTime } from '../composables/useReadingTime'
 
 const route = useRoute()
 const router = useRouter()
 
-// 注入主题状态和切换函数
 const { isDark, toggleTheme } = inject('theme')
 const { getPostById, getPrevPost, getNextPost } = useBlogPosts()
+const { startTracking, stopTracking } = useReadingTime()
 
 const currentPostId = computed(() => Number(route.params.id))
 
@@ -129,6 +130,14 @@ const prevPost = computed(() => {
 
 const nextPost = computed(() => {
   return getNextPost(currentPostId.value)
+})
+
+onMounted(() => {
+  startTracking()
+})
+
+onUnmounted(() => {
+  stopTracking()
 })
 </script>
 

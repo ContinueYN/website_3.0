@@ -10,19 +10,13 @@ export function useBlogPosts() {
   // 计算属性：获取所有唯一的文章分类
   const uniqueCategories = computed(() => {
     // 使用 Set 去重，然后转换为数组
-    const categories = new Set(blogPosts.value.map(post => post.category))
+    const categories = new Set(blogPosts.value.map((post: { category: string }) => post.category))
     return Array.from(categories)
-  })
-
-  // 计算属性：计算所有文章的总阅读时间
-  const totalReadingTime = computed(() => {
-    // 使用 reduce 累加所有文章的阅读时间
-    return blogPosts.value.reduce((total, post) => total + post.readingTime, 0)
   })
 
   // 根据 ID 获取单篇文章
   const getPostById = (id: number) => {
-    return blogPosts.value.find(post => post.id === id)
+  return blogPosts.value.find((post: any) => post.id === id)
   }
 
   // 获取当前文章的上一篇
@@ -53,7 +47,6 @@ export function useBlogPosts() {
   return {
     blogPosts,
     uniqueCategories,
-    totalReadingTime,
     getPostById,
     getPrevPost,
     getNextPost,

@@ -14,8 +14,8 @@
                 <span class="stat-label">文章</span>
               </div>
               <div class="stat-item" data-aos="fade-up" data-aos-delay="400" data-aos-duration="800">
-                <span class="stat-number">{{ totalReadingTime }}</span>
-                <span class="stat-label">阅读时长</span>
+                <span class="stat-number">{{ formatReadingTime(totalReadingTime) }}</span>
+                <span class="stat-label">总阅读时长</span>
               </div>
               <div class="stat-item" data-aos="fade-up" data-aos-delay="500" data-aos-duration="800">
                 <span class="stat-number">{{ uniqueCategories.length }}</span>
@@ -87,17 +87,19 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import { useBlogPosts } from '../composables/useBlogPosts'
+import { useReadingTime } from '../composables/useReadingTime'
 
 const router = useRouter()
 const selectedCategory = ref('全部')
 
 const { isDark, toggleTheme } = inject('theme')
-const { blogPosts, uniqueCategories, totalReadingTime, filterByCategory } = useBlogPosts()
+const { blogPosts, uniqueCategories, filterByCategory } = useBlogPosts()
+const { totalReadingTime, startTracking, stopTracking, fetchTotalReadingTime } = useReadingTime()
 
 const filteredPosts = computed(() => {
   return filterByCategory(selectedCategory.value)
@@ -106,6 +108,29 @@ const filteredPosts = computed(() => {
 const navigateToPost = (id) => {
   router.push({ name: 'BlogPost', params: { id } })
 }
+
+const formatReadingTime = (seconds) => {
+  if (seconds < 60) {
+    return `${seconds}秒`
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return remainingSeconds > 0 ? `${minutes}分${remainingSeconds}秒` : `${minutes}分钟`
+  } else {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return minutes > 0 ? `${hours}小时${minutes}分钟` : `${hours}小时`
+  }
+}
+
+onMounted(async () => {
+  await fetchTotalReadingTime()
+  startTracking()
+})
+
+onUnmounted(() => {
+  stopTracking()
+})
 </script>
 
 <style scoped>
