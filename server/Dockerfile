@@ -1,13 +1,11 @@
-FROM node:18-alpine
+FROM node:22-alpine AS builder
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install --production
+WORKDIR /app/backend
 
 COPY . .
-
+RUN npm install
 RUN npm run build
+
 
 EXPOSE 3001
 

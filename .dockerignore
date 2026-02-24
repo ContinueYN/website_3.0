@@ -7,4 +7,9 @@ dist
 *.log
 .DS_Store
 Thumbs.db
+*.md
+.vscode
+.github
 server
+docker-compose.yml
+docker-compose-full.yml

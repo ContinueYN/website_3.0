@@ -1,31 +1,33 @@
-version: '3.8'
-
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: website_3.0
+    container_name: web_frontend
     ports:
       - "5173:5173"
-    volumes:
-      - ./src:/app/src
-      - ./public:/app/public
-    working_dir: /app
-    command: npm run dev
-    environment:
-      - NODE_ENV=development
     restart: unless-stopped
+    networks:
+      - website_net
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: contact_backend
+    container_name: web_backend
     ports:
       - "3001:3001"
-    working_dir: /app
     environment:
       - NODE_ENV=production
       - PORT=3001
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     restart: unless-stopped
+    networks:
+      - website_net
+
+networks:
+  website_net:
+    driver: bridge

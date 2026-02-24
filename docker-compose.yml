@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   website:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: website_3.0
+    container_name: web_frontend
     ports:
       - "5173:5173"
     volumes:
@@ -15,4 +13,12 @@ services:
     command: npm run dev
     environment:
       - NODE_ENV=development
+      - CHICKID_INSECT=false
     restart: unless-stopped
+    networks:
+      - website_net
+
+
+networks:
+  website_net:
+    driver: bridge

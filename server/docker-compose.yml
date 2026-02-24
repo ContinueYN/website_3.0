@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -8,7 +6,7 @@ services:
     container_name: contact_backend
     ports:
       - "3001:3001"
-    working_dir: /app
+    working_dir: /app/backend
     environment:
       - NODE_ENV=production
       - PORT=3001
