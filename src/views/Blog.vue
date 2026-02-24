@@ -111,7 +111,7 @@ const navigateToPost = (id) => {
 <style scoped>
 .blog {
   min-height: 100vh;
-  background: var(--bg-primary);
+  background: transparent;
   transition: background-color 0.3s ease;
 }
 
@@ -119,21 +119,10 @@ const navigateToPost = (id) => {
 .blog-header {
   padding: 8rem 0 5rem;
   text-align: center;
-  background: linear-gradient(135deg, var(--blog-left) 0%, var(--blog-right) 100%);
-  color: white;
+  background: transparent;
+  color: var(--text-main);
   position: relative;
   overflow: hidden;
-}
-
-.blog-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-  opacity: 0.3;
 }
 
 .blog-header-content {
@@ -184,7 +173,7 @@ const navigateToPost = (id) => {
 
 /* 分类筛选 */
 .blog-categories {
-  background: var(--bg-secondary);
+  backdrop-filter: blur(1px);
   padding: 1.5rem 0;
   border-bottom: 1px solid var(--border-color);
 }
@@ -197,9 +186,9 @@ const navigateToPost = (id) => {
 }
 
 .category-btn {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--text-primary);
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
@@ -211,16 +200,16 @@ const navigateToPost = (id) => {
 }
 
 .category-btn:hover {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-color: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: var(--shadow-glow);
 }
 
 .category-btn.active {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-color: var(--primary-color);
   box-shadow: var(--shadow-glow);
 }
@@ -238,7 +227,7 @@ const navigateToPost = (id) => {
 
 /* 博客卡片 */
 .blog-card {
-  background: var(--bg-secondary);
+  background: transparent;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -248,7 +237,6 @@ const navigateToPost = (id) => {
 }
 
 .blog-card:hover {
-  transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -448,5 +436,24 @@ const navigateToPost = (id) => {
   .blog-list {
     padding: 3rem 0;
   }
+}
+
+/* 深色模式透明背景 */
+.blog.dark .blog-categories {
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.blog.dark .blog-card {
+  background: rgba(30, 41, 59, 0.85);
+}
+
+.blog.dark .category-btn {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.blog.dark .category-btn:hover,
+.blog.dark .category-btn.active {
+  background: rgba(30, 41, 59, 0.8);
 }
 </style>

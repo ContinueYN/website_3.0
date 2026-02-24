@@ -1,5 +1,12 @@
 <template>
   <div id="app" :class="{ 'dark': isDark }">
+    <!-- 粒子背景 - 所有页面都显示 -->
+    <ParticleBackground 
+      :particle-count="isDark ? 120 : 60" 
+      :connect-distance="isDark ? 150 : 100"
+      :is-dark="isDark"
+    />
+    
     <!-- 博客相关页面 -->
     <template v-if="isBlogPath">
       <router-view v-slot="{ Component }">
@@ -11,11 +18,6 @@
     
     <!-- 首页内容 -->
     <template v-else>
-      <ParticleBackground 
-        :particle-count="isDark ? 120 : 60" 
-        :connect-distance="isDark ? 150 : 100"
-        :is-dark="isDark"
-      />
       <Header :isDark="isDark" @toggle-theme="toggleTheme" />
       <main>
         <Hero />
@@ -61,11 +63,13 @@ provide('theme', {
 onMounted(() => {
   // 初始化 AOS
   AOS.init({
-    duration: 800,
-    offset: 100,
-    once: false,
-    mirror: true,
-    easing: 'ease-in-out'
+    duration: 600,
+    offset: 50,
+    once: true,
+    mirror: false,
+    easing: 'ease-out',
+    delay: 0,
+    throttleDelay: 99
   })
 })
 
@@ -81,7 +85,7 @@ watch(route, () => {
 #app {
   min-height: 100vh;
   position: relative;
-  background: var(--bg-primary);
+  background: transparent;
   transition: background-color 0.3s ease;
 }
 
