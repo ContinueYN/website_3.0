@@ -41,8 +41,8 @@
           </div>
           <div class="hero-stats fade-in-up" style="animation-delay: 0.6s">
             <div class="stat">
-              <span class="stat-number">2+</span>
-              <span class="stat-label">周经验</span>
+              <span class="stat-number">0+</span>
+              <span class="stat-label">年经验</span>
             </div>
             <div class="stat">
               <span class="stat-number">0+</span>
@@ -194,9 +194,11 @@ const startWaveAnimation = () => {
   if (!canvas) return
   
   const ctx = canvas.getContext('2d')
+  let time = 0
   
   const animate = () => {
     animationId = requestAnimationFrame(animate)
+    time += 0.02
     
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     
@@ -205,32 +207,38 @@ const startWaveAnimation = () => {
       
       const centerX = 300
       const centerY = 300
-      const radius = avatarRadius * 1.0
+      const gap = 25
+      const radius = avatarRadius + gap
       
-      const bars = 67
+      const bars = 80
       const angleStep = (Math.PI * 2) / bars
       
       for (let i = 0; i < bars; i++) {
         const angle = i * angleStep
         const frequency = dataArray[i] || 0
         const normalizedFreq = frequency / 255
-        const barHeight = normalizedFreq * 50 + 10
         
-        const x1 = centerX + Math.cos(angle) * radius
-        const y1 = centerY + Math.sin(angle) * radius
-        const x2 = centerX + Math.cos(angle) * (radius + barHeight)
-        const y2 = centerY + Math.sin(angle) * (radius + barHeight)
+        const noise1 = Math.sin(i * 0.8) * 0.5
+        const noise2 = Math.cos(i * 0.5) * 0.3
+        const noise3 = Math.sin(i * 1.2) * 0.2
+        const noise = noise1 + noise2 + noise3
+        const barHeight = Math.max(2, normalizedFreq * 70 + 5 + noise * 25)
+        
+        const x1 = centerX + Math.cos(angle) * (radius - barHeight / 2)
+        const y1 = centerY + Math.sin(angle) * (radius - barHeight / 2)
+        const x2 = centerX + Math.cos(angle) * (radius + barHeight / 2)
+        const y2 = centerY + Math.sin(angle) * (radius + barHeight / 2)
         
         const gradient = ctx.createLinearGradient(x1, y1, x2, y2)
         
         if (isDark.value) {
           gradient.addColorStop(0, `rgba(138, 43, 226, ${0.4 + normalizedFreq * 0.6})`)
-          gradient.addColorStop(0.5, `rgba(170, 126, 247, ${0.5 + normalizedFreq * 0.5})`)
-          gradient.addColorStop(1, `rgba(196, 167, 255, ${0.3 + normalizedFreq * 0.7})`)
+          gradient.addColorStop(0.5, `rgba(170, 126, 247, ${0.6 + normalizedFreq * 0.4})`)
+          gradient.addColorStop(1, `rgba(138, 43, 226, ${0.4 + normalizedFreq * 0.6})`)
         } else {
-          gradient.addColorStop(0, `rgba(66, 239, 172, ${0.4 + normalizedFreq * 0.6})`)
-          gradient.addColorStop(0.5, `rgba(167, 254, 215, ${0.5 + normalizedFreq * 0.5})`)
-          gradient.addColorStop(1, `rgba(255, 255, 255, ${0.3 + normalizedFreq * 0.7})`)
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${0.4 + normalizedFreq * 0.6})`)
+          gradient.addColorStop(0.5, `rgba(167, 254, 215, ${0.6 + normalizedFreq * 0.4})`)
+          gradient.addColorStop(1, `rgba(255, 255, 255, ${0.4 + normalizedFreq * 0.6})`)
         }
         
         ctx.beginPath()
@@ -240,24 +248,29 @@ const startWaveAnimation = () => {
         ctx.lineWidth = 2.5 + normalizedFreq * 2
         ctx.lineCap = 'round'
         ctx.stroke()
-        
-        if (normalizedFreq > 0.3) {
-          ctx.beginPath()
-          ctx.arc(x2, y2, 2 + normalizedFreq * 3, 0, Math.PI * 2)
-          ctx.fillStyle = isDark.value 
-            ? `rgba(170, 126, 247, ${normalizedFreq * 0.5})`
-            : `rgba(167, 254, 215, ${normalizedFreq * 0.5})`
-          ctx.fill()
-        }
       }
       
       ctx.beginPath()
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
       ctx.strokeStyle = isDark.value 
-        ? 'rgba(138, 43, 226, 0.3)'
-        : 'rgba(66, 239, 172, 0.3)'
-      ctx.lineWidth = 1
+        ? 'rgba(138, 43, 226, 0.25)'
+        : 'rgba(66, 239, 172, 0.25)'
+      ctx.lineWidth = 1.5
       ctx.stroke()
+      
+      for (let i = 0; i < 8; i++) {
+        const ringAngle = (i / 8) * Math.PI * 2 + time * 0.5
+        const ringRadius = radius + 30 + Math.sin(time + i) * 10
+        const opacity = (Math.sin(time * 1.5 + i) + 1) / 2 * 0.15
+        
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2)
+        ctx.strokeStyle = isDark.value 
+          ? `rgba(138, 43, 226, ${opacity})`
+          : `rgba(66, 239, 172, ${opacity})`
+        ctx.lineWidth = 1
+        ctx.stroke()
+      }
     }
   }
   
@@ -516,7 +529,8 @@ const scrollToSection = (sectionId) => {
   height: 600px;
   z-index: 1;
   pointer-events: none;
-  filter: blur(0.5px);
+  filter: blur(0.3px);
+  opacity: 0.95;
 }
 
 .avatar {
