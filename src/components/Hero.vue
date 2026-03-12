@@ -1,16 +1,11 @@
 <template>
   <section id="home" class="hero">
-    <div class="hero-background">
-      <div class="hero-shape shape-1"></div>
-      <div class="hero-shape shape-2"></div>
-      <div class="hero-shape shape-3"></div>
-    </div>
 
     <div class="container">
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title fade-in-up">
-            你好，我是 <span class="text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            HELLOE~,I'm <span class="text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 160 160">
                 <g transform="translate(0,0) scale(0.303,0.303)">
                   <path fill="#6c91ee"
@@ -38,11 +33,11 @@
             </span>
           </h1>
           <p class="hero-description fade-in-up" style="animation-delay: 0.2s">
-            一名偏向前端设计的全栈开发者，专注于创造优雅、高效的数字化解决方案。
+            一名AI应用全栈开发者，专注于创造优雅、高效的数字化解决方案。
           </p>
           <div class="hero-actions fade-in-up" style="animation-delay: 0.4s">
-            <a href="#projects" class="btn" @click.prevent="scrollToSection('#projects')">查看作品</a>
-            <a href="#contact" class="btn btn-outline" @click.prevent="scrollToSection('#contact')">联系我</a>
+            <a href="#projects" class="btn" @click.prevent="scrollToSection('#projects')">Show</a>
+            <a href="#contact" class="btn btn-outline" @click.prevent="scrollToSection('#contact')">Contact</a>
           </div>
           <div class="hero-stats fade-in-up" style="animation-delay: 0.6s">
             <div class="stat">
@@ -61,11 +56,23 @@
         </div>
 
         <div class="hero-visual">
-          <div class="avatar-container">
-            <div class="avatar">
+          <div class="avatar-wrapper">
+            <canvas ref="waveCanvas" class="wave-canvas"></canvas>
+            <div class="avatar" ref="avatarElement">
               <img src="@/assets/images/user.jpg" alt="个人头像" loading="lazy" />
             </div>
-            <div class="avatar-decoration"></div>
+            <button class="audio-control" @click="toggleAudio" :class="{ 'playing': isPlaying }">
+              <div class="audio-control-inner">
+                <svg v-if="!isPlaying" class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <svg v-else class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 6h12v12H6z"/>
+                </svg>
+              </div>
+              <div class="audio-control-ring"></div>
+              <div class="audio-control-glow"></div>
+            </button>
           </div>
         </div>
       </div>
@@ -74,17 +81,241 @@
 </template>
 
 <script setup>
-// 这里可以添加交互逻辑
-import { onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import backgroundMusic from '@/assets/audio/background-music.mp3'
 
-// 平滑滚动到指定元素
+const waveCanvas = ref(null)
+const avatarElement = ref(null)
+const isPlaying = ref(false)
+let audioContext = null
+let analyser = null
+let source = null
+let audioElement = null
+let animationId = null
+let dataArray = null
+let avatarRadius = 175
+
+const isDark = ref(false)
+
+const checkTheme = () => {
+  const wasDark = isDark.value
+  isDark.value = document.documentElement.classList.contains('dark')
+  
+  if (wasDark !== isDark.value) {
+    console.log('Theme changed:', isDark.value ? 'dark' : 'light')
+    if (waveCanvas.value) {
+      const ctx = waveCanvas.value.getContext('2d')
+      ctx.clearRect(0, 0, 600, 600)
+    }
+  }
+}
+
+onMounted(() => {
+  checkTheme()
+  resizeCanvas()
+  window.addEventListener('resize', resizeCanvas)
+  
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible')
+        obs.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.12 })
+
+  document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el))
+  window.__heroObserver = observer
+  
+  const themeObserver = new MutationObserver(() => {
+    checkTheme()
+  })
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
+})
+
+const toggleAudio = async () => {
+  if (!audioContext) {
+    await initAudio()
+  }
+  
+  if (isPlaying.value) {
+    pauseAudio()
+  } else {
+    playAudio()
+  }
+}
+
+const initAudio = async () => {
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 256
+    
+    audioElement = new Audio(backgroundMusic)
+    audioElement.loop = true
+    audioElement.crossOrigin = 'anonymous'
+    
+    source = audioContext.createMediaElementSource(audioElement)
+    source.connect(analyser)
+    analyser.connect(audioContext.destination)
+    
+    const bufferLength = analyser.frequencyBinCount
+    dataArray = new Uint8Array(bufferLength)
+    
+    startWaveAnimation()
+  } catch (error) {
+    console.error('音频初始化失败:', error)
+  }
+}
+
+const playAudio = async () => {
+  if (audioContext && audioContext.state === 'suspended') {
+    await audioContext.resume()
+  }
+  
+  if (audioElement) {
+    await audioElement.play()
+    isPlaying.value = true
+  }
+}
+
+const pauseAudio = () => {
+  if (audioElement) {
+    audioElement.pause()
+    isPlaying.value = false
+  }
+}
+
+const startWaveAnimation = () => {
+  const canvas = waveCanvas.value
+  if (!canvas) return
+  
+  const ctx = canvas.getContext('2d')
+  
+  const animate = () => {
+    animationId = requestAnimationFrame(animate)
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    
+    if (analyser && isPlaying.value) {
+      analyser.getByteFrequencyData(dataArray)
+      
+      const centerX = 300
+      const centerY = 300
+      const radius = avatarRadius * 1.0
+      
+      const bars = 67
+      const angleStep = (Math.PI * 2) / bars
+      
+      for (let i = 0; i < bars; i++) {
+        const angle = i * angleStep
+        const frequency = dataArray[i] || 0
+        const normalizedFreq = frequency / 255
+        const barHeight = normalizedFreq * 50 + 10
+        
+        const x1 = centerX + Math.cos(angle) * radius
+        const y1 = centerY + Math.sin(angle) * radius
+        const x2 = centerX + Math.cos(angle) * (radius + barHeight)
+        const y2 = centerY + Math.sin(angle) * (radius + barHeight)
+        
+        const gradient = ctx.createLinearGradient(x1, y1, x2, y2)
+        
+        if (isDark.value) {
+          gradient.addColorStop(0, `rgba(138, 43, 226, ${0.4 + normalizedFreq * 0.6})`)
+          gradient.addColorStop(0.5, `rgba(170, 126, 247, ${0.5 + normalizedFreq * 0.5})`)
+          gradient.addColorStop(1, `rgba(196, 167, 255, ${0.3 + normalizedFreq * 0.7})`)
+        } else {
+          gradient.addColorStop(0, `rgba(66, 239, 172, ${0.4 + normalizedFreq * 0.6})`)
+          gradient.addColorStop(0.5, `rgba(167, 254, 215, ${0.5 + normalizedFreq * 0.5})`)
+          gradient.addColorStop(1, `rgba(255, 255, 255, ${0.3 + normalizedFreq * 0.7})`)
+        }
+        
+        ctx.beginPath()
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(x2, y2)
+        ctx.strokeStyle = gradient
+        ctx.lineWidth = 2.5 + normalizedFreq * 2
+        ctx.lineCap = 'round'
+        ctx.stroke()
+        
+        if (normalizedFreq > 0.3) {
+          ctx.beginPath()
+          ctx.arc(x2, y2, 2 + normalizedFreq * 3, 0, Math.PI * 2)
+          ctx.fillStyle = isDark.value 
+            ? `rgba(170, 126, 247, ${normalizedFreq * 0.5})`
+            : `rgba(167, 254, 215, ${normalizedFreq * 0.5})`
+          ctx.fill()
+        }
+      }
+      
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+      ctx.strokeStyle = isDark.value 
+        ? 'rgba(138, 43, 226, 0.3)'
+        : 'rgba(66, 239, 172, 0.3)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+    }
+  }
+  
+  animate()
+}
+
+const resizeCanvas = () => {
+  const canvas = waveCanvas.value
+  const avatar = avatarElement.value
+  if (canvas && avatar) {
+    canvas.width = 600
+    canvas.height = 600
+    
+    const avatarRect = avatar.getBoundingClientRect()
+    avatarRadius = avatarRect.width / 2
+    
+   
+  }
+}
+
+
+
+onBeforeUnmount(() => {
+  if (animationId) {
+    cancelAnimationFrame(animationId)
+  }
+  
+  if (audioElement) {
+    audioElement.pause()
+    audioElement = null
+  }
+  
+  if (source) {
+    source.disconnect()
+    source = null
+  }
+  
+  if (analyser) {
+    analyser.disconnect()
+    analyser = null
+  }
+  
+  if (audioContext) {
+    audioContext.close()
+    audioContext = null
+  }
+  
+  window.removeEventListener('resize', resizeCanvas)
+  
+  const obs = window.__heroObserver
+  if (obs && typeof obs.disconnect === 'function') obs.disconnect()
+  try { delete window.__heroObserver } catch (e) { }
+})
+
 const scrollToSection = (sectionId) => {
-  // 检查当前是否在首页
   if (window.location.pathname !== '/') {
-    // 如果不在首页，先导航到首页，然后在页面加载后滚动到指定部分
     window.location.href = `/#${sectionId.substring(1)}`
   } else {
-    // 如果在首页，直接滚动到指定部分
     const element = document.querySelector(sectionId)
     if (element) {
       element.scrollIntoView({
@@ -94,29 +325,6 @@ const scrollToSection = (sectionId) => {
     }
   }
 }
-
-// 使用 IntersectionObserver 在元素进入视口时添加类以触发动画
-onMounted(() => {
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible')
-        // 仅播放一次，进入后取消观察
-        obs.unobserve(entry.target)
-      }
-    })
-  }, { threshold: 0.12 })
-
-  document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el))
-  // 暴露以便卸载时使用（使用普通 JS，避免 TS-only 语法）
-  window.__heroObserver = observer
-})
-
-onBeforeUnmount(() => {
-  const obs = window.__heroObserver
-  if (obs && typeof obs.disconnect === 'function') obs.disconnect()
-  try { delete window.__heroObserver } catch (e) { /* ignore */ }
-})
 </script>
 
 <style scoped>
@@ -125,7 +333,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   padding-top: 80px;
 }
@@ -232,6 +440,7 @@ onBeforeUnmount(() => {
   align-items: center;
   position: relative;
   z-index: 2;
+  overflow: visible;
 }
 
 .hero-title {
@@ -253,6 +462,10 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 1rem;
   margin-bottom: 3rem;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: flex-start;
 }
 
 .hero-stats {
@@ -280,12 +493,30 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.avatar-container {
+.avatar-wrapper {
   position: relative;
-  width: 400px;
-  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.wave-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(0.5px);
 }
 
 .avatar {
@@ -304,20 +535,198 @@ onBeforeUnmount(() => {
   object-fit: cover;
 }
 
-/* 动画旋转 */
-.avatar-decoration {
+
+
+.audio-control {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 180, 216, 0.2);
+  border: 2px solid rgba(0, 180, 216, 0.4);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 4px 20px rgba(0, 180, 216, 0.3),
+    inset 0 0 20px rgba(0, 180, 216, 0.1);
+  overflow: visible;
+}
+
+.audio-control-inner {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.audio-control:hover .audio-control-inner {
+  transform: scale(1.1);
+}
+
+.audio-control:hover {
+  background: rgba(0, 180, 216, 0.35);
+  border-color: rgba(0, 180, 216, 0.6);
+  box-shadow: 
+    0 8px 30px rgba(0, 180, 216, 0.4),
+    inset 0 0 30px rgba(0, 180, 216, 0.15);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.audio-control.playing {
+  background: rgba(66, 239, 172, 0.15);
+  border-color: rgba(66, 239, 172, 0.4);
+  box-shadow: 
+    0 4px 20px rgba(66, 239, 172, 0.2),
+    inset 0 0 20px rgba(66, 239, 172, 0.05);
+}
+
+.audio-control.playing:hover {
+  background: rgba(66, 239, 172, 0.35);
+  border-color: rgba(66, 239, 172, 0.6);
+  box-shadow: 
+    0 8px 30px rgba(66, 239, 172, 0.4),
+    inset 0 0 30px rgba(66, 239, 172, 0.15);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.audio-control-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(156, 84, 249, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.audio-control:hover .audio-control-ring {
+  border-color: rgba(156, 84, 249, 0.4);
+  transform: scale(1.05);
+}
+
+.audio-control.playing .audio-control-ring {
+  border-color: rgba(66, 239, 172, 0.3);
+  animation: ringPulse 2s ease-in-out infinite;
+}
+
+.audio-control-glow {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 380px;
-  height: 380px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: linear-gradient(45deg, #9c54f9d6, #f1f56fdd, #6bffcbab);
-  opacity: 0.5; 
-  animation: rotate 6s linear infinite; 
-  filter: blur(8px); 
-  z-index: -2;
+  background: radial-gradient(circle, rgba(156, 84, 249, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease, background 0.4s ease;
+  z-index: 0;
+}
+
+.audio-control:hover .audio-control-glow {
+  opacity: 1;
+}
+
+.audio-control.playing .audio-control-glow {
+  background: radial-gradient(circle, rgba(66, 239, 172, 0.3) 0%, transparent 70%);
+  opacity: 1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.play-icon, .pause-icon {
+  transition: all 0.3s ease;
+}
+
+.audio-control.playing .play-icon,
+.audio-control:not(.playing) .pause-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes ringPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* 深色模式按钮样式 */
+.dark .audio-control {
+  background: rgba(89, 28, 135, 0.2);
+  border-color: rgba(89, 28, 135, 0.4);
+  box-shadow: 
+    0 4px 20px rgba(89, 28, 135, 0.15),
+    inset 0 0 20px rgba(89, 28, 135, 0.08);
+}
+
+.dark .audio-control:hover {
+  background: rgba(89, 28, 135, 0.4);
+  border-color: rgba(89, 28, 135, 0.7);
+  box-shadow: 
+    0 8px 30px rgba(89, 28, 135, 0.3),
+    inset 0 0 30px rgba(89, 28, 135, 0.15);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.dark .audio-control.playing {
+  background: rgba(170, 126, 247, 0.15);
+  border-color: rgba(170, 126, 247, 0.4);
+  box-shadow: 
+    0 4px 20px rgba(170, 126, 247, 0.2),
+    inset 0 0 20px rgba(170, 126, 247, 0.08);
+}
+
+.dark .audio-control.playing:hover {
+  background: rgba(170, 126, 247, 0.4);
+  border-color: rgba(170, 126, 247, 0.7);
+  box-shadow: 
+    0 8px 30px rgba(170, 126, 247, 0.3),
+    inset 0 0 30px rgba(170, 126, 247, 0.15);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.dark .audio-control-ring {
+  border-color: rgba(89, 28, 135, 0.2);
+}
+
+.dark .audio-control:hover .audio-control-ring {
+  border-color: rgba(89, 28, 135, 0.4);
+}
+
+.dark .audio-control.playing .audio-control-ring {
+  border-color: rgba(170, 126, 247, 0.3);
+}
+
+.dark .audio-control-glow {
+  background: radial-gradient(circle, rgba(89, 28, 135, 0.2) 0%, transparent 70%);
+}
+
+.dark .audio-control.playing .audio-control-glow {
+  background: radial-gradient(circle, rgba(170, 126, 247, 0.2) 0%, transparent 70%);
 }
 
 .text-gradient {
@@ -373,11 +782,6 @@ onBeforeUnmount(() => {
   color: #79bbdc; 
 }
 
-@keyframes rotate {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 @media (max-width: 968px) {
   .hero-content {
     grid-template-columns: 1fr;
@@ -389,19 +793,16 @@ onBeforeUnmount(() => {
     font-size: 2.5rem;
   }
   
-  .avatar-container {
-    width: 300px;
-    height: 300px;
-  }
-  
   .avatar {
     width: 250px;
     height: 250px;
   }
   
-  .avatar-decoration {
-    width: 280px;
-    height: 280px;
+  .audio-control {
+    width: 45px;
+    height: 45px;
+    bottom: 15px;
+    right: 15px;
   }
 }
 
@@ -438,6 +839,32 @@ onBeforeUnmount(() => {
   .stat-number {
     font-size: 1.5rem;
   }
+  
+  .audio-control {
+    width: 40px;
+    height: 40px;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(156, 84, 249, 0.8);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(156, 84, 249, 0.3);
+  }
+  
+  .audio-control:hover {
+    background: rgba(156, 84, 249, 1);
+    box-shadow: 0 6px 25px rgba(156, 84, 249, 0.5);
+  }
+  
+  .audio-control.playing {
+    background: rgba(66, 239, 172, 0.8);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(66, 239, 172, 0.3);
+  }
+  
+  .audio-control.playing:hover {
+    background: rgba(66, 239, 172, 1);
+    box-shadow: 0 6px 25px rgba(66, 239, 172, 0.5);
+  }
 }
 
 @media (max-width: 480px) {
@@ -462,19 +889,9 @@ onBeforeUnmount(() => {
     min-width: 80px;
   }
   
-  .avatar-container {
-    width: 250px;
-    height: 250px;
-  }
-  
   .avatar {
     width: 200px;
     height: 200px;
-  }
-  
-  .avatar-decoration {
-    width: 230px;
-    height: 230px;
   }
 }
 </style>
