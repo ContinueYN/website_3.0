@@ -102,7 +102,7 @@ const checkTheme = () => {
   isDark.value = document.documentElement.classList.contains('dark')
   
   if (wasDark !== isDark.value) {
-    console.log('Theme changed:', isDark.value ? 'dark' : 'light')
+   
     if (waveCanvas.value) {
       const ctx = waveCanvas.value.getContext('2d')
       ctx.clearRect(0, 0, 600, 600)
@@ -207,9 +207,12 @@ const startWaveAnimation = () => {
       
       const centerX = 300
       const centerY = 300
-      const gap = 25
+      // 声纹与头像之间的间距
+      const gap = 30
+      // 声纹的基础半径（基于头像大小）
       const radius = avatarRadius + gap
       
+      // 声纹的数量
       const bars = 80
       const angleStep = (Math.PI * 2) / bars
       
@@ -218,11 +221,13 @@ const startWaveAnimation = () => {
         const frequency = dataArray[i] || 0
         const normalizedFreq = frequency / 255
         
+        // 添加一些噪声使声纹更自然
         const noise1 = Math.sin(i * 0.8) * 0.5
         const noise2 = Math.cos(i * 0.5) * 0.3
         const noise3 = Math.sin(i * 1.2) * 0.2
         const noise = noise1 + noise2 + noise3
-        const barHeight = Math.max(2, normalizedFreq * 70 + 5 + noise * 25)
+        // 声纹高度计算：基于音频频率，添加噪声和基础值
+        const barHeight = Math.max(2, normalizedFreq * 40 + 5 + noise * 25)
         
         const x1 = centerX + Math.cos(angle) * (radius - barHeight / 2)
         const y1 = centerY + Math.sin(angle) * (radius - barHeight / 2)
@@ -245,7 +250,8 @@ const startWaveAnimation = () => {
         ctx.moveTo(x1, y1)
         ctx.lineTo(x2, y2)
         ctx.strokeStyle = gradient
-        ctx.lineWidth = 2.5 + normalizedFreq * 2
+        // 声纹粗细计算：基于音频频率
+        ctx.lineWidth = 1.5 + normalizedFreq * 2
         ctx.lineCap = 'round'
         ctx.stroke()
       }
