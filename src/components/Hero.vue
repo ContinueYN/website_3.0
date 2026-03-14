@@ -824,6 +824,22 @@ const scrollToSection = (sectionId) => {
     bottom: 15px;
     right: 15px;
   }
+  
+  .shape-1 {
+    width: 200px;
+    height: 200px;
+    right: -50px;
+  }
+  
+  .shape-2 {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .wave-canvas {
+    width: 400px;
+    height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -884,6 +900,17 @@ const scrollToSection = (sectionId) => {
   .audio-control.playing:hover {
     background: rgba(66, 239, 172, 1);
     box-shadow: 0 6px 25px rgba(66, 239, 172, 0.5);
+  }
+  
+  .shape-1,
+  .shape-2,
+  .shape-3 {
+    display: none;
+  }
+  
+  .wave-canvas {
+    width: 300px;
+    height: 300px;
   }
 }
 
