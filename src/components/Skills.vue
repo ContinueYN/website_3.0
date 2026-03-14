@@ -2,8 +2,7 @@
   <section id="skills" class="skills">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">技术栈</h2>
-        <p class="section-subtitle">我掌握的技术与工具</p>
+        <h2 class="section-title">Skills</h2>
       </div>
 
       <div class="skills-container">
@@ -462,6 +461,18 @@ onBeforeUnmount(() => {
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
+}
+
+.section-title {
+  display: flex;
+  justify-content: center;
+  font-size: 3rem;
+  font-family: Impact, sans-serif;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  letter-spacing: 0.5rem;
+  user-select: none;
 }
 
 .category-tab {

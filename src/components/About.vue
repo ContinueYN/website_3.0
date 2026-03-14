@@ -229,11 +229,11 @@ onMounted(() => {
 
 .header {
   position: absolute;
-  font-size: 5rem;
+  font-size: 4rem;
   font-family: Impact, sans-serif;
-  font-weight: 900;
+  font-weight: 800;
   margin-bottom: 5rem;
-  color: #fff;
+  color: var(--text-main);
   letter-spacing: 0.5rem;
   user-select: none;
 }
@@ -346,8 +346,8 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,17 +365,16 @@ onMounted(() => {
 }
 
 .modal-content {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 50px;
   max-width: 600px;
   width: 90%;
   position: relative;
   box-shadow: 
-    0 0 30px rgba(23, 247, 0, 0.3),
-    0 0 60px rgba(23, 247, 0, 0.2),
-    inset 0 0 30px rgba(23, 247, 0, 0.1);
-  border: 2px solid #17f700;
+    var(--shadow-lg),
+    0 0 40px rgba(167, 254, 215, 0.2);
+  border: 2px solid var(--primary-color);
   animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -395,8 +394,8 @@ onMounted(() => {
   top: 20px;
   right: 20px;
   background: transparent;
-  border: 2px solid #17f700;
-  color: #17f700;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
   cursor: pointer;
   padding: 8px;
   display: flex;
@@ -409,25 +408,28 @@ onMounted(() => {
 }
 
 .modal-close:hover {
-  background: #17f700;
-  color: #000;
+  background: var(--primary-color);
+  color: var(--text-main);
   transform: rotate(90deg);
-  box-shadow: 0 0 20px #17f700;
+  box-shadow: 0 0 20px var(--primary-color);
 }
 
 .modal-title {
   font-size: 2.5rem;
   font-weight: 900;
-  color: #17f700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 20px;
-  text-shadow: 0 0 20px #17f700;
   text-align: center;
+  filter: drop-shadow(0 0 20px rgba(167, 254, 215, 0.5));
 }
 
 .modal-description {
   font-size: 1.2rem;
   line-height: 1.8;
-  color: #fff;
+  color: var(--text-secondary);
   text-align: center;
   margin-bottom: 30px;
 }
@@ -442,33 +444,33 @@ onMounted(() => {
 
 .tag {
   padding: 10px 24px;
-  background: rgba(23, 247, 0, 0.1);
-  color: #17f700;
+  background: rgba(167, 254, 215, 0.15);
+  color: var(--primary-dark);
   border-radius: 25px;
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid #17f700;
+  border: 2px solid var(--primary-color);
   transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(23, 247, 0, 0.3);
+  box-shadow: 0 0 10px rgba(167, 254, 215, 0.3);
 }
 
 .tag:hover {
-  background: #17f700;
-  color: #000;
-  box-shadow: 0 0 20px #17f700;
+  background: var(--primary-color);
+  color: var(--text-main);
+  box-shadow: 0 0 20px var(--primary-color);
   transform: translateY(-2px);
 }
 
 .modal-divider {
   height: 2px;
-  background: linear-gradient(90deg, transparent, #17f700, transparent);
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
   margin-bottom: 30px;
 }
 
 .modal-details {
   font-size: 1.1rem;
   line-height: 2;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   text-align: justify;
 }
 
