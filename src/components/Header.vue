@@ -29,7 +29,14 @@
           aria-label="回到顶部" 
           :class="{ 'show': showBackToTop }"
         >
-          <ArrowUp size="20" />
+          <div class="back-to-top-content">
+            <div class="sakura-petal petal-1"></div>
+            <div class="sakura-petal petal-2"></div>
+            <div class="sakura-petal petal-3"></div>
+            <div class="star-icon">✦</div>
+            <ArrowUp size="20" class="arrow-icon" />
+          </div>
+          <div class="back-to-top-glow"></div>
         </button>
         
         <button class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="切换菜单">
@@ -352,38 +359,181 @@ onMounted(() => {
   transform: scale(1.5);
 }
 
-/* 回到顶部按钮 */
+/* 回到顶部按钮 - 二次元风格 */
 .back-to-top {
-  background: var(--primary-color);
-  border: none;
+  position: relative;
+  background: linear-gradient(135deg, #ffb7c5, #ff9eb5);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 0.75rem;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(20px) scale(0.8);
   pointer-events: none;
   color: white;
-  box-shadow: var(--shadow);
+  box-shadow: 0 5px 20px rgba(255, 183, 197, 0.4),
+              0 0 30px rgba(255, 183, 197, 0.2);
+  overflow: visible;
+  width: 50px;
+  height: 50px;
 }
 
 .back-to-top.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
+.back-to-top-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* 樱花花瓣装饰 */
+.sakura-petal {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 183, 197, 0.6));
+  border-radius: 50% 0 50% 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.petal-1 {
+  top: -5px;
+  left: -5px;
+  transform: rotate(-30deg);
+  animation: petal-float 3s ease-in-out infinite;
+}
+
+.petal-2 {
+  top: -5px;
+  right: -5px;
+  transform: rotate(30deg);
+  animation: petal-float 3s ease-in-out infinite 0.5s;
+}
+
+.petal-3 {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(60deg);
+  animation: petal-float 3s ease-in-out infinite 1s;
+}
+
+@keyframes petal-float {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(var(--r, 10deg));
+  }
+}
+
+/* 星星图标 */
+.star-icon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  animation: star-twinkle 2s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(180deg);
+  }
+}
+
+/* 箭头图标 */
+.arrow-icon {
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
+}
+
+/* 光晕效果 */
+.back-to-top-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 183, 197, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .back-to-top:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #ffcce6, #ffb3d1);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 35px rgba(255, 183, 197, 0.6),
+              0 0 50px rgba(255, 183, 197, 0.4),
+              inset 0 0 20px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.back-to-top:hover .back-to-top-glow {
+  opacity: 1;
+}
+
+.back-to-top:hover .arrow-icon {
+  transform: translateY(-3px);
+}
+
+.back-to-top:hover .sakura-petal {
+  opacity: 1;
+  animation-duration: 1.5s;
 }
 
 .back-to-top:active {
-  transform: translateY(0);
+  transform: translateY(-2px) scale(0.95);
+  box-shadow: 0 5px 20px rgba(255, 183, 197, 0.4);
+}
+
+.back-to-top:active .arrow-icon {
+  transform: translateY(-1px);
+}
+
+/* 点击波纹效果 */
+.back-to-top::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  opacity: 0;
+}
+
+.back-to-top:active::after {
+  width: 150px;
+  height: 150px;
+  opacity: 0;
+  transition: width 0s, height 0s, opacity 0.6s ease;
 }
 
 .mobile-menu-btn {

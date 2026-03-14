@@ -375,7 +375,7 @@ onMounted(() => {
   .horizontal-scroll-section {
     height: auto;
     padding: 3rem 0;
-    background: var(--bg-secondary);
+    background:transparent;
   }
 
   .sticky-wrapper {
