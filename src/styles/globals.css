@@ -27,6 +27,8 @@
   --bg-primary: linear-gradient(135deg, #f1f1f1 0%, #e0f7fa 50%, #fff9e6 100%);
   --bg-secondary: linear-gradient(135deg, #ffffff 0%, #f0fdfa 50%, #fef3c7 100%);
   --bg-card: rgba(255, 255, 255, 0.95);
+
+  --about-card:linear-gradient(135deg, #ffffff 0%, #f0fdfa 50%, #fef3c7 100%);
   
   /* 玻璃拟态效果 */
   --glass-bg: rgb(225 246 249);
@@ -81,6 +83,8 @@
   --bg-primary: linear-gradient(135deg, #161616 0%, #1e293b 50%, #312e81 100%);
   --bg-secondary: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #4c1d95 100%);
   --bg-card: rgba(30, 41, 59, 0.95);
+
+  --about-card: linear-gradient(135deg, #161616 0%, #1e293b 50%, #312e81 100%);
   
   --glass-bg: rgba(30, 41, 59, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
