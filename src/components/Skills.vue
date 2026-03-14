@@ -59,7 +59,7 @@
       </div>
 
       <div class="tools-section">
-        <h3 class="tools-title">常用工具</h3>
+        <h3 class="tools-title">Tools</h3>
         <div class="tools-grid">
           <div 
             v-for="(tool, index) in tools" 
@@ -540,15 +540,37 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  transform: scaleX(0);
+  width: 40px;
+  height: 40px;
+  border-top: 5px solid var(--primary-color);
+  border-left: 5px solid var(--primary-color);
+  border-top-left-radius: 0.75rem;
+  transform: scale(0);
+  transform-origin: top left;
   transition: transform 0.3s ease;
+  opacity: 0;
 }
 
-.skill-card:hover::before {
-  transform: scaleX(1);
+.skill-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-bottom: 8px solid var(--primary-color);
+  border-right: 8px solid var(--primary-color);
+  border-bottom-right-radius: 0.75rem;
+  transform: scale(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+  opacity: 0;
+}
+
+.skill-card:hover::before,
+.skill-card:hover::after {
+  transform: scale(1);
+  opacity: 1;
 }
 
 .skill-card.animate-in {
