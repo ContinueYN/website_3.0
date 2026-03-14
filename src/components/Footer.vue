@@ -14,26 +14,7 @@
           </div>
         </div>
         
-        <div class="footer-section">
-          <h4>快速链接</h4>
-          <ul class="footer-links">
-            <li><a href="#home" @click.prevent="scrollToSection('#home')">首页</a></li>
-            <li><a href="#about" @click.prevent="scrollToSection('#about')">关于</a></li>
-            <li><a href="#skills" @click.prevent="scrollToSection('#skills')">技能</a></li>
-            <li><a href="#projects" @click.prevent="scrollToSection('#projects')">项目</a></li>
-            <li><a href="#contact" @click.prevent="scrollToSection('#contact')">联系</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>服务</h4>
-          <ul class="footer-links">
-            <p>网站开发</p>
-            <p>移动应用</p>
-            <p>UI/UX设计</p>
-            <p>技术咨询:Continue1831</p>
-          </ul>
-        </div>
+       
         
         <div class="footer-section">
           <h4>联系信息</h4>
@@ -54,38 +35,50 @@
 
 <script setup>
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
-
-// 平滑滚动到指定元素
-const scrollToSection = (sectionId) => {
-  // 检查当前是否在首页
-  if (window.location.pathname !== '/') {
-    // 如果不在首页，先导航到首页，然后在页面加载后滚动到指定部分
-    window.location.href = `/#${sectionId.substring(1)}`
-  } else {
-    // 如果在首页，直接滚动到指定部分
-    const element = document.querySelector(sectionId)
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
-    }
-  }
-}
 </script>
 
 <style scoped>
 .footer {
-  background: var(--bg-secondary);
+  background: transparent;
   padding: 3rem 0 1rem;
   border-top: 1px solid var(--border-color);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
   margin-bottom: 2rem;
+  align-items: start;
+}
+
+.footer-section {
+  animation: fadeInUp 0.8s ease-out both;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.footer-section:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.footer-section:nth-child(2) {
+  animation-delay: 0.2s;
 }
 
 .footer-section h3,
@@ -108,35 +101,26 @@ const scrollToSection = (sectionId) => {
 .footer-social {
   display: flex;
   gap: 1rem;
+  justify-content: center;
 }
 
 .social-icon {
   padding: 0.5rem;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
 }
 
 .social-icon:hover {
   color: var(--primary-color);
+  transform: translateY(-5px) scale(1.1);
 }
 
-.footer-links {
-  list-style: none;
-}
-
-.footer-links li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: var(--primary-color);
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .contact-info p {
@@ -144,11 +128,23 @@ const scrollToSection = (sectionId) => {
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-info p:hover {
+  transform: translateX(5px);
+  color: var(--text-primary);
 }
 
 .inline-icon {
   color: var(--primary-color);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-info p:hover .inline-icon {
+  transform: scale(1.2);
 }
 
 .footer-bottom {
@@ -156,6 +152,16 @@ const scrollToSection = (sectionId) => {
   border-top: 1px solid var(--border-color);
   text-align: center;
   color: var(--text-secondary);
+  animation: fadeIn 1s ease-out 0.4s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 968px) {
