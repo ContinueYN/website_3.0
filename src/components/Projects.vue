@@ -1,97 +1,52 @@
 <template>
   <section id="projects" class="projects">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">我的项目</h2>
-        <p class="section-subtitle">近期作品展示</p>
+    <!-- 连续滚动文字 - 向左 -->
+    <div class="scrolling-text-container">
+      <div class="scrolling-text scrolling-left" ref="scrollingTextLeftRef">
+        <span class="text-repeat">PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ </span>
+        <span class="text-repeat">PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ </span>
       </div>
+    </div>
 
-      <div class="projects-grid">
-        <div 
-          v-for="project in projects" 
-          :key="project.id" 
-          class="card" 
-          :data-id="project.id"
-          @mouseenter="handleMouseEnter"
-          @mouseleave="handleMouseLeave"
-        >
-          <div class="card-inner">
-            <!-- 水波纹效果 - 动态定位 -->
+    <!-- 连续滚动文字 - 向右 -->
+    <div class="scrolling-text-container">
+      <div class="scrolling-text scrolling-right" ref="scrollingTextRightRef">
+        <span class="text-repeat">PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ </span>
+        <span class="text-repeat">PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ PROJECT //\\ </span>
+      </div>
+    </div>
+
+    <!-- 横向滚动容器 -->
+    <div class="horizontal-scroll-section" ref="horizontalSectionRef">
+      <div class="sticky-wrapper">
+        <div class="horizontal-container">
+          <div class="horizontal-track" ref="horizontalTrackRef">
+            <!-- 项目卡片 -->
             <div 
-              v-if="showRipple[project.id]" 
-              class="ripple-effect"
-              :style="{
-                left: ripplePositions[project.id]?.x + 'px',
-                top: ripplePositions[project.id]?.y + 'px'
-              }"
-            ></div>
-
-            <!-- 正面 -->
-            <div class="card-face card-front">
-              <div class="project-image">
-                <picture>
-                  <source :srcset="project.imageWebp" type="image/webp">
-                  <img :src="project.image" :alt="project.title" loading="lazy" />
-                </picture>
-              </div>
-              <h3 class="project-title">{{ project.title }}</h3>
-              <p class="project-description">{{ project.description }}</p>
-              <div class="project-tech">
-                <span v-for="tech in project.technologies" :key="tech" class="tech-tag">
-                  {{ tech }}
-                </span>
-              </div>
-            </div>
-
-            <!-- 背面 -->
-            <div class="card-face card-back">
-              <h3 class="project-title">{{ project.title }}</h3>
-
-              <!-- 视频部分 -->
-              <div class="video-section">
-                <div class="video-container" @click="openFullscreen(project.id)">
-                  <video :ref="el => setVideoRef(project.id, el)" :src="project.video" :poster="project.image"
-                    preload="none" muted class="project-video">
-                    您的浏览器不支持视频播放
-                  </video>
-                  <div class="video-overlay">
-                    <button class="play-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </button>
-                    <span class="video-text">点击播放演示视频</span>
-                  </div>
+              v-for="project in projects" 
+              :key="project.id" 
+              class="project-card"
+            >
+              <div class="card-content">
+                <div class="card-number">{{ String(project.id).padStart(2, '0') }}</div>
+                <h3 class="card-title">{{ project.title }}</h3>
+                <p class="card-description">{{ project.description }}</p>
+                <div class="card-tech">
+                  <span v-for="tech in project.technologies" :key="tech" class="tech-tag">
+                    {{ tech }}
+                  </span>
+                </div>
+                <div class="card-links">
+                  <a :href="project.githubUrl" class="card-link github-link" target="_blank">
+                    <span>GitHub</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.24-.604-.536-1.529.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.648.353 2.572.11 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </a>
                 </div>
               </div>
-
-              <div class="project-actions">
-                <a :href="project.demoUrl" class="project-link">查看演示</a>
-                <a :href="project.githubUrl" class="project-link">GitHub</a>
-              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 全屏视频模态框 -->
-      <div v-if="fullscreenVideo" class="video-modal" @click="closeFullscreen" data-aos="zoom-in" data-aos-duration="300">
-        <div class="video-modal-content" @click.stop>
-          <button class="close-button" @click="closeFullscreen">×</button>
-          <div class="video-controls">
-            <button class="music-control" @click="toggleMusic">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path v-if="musicPlaying" d="M6 6h12v12H6z" />
-                <path v-else d="M8 5v14l11-7z" />
-              </svg>
-              背景音乐 {{ musicPlaying ? '关' : '开' }}
-            </button>
-          </div>
-          <video ref="fullscreenVideoPlayer" :src="currentVideo" controls autoplay muted class="fullscreen-video">
-            您的浏览器不支持视频播放
-          </video>
-          <!-- 隐藏的背景音乐播放器 -->
-          <audio ref="backgroundMusic" :src="backgroundAudio" loop></audio>
         </div>
       </div>
     </div>
@@ -99,613 +54,374 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import project1 from '../assets/images/1.png'
-import project2 from '../assets/images/2.png'
-import project3 from '../assets/images/3.png'
-import project4 from '../assets/images/4.png'
-import project5 from '../assets/images/5.png'
-import project1Webp from '../assets/images/1.webp'
-import project2Webp from '../assets/images/2.webp'
-import project3Webp from '../assets/images/3.webp'
-import project4Webp from '../assets/images/4.webp'
-import project5Webp from '../assets/images/5.webp'
+import { ref, onMounted } from 'vue'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 
-// 导入视频文件
-import video1 from '../assets/videos/1.mp4'
-import video2 from '../assets/videos/2.mp4'
-import video3 from '../assets/videos/3.mp4'
-import video4 from '../assets/videos/4.mp4'
-import video5 from '../assets/videos/5.mp4'
+gsap.registerPlugin(ScrollTrigger)
 
-// 导入背景音乐文件
-import backgroundMusicFile from '../assets/audio/background-music.mp3'
-
-// 视频元素引用
-const videoRefs = ref({})
-const fullscreenVideo = ref(false)
-const currentVideo = ref('')
-const fullscreenVideoPlayer = ref(null)
-const backgroundMusic = ref(null)
-const musicPlaying = ref(false)
-const backgroundAudio = ref(backgroundMusicFile)
-
-// 水波纹相关状态 
-const showRipple = ref({})
-const ripplePositions = ref({}) // 改为对象存储每个卡片的位置
-let rippleTimeouts = ref({}) // 存储每个卡片的定时器
-
-// 处理鼠标进入事件 
-const handleMouseEnter = (event) => {
-  const card = event.currentTarget
-  const cardRect = card.getBoundingClientRect()
-  
-  // 获取项目ID ：直接从data-id属性获取
-  const projectId = parseInt(card.dataset.id)
-  
-  // 计算鼠标在卡片内的相对位置
-  const x = event.clientX - cardRect.left
-  const y = event.clientY - cardRect.top
-  
-  // 存储位置到对应项目
-  ripplePositions.value[projectId] = { x, y }
-  
-  // 清除之前的定时器（如果有）
-  if (rippleTimeouts.value[projectId]) {
-    clearTimeout(rippleTimeouts.value[projectId])
-  }
-  
-  // 显示水波纹
-  showRipple.value[projectId] = true
-  
-  // 1秒后隐藏水波纹
-  rippleTimeouts.value[projectId] = setTimeout(() => {
-    showRipple.value[projectId] = false
-  }, 1000)
-}
-
-// 处理鼠标离开事件 
-const handleMouseLeave = (event) => {
-  const card = event.currentTarget
-  const projectId = parseInt(card.dataset.id)
-  
-  // 立即隐藏水波纹
-  showRipple.value[projectId] = false
-  
-  // 清除定时器
-  if (rippleTimeouts.value[projectId]) {
-    clearTimeout(rippleTimeouts.value[projectId])
-    delete rippleTimeouts.value[projectId]
-  }
-}
-
-// 设置视频引用
-const setVideoRef = (id, el) => {
-  if (el) {
-    videoRefs.value[id] = el
-  }
-}
-
-// 打开全屏视频
-const openFullscreen = (projectId) => {
-  
-  const project = projects.value.find(p => p.id === projectId)
-  if (project && project.video) {
-    currentVideo.value = project.video
-    fullscreenVideo.value = true
-    
-    setTimeout(() => {
-      if (fullscreenVideoPlayer.value) {
-        fullscreenVideoPlayer.value.play().catch(error => {
-          console.log('视频自动播放被阻止:', error)
-        })
-      }
-      playBackgroundMusic()
-    }, 100)
-  }
-}
-
-// 播放背景音乐
-const playBackgroundMusic = () => {
-  if (backgroundMusic.value) {
-    backgroundMusic.value.play()
-      .then(() => {
-        musicPlaying.value = true
-      })
-      .catch(error => {
-        console.log('背景音乐自动播放被阻止:', error)
-        // 用户交互后可以重新尝试播放
-      })
-  }
-}
-
-// 切换背景音乐
-const toggleMusic = () => {
-  if (!backgroundMusic.value) return
-  
-  if (musicPlaying.value) {
-    backgroundMusic.value.pause()
-    musicPlaying.value = false
-  } else {
-    backgroundMusic.value.play()
-      .then(() => {
-        musicPlaying.value = true
-      })
-      .catch(error => {
-        console.log('播放背景音乐失败:', error)
-      })
-  }
-}
-
-// 关闭全屏视频
-const closeFullscreen = () => {
-  fullscreenVideo.value = false
-  currentVideo.value = ''
-  
-  // 停止视频
-  if (fullscreenVideoPlayer.value) {
-    fullscreenVideoPlayer.value.pause()
-    fullscreenVideoPlayer.value.currentTime = 0
-  }
-  
-  // 停止背景音乐
-  if (backgroundMusic.value) {
-    backgroundMusic.value.pause()
-    backgroundMusic.value.currentTime = 0
-    musicPlaying.value = false
-  }
-}
-
-// 键盘事件监听（ESC退出全屏，M键切换音乐）
-const handleKeydown = (event) => {
-  if (event.key === 'Escape' && fullscreenVideo.value) {
-    closeFullscreen()
-  }
-  if (event.key === 'm' || event.key === 'M') {
-    if (fullscreenVideo.value) {
-      toggleMusic()
-    }
-  }
-}
-
-
-
-// 在组件卸载时清理所有定时器
-onUnmounted(() => {
-  Object.values(rippleTimeouts.value).forEach(timeout => {
-    if (timeout) clearTimeout(timeout)
-  })
-  rippleTimeouts.value = {}
-})
+const horizontalSectionRef = ref(null)
+const horizontalTrackRef = ref(null)
+const scrollingTextLeftRef = ref(null)
+const scrollingTextRightRef = ref(null)
 
 const projects = ref([
   {
     id: 1,
     title: 'My-website_1.0',
     description: '一个最初版本的个人网站，包含个人简介、技能学习经历等内容。',
-    image: project1,
-    imageWebp: project1Webp,
-    video: video1,
-    demoUrl: '#',
-    githubUrl: '#',
-    technologies: ['CSS3', 'jquery.js', 'HTML5', 'scroll.js']
+    githubUrl: 'https://github.com/ContinueYN',
+    technologies: ['CSS3', 'jQuery', 'HTML5', 'Scroll.js']
   },
   {
     id: 2,
     title: 'My-website_2.0',
-    description: '一个经过迭代的个人网站，经过设计，添加流畅动画。',
-    image: project2,
-    imageWebp: project2Webp,
-    video: video2,
-    demoUrl: '#',
-    githubUrl: '#',
-    technologies: ['React', 'CSS3', 'HTML5', 'JSX', 'scroll.js']
+    description: '迭代版本的个人网站，优化设计，添加流畅动画效果。',
+    githubUrl: 'https://github.com/ContinueYN',
+    technologies: ['React', 'CSS3', 'HTML5', 'JSX']
   },
   {
     id: 3,
     title: '食堂网站',
-    description: '一个最初项目，自制弹幕功能、点赞及排行榜功能和进度跟踪。',
-    image: project3,
-    imageWebp: project3Webp,
-    video: video3,
-    demoUrl: '#',
-    githubUrl: '#',
-    technologies: ['HTML5', 'Python', 'CSS3', 'layui.js','jquery.js', 'Flask']
+    description: '自制弹幕功能、点赞及排行榜功能和进度跟踪的食堂网站。',
+    githubUrl: 'https://github.com/ContinueYN',
+    technologies: ['HTML5', 'Python', 'CSS3', 'Layui', 'Flask']
   },
   {
     id: 4,
-    title: '3D古诗词',
-    description: '基于Three.js和Tween.js构建的古诗词展览，拥有3d建模。',
-    image: project4,
-    imageWebp: project4Webp,
-    video: video4,
-    demoUrl: '#',
-    githubUrl: '#',
-    technologies: ['React', 'CSS3', 'JSX', 'Three.js', 'Tween.js']
+    title: '3D 古诗词',
+    description: '基于 Three.js 和 Tween.js 构建的古诗词展览，拥有 3D 建模。',
+    githubUrl: 'https://github.com/ContinueYN',
+    technologies: ['React', 'Three.js', 'Tween.js', 'CSS3']
   },
   {
     id: 5,
     title: '表单注册',
-    description: '全新自设计UI界面，搭载多功能(加水印，听歌，ai问答，后台管理)。',
-    image: project5,
-    imageWebp: project5Webp,
-    video: video5,
-    demoUrl: '#',
-    githubUrl: '#',
-    technologies: ['Vue3', 'Typescript', 'node.js', 'FastAPI']
+    description: '全新 UI 设计，搭载多功能 (加水印，听歌，AI 问答，后台管理)。',
+    githubUrl: 'https://github.com/ContinueYN',
+    technologies: ['Vue3', 'TypeScript', 'Node.js', 'FastAPI']
   }
 ])
+
+onMounted(() => {
+  // 连续滚动文字动画 - 向左
+  if (scrollingTextLeftRef.value) {
+    gsap.to(scrollingTextLeftRef.value, {
+      xPercent: -50,
+      ease: 'none',
+      duration: 20,
+      repeat: -1
+    })
+  }
+
+  // 连续滚动文字动画 - 向右
+  if (scrollingTextRightRef.value) {
+    gsap.fromTo(scrollingTextRightRef.value,
+      { xPercent: -50 },
+      {
+        xPercent: 0,
+        ease: 'none',
+        duration: 20,
+        repeat: -1
+      }
+    )
+  }
+
+  // 横向滚动动画
+  const track = horizontalTrackRef.value
+  const section = horizontalSectionRef.value
+  
+  if (track && section) {
+    const trackWidth = track.scrollWidth
+    const viewportWidth = window.innerWidth
+    
+    gsap.to(track, {
+      x: () => -(trackWidth - viewportWidth),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${trackWidth - viewportWidth}`,
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    })
+  }
+})
 </script>
 
 <style scoped>
 .projects {
-  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 连续滚动文字 */
+.scrolling-text-container {
+  position: relative;
+  width: 100%;
+  padding: 2rem 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.scrolling-text-container:first-child {
+  border-bottom: none;
+}
+
+.scrolling-text-container:last-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrolling-text {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.scrolling-left {
+  transform: translateX(0);
+}
+
+.scrolling-right {
+  transform: translateX(-50%);
+}
+
+.text-repeat {
+  display: inline-block;
+  font-size: 3rem;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  padding-right: 2rem;
+}
+
+/* 横向滚动部分 */
+.horizontal-scroll-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   background: transparent;
 }
 
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-}
-
-.card {
-  width: 100%;
-  height: 450px;
-  perspective: 1000px;
-  position: relative;
-}
-
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 50px;
-}
-
-.card:hover .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-face {
+.sticky-wrapper {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 50px;
-  padding: 20px;
+  overflow: hidden;
+}
+
+.horizontal-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-}
-
-.card-front {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  backdrop-filter: blur(15px);
-}
-
-.card-back {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  transform: rotateY(180deg);
-  justify-content: space-between;
   align-items: center;
 }
 
-/* 水波纹效果 */
-.ripple-effect {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: var(--gradient-accent); /* 使用已有的渐变变量 */
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-  animation: rippleExpand 1s ease-out forwards;
+.horizontal-track {
+  display: flex;
+  gap: 4rem;
+  padding: 0 10vw;
+  width: max-content;
 }
 
-/* 简化动画*/
-@keyframes rippleExpand {
-  0% {
-    width: 0;
-    height: 0;
-    opacity: 0.8;
-  }
-  50% {
-    width: 150px;
-    height: 150px;
-    opacity: 0.5;
-  }
-  100% {
-    width: 300px;
-    height: 300px;
-    opacity: 0;
-  }
-}
-/* 卡片翻转动画 */
-.card-inner {
+/* 项目卡片 */
+.project-card {
+  width: 400px;
+  height: 500px;
+  flex-shrink: 0;
   position: relative;
+}
+
+.card-content {
   width: 100%;
   height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 50px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  filter: blur(3px);
+  opacity: 0.85;
 }
 
-.card:hover .card-inner {
-  transform: rotateY(180deg);
+.card-content:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 48px rgba(99, 102, 241, 0.2);
+  border-color: var(--primary-color);
+  backdrop-filter: blur(15px);
+  filter: blur(0);
+  opacity: 1;
 }
 
-
-.project-image {
-  position: relative;
-  height: 160px;
-  overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-.project-image img {
-  width: 100%;
-  height: 100%;
-  border-radius: 30px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.card:hover .card-front .project-image img {
-  transform: scale(1.1);
-}
-
-.project-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.project-description {
-  color: var(--text-secondary);
+.card-number {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  opacity: 0.2;
+  line-height: 1;
   margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
   line-height: 1.6;
   flex-grow: 1;
+  margin-bottom: 1.5rem;
 }
 
-.project-tech {
+.card-tech {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 .tech-tag {
-  padding: 0.25rem 0.75rem;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border-radius: 1rem;
-  font-size: 0.875rem;
-}
-
-.project-actions {
-  display: flex;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.project-link {
   padding: 0.5rem 1rem;
-  background: var(--primary-color);
-  color: white;
-  text-decoration: none;
-  border-radius: 0.5rem;
-  transition: background 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.project-link:hover {
-  background: var(--primary-dark);
-}
-
-/* 视频相关样式 */
-.video-section {
-  width: 100%;
-  margin: 1rem 0;
-}
-
-.video-container {
-  position: relative;
-  width: 100%;
-  height: 140px;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.video-container:hover {
-  transform: scale(1.05);
-}
-
-.project-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.video-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  transition: background 0.3s ease;
-}
-
-.video-container:hover .video-overlay {
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.play-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.play-button:hover {
-  transform: scale(1.1);
-  background: var(--primary-dark);
-}
-
-.video-text {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-color);
+  border-radius: 2rem;
   font-size: 0.875rem;
   font-weight: 500;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  transition: all 0.3s ease;
 }
 
-/* 全屏视频模态框 */
-.video-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+.tech-tag:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--primary-color);
+}
+
+.card-links {
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  gap: 1rem;
 }
 
-.video-modal-content {
-  position: relative;
-  width: 90%;
-  max-width: 800px;
-  background: black;
+.card-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
   border-radius: 12px;
-  overflow: hidden;
-}
-
-.video-controls {
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  z-index: 1002;
-}
-
-.music-control {
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  padding: 8px 12px;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.3s ease;
+  min-width: 140px;
 }
 
-.music-control:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.7);
+.demo-link {
+  background: var(--primary-color);
   color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  cursor: pointer;
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease;
+  border: 2px solid var(--primary-color);
 }
 
-.close-button:hover {
-  background: rgba(0, 0, 0, 0.9);
+.demo-link:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-.fullscreen-video {
-  width: 100%;
-  height: auto;
-  max-height: 80vh;
+.github-link {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 隐藏音频元素 */
-audio {
-  display: none;
+.github-link:hover {
+  border-color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
 }
 
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .projects {
+  .scrolling-text-container {
+    padding: 1rem 0;
+  }
+
+  .text-repeat {
+    font-size: 1.5rem;
+    letter-spacing: 0.2rem;
+  }
+
+  .horizontal-scroll-section {
+    height: auto;
     padding: 3rem 0;
+    background: var(--bg-secondary);
   }
 
-  .projects-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .sticky-wrapper {
+    position: relative;
+    height: auto;
+    overflow: visible;
   }
 
-  .card {
-    height: 480px;
+  .horizontal-container {
+    height: auto;
   }
 
-  .project-actions {
+  .horizontal-track {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 2rem;
+    padding: 0 1.5rem;
+    width: 100%;
+    transform: none !important;
   }
 
-  .video-container {
-    height: 120px;
+  .project-card {
+    width: 100%;
+    height: auto;
+    min-height: 400px;
   }
 
-  .video-modal-content {
-    width: 95%;
+  .card-content {
+    height: auto;
+    padding: 2rem;
   }
 
-  .video-text {
-    font-size: 0.8rem;
+  .card-number {
+    font-size: 3rem;
   }
 
-  .video-controls {
-    top: 50px;
-    right: 8px;
+  .card-title {
+    font-size: 1.5rem;
   }
 
-  .music-control {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+  .card-description {
+    font-size: 0.95rem;
+  }
+
+  .card-link {
+    width: 100%;
+    max-width: 280px;
   }
 }
 </style>
