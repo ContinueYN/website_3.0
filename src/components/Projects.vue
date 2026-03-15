@@ -28,7 +28,6 @@
               class="project-card"
             >
               <div class="card-content">
-                <div class="card-number">{{ String(project.id).padStart(2, '0') }}</div>
                 <h3 class="card-title">{{ project.title }}</h3>
                 <p class="card-description">{{ project.description }}</p>
                 <div class="card-tech">
@@ -240,32 +239,94 @@ onMounted(() => {
   height: 500px;
   flex-shrink: 0;
   position: relative;
+  perspective: 1000px;
 }
 
 .card-content {
   width: 100%;
   height: 100%;
-  background: var(--bg-card);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 60px rgba(255, 183, 178, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
   filter: blur(3px);
   opacity: 0.85;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 183, 178, 0.1) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.card-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 183, 178, 0.15) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .card-content:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 48px rgba(99, 102, 241, 0.2);
-  border-color: var(--primary-color);
+  transform: translateY(-15px) scale(1.02);
+  box-shadow: 
+    0 20px 60px rgba(255, 183, 178, 0.3),
+    0 0 100px rgba(255, 183, 178, 0.2),
+    inset 0 0 30px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 183, 178, 0.4);
   backdrop-filter: blur(15px);
   filter: blur(0);
   opacity: 1;
+}
+
+.card-content:hover::before {
+  opacity: 1;
+  animation: shimmer 1.5s ease-in-out;
+}
+
+.card-content:hover::after {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
 }
 
 .card-number {
@@ -283,14 +344,19 @@ onMounted(() => {
   color: var(--text-primary);
   margin-bottom: 1rem;
   line-height: 1.3;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(255, 183, 178, 0.3);
+  letter-spacing: 0.05em;
 }
 
 .card-description {
   font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.8;
   flex-grow: 1;
   margin-bottom: 1.5rem;
+  text-align: justify;
+  letter-spacing: 0.02em;
 }
 
 .card-tech {
@@ -301,19 +367,39 @@ onMounted(() => {
 }
 
 .tech-tag {
-  padding: 0.5rem 1rem;
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--primary-color);
+  padding: 0.5rem 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 183, 178, 0.15) 0%, rgba(255, 183, 178, 0.05) 100%);
+  color: #ffb7b2;
   border-radius: 2rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  transition: all 0.3s ease;
+  font-weight: 600;
+  border: 1px solid rgba(255, 183, 178, 0.3);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-tag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
 .tech-tag:hover {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: var(--primary-color);
+  background: linear-gradient(135deg, rgba(255, 183, 178, 0.3) 0%, rgba(255, 183, 178, 0.15) 100%);
+  border-color: rgba(255, 183, 178, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 183, 178, 0.3);
+}
+
+.tech-tag:hover::before {
+  left: 100%;
 }
 
 .card-links {
@@ -328,13 +414,33 @@ onMounted(() => {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 2rem;
-  border-radius: 12px;
+  border-radius: 16px;
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
   min-width: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+}
+
+.card-link:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .demo-link {
@@ -350,15 +456,33 @@ onMounted(() => {
 }
 
 .github-link {
-  background: transparent;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   color: var(--text-primary);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 183, 178, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .github-link:hover {
-  border-color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
+  border-color: rgba(255, 183, 178, 0.6);
+  background: linear-gradient(135deg, rgba(255, 183, 178, 0.15) 0%, rgba(255, 183, 178, 0.08) 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255, 183, 178, 0.25);
+  color: #ffb7b2;
+}
+
+.github-link span {
+  position: relative;
+  z-index: 1;
+}
+
+.github-link svg {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.github-link:hover svg {
+  transform: scale(1.2) rotate(-10deg);
 }
 
 /* 响应式设计 */
@@ -407,10 +531,6 @@ onMounted(() => {
     padding: 2rem;
   }
 
-  .card-number {
-    font-size: 3rem;
-  }
-
   .card-title {
     font-size: 1.5rem;
   }
@@ -422,6 +542,11 @@ onMounted(() => {
   .card-link {
     width: 100%;
     max-width: 280px;
+  }
+
+  .tech-tag {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
   }
 }
 </style>
