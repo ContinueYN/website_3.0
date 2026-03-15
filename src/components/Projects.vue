@@ -68,37 +68,37 @@ const projects = ref([
   {
     id: 1,
     title: 'My-website_1.0',
-    description: '一个最初版本的个人网站，包含个人简介、技能学习经历等内容。',
-    githubUrl: 'https://github.com/ContinueYN',
-    technologies: ['CSS3', 'jQuery', 'HTML5', 'Scroll.js']
+    description: '最初版本的个人网站，采用 HTML5+CSS3+jQuery 构建，包含个人简介、技能展示和学习经历等基础内容，探索网页设计的起点之作。',
+    githubUrl: 'https://github.com/ContinueYN/website_1.0',
+    technologies: ['HTML5', 'CSS3', 'jQuery', 'Scroll.js']
   },
   {
     id: 2,
     title: 'My-website_2.0',
-    description: '迭代版本的个人网站，优化设计，添加流畅动画效果。',
-    githubUrl: 'https://github.com/ContinueYN',
+    description: '全面升级的个人网站，基于 React 重构，优化整体设计语言，添加流畅的页面过渡动画和响应式布局，提升用户体验。',
+    githubUrl: 'https://github.com/ContinueYN/website_2.0',
     technologies: ['React', 'CSS3', 'HTML5', 'JSX']
   },
   {
     id: 3,
     title: '食堂网站',
-    description: '自制弹幕功能、点赞及排行榜功能和进度跟踪的食堂网站。',
-    githubUrl: 'https://github.com/ContinueYN',
-    technologies: ['HTML5', 'Python', 'CSS3', 'Layui', 'Flask']
+    description: '金中海湾食堂官方网站，支持弹幕互动、菜品排行榜、多页面切换等功能。后端采用 Python Flask，实现学生交流和菜品展示。',
+    githubUrl: 'https://github.com/ContinueYN/Canteen',
+    technologies: ['Python', 'Flask', 'HTML5', 'CSS3', 'Layui']
   },
   {
     id: 4,
     title: '3D 古诗词',
-    description: '基于 Three.js 和 Tween.js 构建的古诗词展览，拥有 3D 建模。',
-    githubUrl: 'https://github.com/ContinueYN',
-    technologies: ['React', 'Three.js', 'Tween.js', 'CSS3']
+    description: '诗之古河 - 将传统文化与现代科技融合的创新项目。基于 Three.js 实现书法作品的 3D 动态展示，支持唐风卷轴、绢本册页等多种装帧形式。',
+    githubUrl: 'https://github.com/ContinueYN/Poem',
+    technologies: ['Three.js', 'Tween.js', 'HTML5', 'CSS3']
   },
   {
     id: 5,
     title: '表单注册',
-    description: '全新 UI 设计，搭载多功能 (加水印，听歌，AI 问答，后台管理)。',
-    githubUrl: 'https://github.com/ContinueYN',
-    technologies: ['Vue3', 'TypeScript', 'Node.js', 'FastAPI']
+    description: 'ChatRegistry AI - 全栈用户管理系统，集成 AI 聊天服务。包含用户注册、信息管理功能，搭载智谱 AI GLM-4，支持多种聊天模式和思维链推理。',
+    githubUrl: 'https://github.com/ContinueYN/ChatRegistry-AI',
+    technologies: ['Vue3', 'TypeScript', 'FastAPI', 'Express']
   }
 ])
 
