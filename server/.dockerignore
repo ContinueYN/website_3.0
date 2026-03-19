@@ -3,8 +3,10 @@ dist
 .git
 .gitignore
 .env
-.env.*
+.env.local
+.env.*.local
 *.log
 .DS_Store
 Thumbs.db
 *.md
+!REFACTOR.md

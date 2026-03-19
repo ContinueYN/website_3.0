@@ -3,22 +3,24 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node --loader ts-node/esm contact.ts",
+    "dev": "node --loader ts-node/esm index.ts",
     "build": "tsc",
-    "start": "node dist/contact.js"
+    "start": "node dist/index.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "@types/pg": "^8.18.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "nodemailer": "^6.9.7",
-    "dotenv": "^16.3.1"
+    "pg": "^8.20.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
     "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
     "@types/nodemailer": "^6.4.14",
-    "typescript": "^5.3.3",
     "ts-node": "^10.9.1",
-    "@types/node": "^20.10.5"
+    "typescript": "^5.3.3"
   }
 }
