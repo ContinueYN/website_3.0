@@ -82,16 +82,13 @@ function loadModel() {
   loader.register((parser) => new VRMLoaderPlugin(parser))
   
   const modelPath = new URL('/src/assets/3D/loi.vrm', import.meta.url).href
-  console.log('Loading model from:', modelPath)
   
   loader.load(
     modelPath,
     (gltf) => {
-      console.log('Model loaded successfully:', gltf)
       vrm = gltf.userData.vrm
       
       if (!vrm) {
-        console.error('VRM data not found in loaded model')
         error.value = 'VRM 数据未找到，请确保文件是 VRM 格式'
         loading.value = false
         return
@@ -110,10 +107,8 @@ function loadModel() {
     },
     (progress) => {
       const percent = Math.round((progress.loaded / progress.total * 100))
-      console.log(percent + '% loaded')
     },
     (err) => {
-      console.error('Model loading error:', err)
       error.value = '请将 .vroid 文件转换为 .vrm 格式'
       loading.value = false
       
