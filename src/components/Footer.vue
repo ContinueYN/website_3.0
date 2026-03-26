@@ -4,14 +4,11 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3 class="footer-logo">Portfolio</h3>
-          <p class="footer-description">
-            全栈开发者，专注于创造优秀的数字体验。
-          </p>
-          <div class="footer-social">
-            <a href="https://github.com/ContinueYN" class="social-icon">GitHub</a>
-            <a href="https://blog.csdn.net" class="social-icon">CSDN</a>
-            <a href="127.0.0.1" class="social-icon">Telegram</a>
+          <div class="footer-description-wrapper">
+            <VRoidViewer />
+            
           </div>
+          
         </div>
         
        
@@ -22,6 +19,11 @@
             <p><Mail :size="16" class="inline-icon" /> 3258664928@qq.com</p>
             <p><Phone :size="16" class="inline-icon" /> +86 183 1686 5751</p>
             <p><MapPin :size="16" class="inline-icon" /> 中国，汕头市</p>
+          </div>
+          <div class="footer-social">
+            <a href="https://github.com/ContinueYN" class="social-icon">GitHub</a>
+            <a href="https://blog.csdn.net" class="social-icon">CSDN</a>
+            <a href="127.0.0.1" class="social-icon">Telegram</a>
           </div>
         </div>
       </div>
@@ -35,6 +37,7 @@
 
 <script setup>
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
+import VRoidViewer from './VRoidViewer.vue'
 </script>
 
 <style scoped>
@@ -92,10 +95,18 @@ import { Mail, Phone, MapPin } from 'lucide-vue-next'
   font-weight: 700;
 }
 
+.footer-description-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
 .footer-description {
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
   line-height: 1.6;
+  margin: 0;
 }
 
 .footer-social {
@@ -182,6 +193,10 @@ import { Mail, Phone, MapPin } from 'lucide-vue-next'
   
   .footer-social {
     justify-content: center;
+  }
+
+  .footer-description-wrapper {
+    flex-direction: column;
   }
 }
 </style>
