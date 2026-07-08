@@ -5,7 +5,7 @@
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title fade-in-up">
-            HELLOE~,I'm <span class="text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            HELLO~,I'm <span class="text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 160 160">
                 <g transform="translate(0,0) scale(0.303,0.303)">
                   <path fill="#6c91ee"
