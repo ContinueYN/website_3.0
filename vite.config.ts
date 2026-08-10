@@ -6,7 +6,9 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/website_3.0/',
+  // 使用自定义域名时部署在站点根路径，base 必须为 '/'
+  // （原 '/website_3.0/' 仅适用于 continueyn.github.io/website_3.0 项目页）
+  base: '/',
   plugins: [
     vue(),
     vueDevTools(),
