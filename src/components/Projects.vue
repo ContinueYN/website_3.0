@@ -67,38 +67,38 @@ const scrollingTextRightRef = ref(null)
 const projects = ref([
   {
     id: 1,
-    title: 'My-website_1.0',
-    description: '最初版本的个人网站，采用 HTML5+CSS3+jQuery 构建，包含个人简介、技能展示和学习经历等基础内容，探索网页设计的起点之作。',
-    githubUrl: 'https://github.com/ContinueYN/website_1.0',
-    technologies: ['HTML5', 'CSS3', 'jQuery', 'Scroll.js']
+    title: 'GomokuMind',
+    description: '五子棋策略评估与辅助系统，实现并对比 Heuristic、MCTS、Alpha-Beta、AlphaZero、Minimax 五种经典博弈算法。Go 后端 + Python 策略引擎 + React 前端可视化，支持人机对弈与策略胜率分析。',
+    githubUrl: 'https://github.com/ContinueYN/GomokuMind',
+    technologies: ['Go', 'Python', 'React', 'TypeScript', 'MCTS', 'AlphaZero']
   },
   {
     id: 2,
-    title: 'My-website_2.0',
-    description: '全面升级的个人网站，基于 React 重构，优化整体设计语言，添加流畅的页面过渡动画和响应式布局，提升用户体验。',
-    githubUrl: 'https://github.com/ContinueYN/website_2.0',
-    technologies: ['React', 'CSS3', 'HTML5', 'JSX']
+    title: 'ChatRegistry AI',
+    description: '全栈 AI 聊天与用户管理系统。前端 Vue3 + TypeScript，后端 FastAPI + Express 双服务架构，集成智谱 AI GLM-4 大模型，支持流式对话、多轮会话管理、思维链推理及 Markdown 渲染。',
+    githubUrl: 'https://github.com/ContinueYN/ChatRegistry-AI',
+    technologies: ['Vue3', 'TypeScript', 'FastAPI', 'Express', 'GLM-4', 'SSE']
   },
   {
     id: 3,
-    title: '食堂网站',
-    description: '金中海湾食堂官方网站，支持弹幕互动、菜品排行榜、多页面切换等功能。后端采用 Python Flask，实现学生交流和菜品展示。',
-    githubUrl: 'https://github.com/ContinueYN/Canteen',
-    technologies: ['Python', 'Flask', 'HTML5', 'CSS3', 'Layui']
+    title: 'Portfolio 3.0',
+    description: '个人作品集网站第三代。Vue3 + TypeScript + Vite 构建，GSAP 滚动驱动动画、Three.js 粒子背景、VRM 3D 角色交互、SVG 笔画绘制动画，GitHub Actions 自动部署。',
+    githubUrl: 'https://github.com/ContinueYN/website_3.0',
+    technologies: ['Vue3', 'TypeScript', 'GSAP', 'Three.js', 'VRM', 'CI/CD']
   },
   {
     id: 4,
-    title: '3D 古诗词',
-    description: '诗之古河 - 将传统文化与现代科技融合的创新项目。基于 Three.js 实现书法作品的 3D 动态展示，支持唐风卷轴、绢本册页等多种装帧形式。',
+    title: '诗之古河',
+    description: '传统文化与 3D 前端技术融合。基于 Three.js 实现古诗书法作品的立体展示，支持唐风卷轴、绢本册页、竹简等多种装帧形式切换，配合粒子特效营造古风意境。',
     githubUrl: 'https://github.com/ContinueYN/Poem',
-    technologies: ['Three.js', 'Tween.js', 'HTML5', 'CSS3']
+    technologies: ['Three.js', 'Tween.js', 'Canvas', 'CSS3', 'WebGL']
   },
   {
     id: 5,
-    title: '表单注册',
-    description: 'ChatRegistry AI - 全栈用户管理系统，集成 AI 聊天服务。包含用户注册、信息管理功能，搭载智谱 AI GLM-4，支持多种聊天模式和思维链推理。',
-    githubUrl: 'https://github.com/ContinueYN/ChatRegistry-AI',
-    technologies: ['Vue3', 'TypeScript', 'FastAPI', 'Express']
+    title: 'Literature',
+    description: '纯前端现代文学内容平台，TypeScript 构建。跨平台适配（含 Swift、Java、Ruby 多语言工具链），支持文学作品的结构化浏览、搜索与阅读体验优化。',
+    githubUrl: 'https://github.com/ContinueYN/Literature',
+    technologies: ['TypeScript', 'Swift', 'Python', 'CSS3', 'Java']
   }
 ])
 

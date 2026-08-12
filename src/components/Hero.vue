@@ -41,11 +41,11 @@
           </div>
           <div class="hero-stats fade-in-up" style="animation-delay: 0.6s">
             <div class="stat">
-              <span class="stat-number">0+</span>
+              <span class="stat-number">99+</span>
               <span class="stat-label">年经验</span>
             </div>
             <div class="stat">
-              <span class="stat-number">0+</span>
+              <span class="stat-number">99+</span>
               <span class="stat-label">项目完成</span>
             </div>
             <div class="stat">
@@ -761,24 +761,19 @@ const scrollToSection = (sectionId) => {
   height: auto;   
 }
 
-/* SVG路径绘制动画 */
+/* SVG路径绘制动画 — 延迟 0.4s 对齐首页内容淡入完成 */
 .animated-svg path {
-  stroke: currentColor; /* 使用当前文字颜色 */
+  stroke: currentColor;
   stroke-width: 2;
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: drawPath 2s ease-in-out forwards;
-  fill: transparent; 
+  animation: drawPath 2s ease-in-out 0.4s forwards, fillIn 0.5s ease-in-out 1.9s forwards;
+  fill: transparent;
 }
 
-/* "诺"字延迟出现 */
+/* "诺"字延迟出现（0.4s 内容淡入 + 1s 原延迟） */
 .nuo path {
-  animation-delay: 1s;
-}
-
-/* 绘制完成后显示填充 */
-.animated-svg path {
-  animation: drawPath 2s ease-in-out forwards, fillIn 0.5s ease-in-out 1.5s forwards;
+  animation: drawPath 2s ease-in-out 1.4s forwards, fillIn 0.5s ease-in-out 2.9s forwards;
 }
 
 @keyframes drawPath {

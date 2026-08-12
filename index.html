@@ -42,6 +42,108 @@
     
 </head>
 <body>
+    <!-- 加载动画覆盖层 -->
+    <div id="loadback"
+        style="background-color:#000;width:100%;height:100%;z-index:9999;position:fixed;transition:opacity 1s ease;top:0;left:0;color:#d2d2d2;">
+        <p id="loadbacktext"
+            style="width:100%;position:absolute;left:0;font-size:50px;transition:opacity 1s ease;height:100px;top:calc(50% - 80px);text-align:center;opacity:0;margin:0;">
+            嗨,别来无恙啊!</p>
+        <p id="loadbacktexteng"
+            style="width:100%;position:absolute;left:0;font-size:25px;transition:opacity 1s ease;height:50px;top:50%;text-align:center;opacity:0;margin:0;">
+            Hi,terribly nice to meet you!</p>
+    </div>
+    <script>
+      (function() {
+        var zh_ms = ['海内存知己,天涯若比邻,正在加载请稍等...', '有朋自远方来,不亦乐乎,欢迎!', '君问归期未有期,巴山夜雨涨秋池,请耐心等待',
+          '无可奈何花落去,似曾相识燕归来,页面马上加载出来',
+          '盈缩之期,不但在天;养怡之福,可得永年。正在努力加载', '遗民泪尽胡尘里,南望王师又一年,你的网络太慢了',
+          '让我们再来一次吧'];
+        var en_ms = ['Wherever you are,friendship never chenge.Page is loading...', 'Meeting friends is very happy.Welcome!',
+          'Your returning date hasn\'t decided,rain rises the pond.Please wait', 'Flowers fall helplessly,the swallow return again,Page coming soon',
+          'The length of life is not just decided by god.Loading hard...',
+          'Loyalists crying in Hun\'s territory,year after year.The network is too slow.', 'Let\'s do it again'];
+
+        var lb = document.getElementById('loadback');
+        var lbt = document.getElementById('loadbacktext');
+        var lbte = document.getElementById('loadbacktexteng');
+
+        // 第1条消息：100ms 后淡入
+        setTimeout(function() {
+          lbt.style.opacity = 1;
+          lbte.style.opacity = 1;
+        }, 100);
+
+        // 第1条消息：2100ms 后淡出
+        setTimeout(function() {
+          lbt.style.opacity = 0;
+          lbte.style.opacity = 0;
+        }, 2100);
+
+        // 第2条消息：4100ms 后切换文案并淡入
+        setTimeout(function() {
+          lbt.innerText = '与君初相识，犹如故人归。欢迎来到yn的网站';
+          lbte.innerText = 'Meeting you first time is like seeing an old friend.Welcome to YN’s website.';
+          lbt.style.opacity = 1;
+          lbte.style.opacity = 1;
+        }, 4100);
+
+        // 第2条消息：6100ms 后淡出
+        setTimeout(function() {
+          lbt.style.opacity = 0;
+          lbte.style.opacity = 0;
+        }, 6100);
+
+        // 轮换消息：每10秒切换
+        var c = -1;
+        var bcci = setInterval(function() {
+          lbt.style.opacity = 0;
+          lbte.style.opacity = 0;
+          setTimeout(function() {
+            c++;
+            lbt.innerText = zh_ms[c % 7];
+            lbte.innerText = en_ms[c % 7];
+            lbt.style.opacity = 1;
+            lbte.style.opacity = 1;
+          }, 1000);
+          lb.style.backgroundColor = '#003561';
+          setTimeout(function() { lb.style.backgroundColor = '#000'; }, 5000);
+        }, 10000);
+
+        // 结束加载动画的函数
+        function finishLoading() {
+          if (window.__loadingComplete) return; // 防止重复调用
+          window.__loadingComplete = true;
+          clearInterval(bcci);
+          // ① 先通知 Vue 开始挂载（遮罩仍覆盖在上面，重计算被遮罩挡住）
+          window.dispatchEvent(new Event('loading-complete'));
+          // ② 遮罩开始淡出
+          lb.style.opacity = 0;
+          lb.style.pointerEvents = 'none';
+          setTimeout(function() {
+            lb.style.display = 'none';
+          }, 1000);
+        }
+
+        // 页面加载完成后结束（但保证最短展示时间至少覆盖前两条消息 ~6s）
+        var minDisplayTime = 6200;
+        var loadFired = false;
+        var startTime = Date.now();
+
+        window.addEventListener('load', function() {
+          loadFired = true;
+          var elapsed = Date.now() - startTime;
+          var remaining = Math.max(0, minDisplayTime - elapsed);
+          setTimeout(finishLoading, remaining);
+        });
+
+        // 兜底：最长12秒后强制结束
+        setTimeout(function() {
+          if (!window.__loadingComplete) {
+            finishLoading();
+          }
+        }, 12000);
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
     
