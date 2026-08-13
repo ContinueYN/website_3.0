@@ -14,7 +14,7 @@
        
         
         <div class="footer-section">
-          <h4>联系信息</h4>
+          <h3>联系信息</h3>
           <div class="contact-info">
             <p><Mail :size="16" class="inline-icon" /> 3258664928@qq.com</p>
             <p><Phone :size="16" class="inline-icon" /> +86 183 1686 5751</p>
@@ -24,6 +24,12 @@
             <a href="https://github.com/ContinueYN" class="social-icon">GitHub</a>
             <a href="https://blog.csdn.net" class="social-icon">CSDN</a>
             <a href="127.0.0.1" class="social-icon">Telegram</a>
+          </div>
+          <br>
+          <h3>友情链接</h3>
+          <div class="friend-links">
+            <a href="https://qqhamburger.top" class="friend-link" target="_blank" rel="noopener">QQ</a>
+            <a href="https://mypresentboxes.com" class="friend-link" target="_blank" rel="noopener">PresentBox</a>
           </div>
         </div>
       </div>
@@ -124,6 +130,25 @@ import VRoidViewer from './VRoidViewer.vue'
 }
 
 .social-icon:hover {
+  color: var(--primary-color);
+  transform: translateY(-5px) scale(1.1);
+}
+
+.friend-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.friend-link {
+  padding: 0.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.friend-link:hover {
   color: var(--primary-color);
   transform: translateY(-5px) scale(1.1);
 }
