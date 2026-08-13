@@ -187,7 +187,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   background: var(--bg-primary);
-  z-index: 1000;
+  z-index: 3000;
   transition: all 0.3s ease;
 }
 
