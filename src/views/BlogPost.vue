@@ -236,9 +236,13 @@ const scrollTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-watch(currentPost, buildToc, { immediate: true })
+// 组件复用（上一篇/下一篇导航）时，文章变化需重建目录
+watch(currentPost, buildToc)
 
 onMounted(() => {
+  // 首次进入时在挂载后构建目录：immediate watch 在 setup 阶段执行时
+  // bodyRef 及 v-html 内容尚未就绪，会导致目录静默丢失
+  buildToc()
   window.addEventListener('scroll', onScroll, { passive: true })
 })
 
