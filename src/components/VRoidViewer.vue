@@ -32,7 +32,10 @@ let blinkTimer = 0
 let nextBlinkTime = 0
 let isBlinking = false
 let resizeObserver = null
+let animationId = null
 let placeholderAnimationId = null
+let canvasHandlers = null
+let disposed = false
 // 鼠标视差目标值（模型看向的方向偏移）
 let parallaxTargetX = 0
 let parallaxTargetY = 0
@@ -48,25 +51,24 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  disposed = true
+  if (animationId) {
+    cancelAnimationFrame(animationId)
+  }
   if (placeholderAnimationId) {
     cancelAnimationFrame(placeholderAnimationId)
   }
   if (resizeObserver) {
     resizeObserver.disconnect()
   }
+  removeDragControls()
   if (renderer) {
     renderer.dispose()
+    renderer.forceContextLoss()
+    renderer.domElement.remove()
   }
   if (vrm) {
-    vrm.scene.traverse((object) => {
-      if (object.isMesh) {
-        object.geometry.dispose()
-        if (object.material.map) {
-          object.material.map.dispose()
-        }
-        object.material.dispose()
-      }
-    })
+    VRMUtils.deepDispose(vrm.scene)
   }
 })
 
@@ -136,6 +138,9 @@ function loadModel() {
   loader.load(
     modelPath,
     (gltf) => {
+      // 组件已卸载时放弃迟到的加载结果，避免向已销毁的场景注入对象
+      if (disposed) return
+
       vrm = gltf.userData.vrm
       
       if (!vrm) {
@@ -174,9 +179,11 @@ function loadModel() {
       const percent = Math.round((progress.loaded / progress.total * 100))
     },
     (err) => {
+      if (disposed) return
+
       error.value = '请将 .vroid 文件转换为 .vrm 格式'
       loading.value = false
-      
+
       createPlaceholderModel()
     }
   )
@@ -208,64 +215,83 @@ function createPlaceholderModel() {
 function setupDragControls() {
   const canvas = renderer.domElement
 
-  canvas.addEventListener('mousedown', (e) => {
-    isDragging = true
-    rotationVelocity = 0
-    previousMousePosition = { x: e.clientX, y: e.clientY }
-  })
+  canvasHandlers = {
+    mousedown: (e) => {
+      isDragging = true
+      rotationVelocity = 0
+      previousMousePosition = { x: e.clientX, y: e.clientY }
+    },
+    mousemove: (e) => {
+      if (!vrm) return
 
-  canvas.addEventListener('mousemove', (e) => {
-    if (!vrm) return
+      if (isDragging) {
+        const deltaX = e.clientX - previousMousePosition.x
+        rotationVelocity = deltaX * 0.01
+        targetRotation += rotationVelocity
+        previousMousePosition = { x: e.clientX, y: e.clientY }
+      } else if (isHovering) {
+        // 鼠标视差：模型微微看向鼠标方向
+        const rect = canvas.getBoundingClientRect()
+        const centerX = rect.left + rect.width / 2
+        const centerY = rect.top + rect.height / 2
+        parallaxTargetX = (e.clientY - centerY) / (rect.height / 2) * 0.08
+        parallaxTargetY = (e.clientX - centerX) / (rect.width / 2) * 0.12
+      }
+    },
+    mouseup: () => {
+      isDragging = false
+    },
+    mouseenter: () => {
+      isHovering = true
+    },
+    mouseleave: () => {
+      isDragging = false
+      isHovering = false
+      // 鼠标离开时复位视差
+      parallaxTargetX = 0
+      parallaxTargetY = 0
+    },
+    touchstart: (e) => {
+      isDragging = true
+      rotationVelocity = 0
+      previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    },
+    touchmove: (e) => {
+      if (!isDragging || !vrm) return
 
-    if (isDragging) {
-      const deltaX = e.clientX - previousMousePosition.x
+      const deltaX = e.touches[0].clientX - previousMousePosition.x
       rotationVelocity = deltaX * 0.01
       targetRotation += rotationVelocity
-      previousMousePosition = { x: e.clientX, y: e.clientY }
-    } else if (isHovering) {
-      // 鼠标视差：模型微微看向鼠标方向
-      const rect = canvas.getBoundingClientRect()
-      const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
-      parallaxTargetX = (e.clientY - centerY) / (rect.height / 2) * 0.08
-      parallaxTargetY = (e.clientX - centerX) / (rect.width / 2) * 0.12
+      previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    },
+    touchend: () => {
+      isDragging = false
     }
-  })
+  }
 
-  canvas.addEventListener('mouseup', () => {
-    isDragging = false
-  })
+  canvas.addEventListener('mousedown', canvasHandlers.mousedown)
+  canvas.addEventListener('mousemove', canvasHandlers.mousemove)
+  canvas.addEventListener('mouseup', canvasHandlers.mouseup)
+  canvas.addEventListener('mouseenter', canvasHandlers.mouseenter)
+  canvas.addEventListener('mouseleave', canvasHandlers.mouseleave)
+  canvas.addEventListener('touchstart', canvasHandlers.touchstart, { passive: true })
+  canvas.addEventListener('touchmove', canvasHandlers.touchmove, { passive: true })
+  canvas.addEventListener('touchend', canvasHandlers.touchend)
+}
 
-  canvas.addEventListener('mouseenter', () => {
-    isHovering = true
-  })
+function removeDragControls() {
+  if (!canvasHandlers || !renderer) return
 
-  canvas.addEventListener('mouseleave', () => {
-    isDragging = false
-    isHovering = false
-    // 鼠标离开时复位视差
-    parallaxTargetX = 0
-    parallaxTargetY = 0
-  })
-
-  canvas.addEventListener('touchstart', (e) => {
-    isDragging = true
-    rotationVelocity = 0
-    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-  })
-
-  canvas.addEventListener('touchmove', (e) => {
-    if (!isDragging || !vrm) return
-
-    const deltaX = e.touches[0].clientX - previousMousePosition.x
-    rotationVelocity = deltaX * 0.01
-    targetRotation += rotationVelocity
-    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-  })
-
-  canvas.addEventListener('touchend', () => {
-    isDragging = false
-  })
+  const canvas = renderer.domElement
+  canvas.removeEventListener('mousedown', canvasHandlers.mousedown)
+  canvas.removeEventListener('mousemove', canvasHandlers.mousemove)
+  canvas.removeEventListener('mouseup', canvasHandlers.mouseup)
+  canvas.removeEventListener('mouseenter', canvasHandlers.mouseenter)
+  canvas.removeEventListener('mouseleave', canvasHandlers.mouseleave)
+  canvas.removeEventListener('touchstart', canvasHandlers.touchstart)
+  canvas.removeEventListener('touchmove', canvasHandlers.touchmove)
+  canvas.removeEventListener('touchend', canvasHandlers.touchend)
+  canvasHandlers = null
 }
 
 // 更真实的呼吸曲线：吸气快、呼气慢，非对称正弦波
@@ -281,7 +307,7 @@ function breathingCurve(t) {
 }
 
 function animate() {
-  requestAnimationFrame(animate)
+  animationId = requestAnimationFrame(animate)
 
   const delta = Math.min(clock.getDelta(), 0.1) // 防止大帧跳跃
   time += delta

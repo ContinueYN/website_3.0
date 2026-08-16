@@ -99,6 +99,9 @@ let avatarRadius = 175
 
 const isDark = ref(false)
 
+let fadeObserver = null
+let themeObserver = null
+
 const checkTheme = () => {
   const wasDark = isDark.value
   isDark.value = document.documentElement.classList.contains('dark')
@@ -127,9 +130,9 @@ onMounted(() => {
   }, { threshold: 0.12 })
 
   document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el))
-  window.__heroObserver = observer
-  
-  const themeObserver = new MutationObserver(() => {
+  fadeObserver = observer
+
+  themeObserver = new MutationObserver(() => {
     checkTheme()
   })
   themeObserver.observe(document.documentElement, {
@@ -177,10 +180,14 @@ const playAudio = async () => {
   if (audioContext && audioContext.state === 'suspended') {
     await audioContext.resume()
   }
-  
+
   if (audioElement) {
     await audioElement.play()
     isPlaying.value = true
+    // 暂停后循环已被停掉，恢复播放时重新启动声波动画
+    if (animationId === null) {
+      startWaveAnimation()
+    }
   }
 }
 
@@ -188,6 +195,11 @@ const pauseAudio = () => {
   if (audioElement) {
     audioElement.pause()
     isPlaying.value = false
+  }
+  // 停止声波绘制循环，避免后台持续占用 CPU
+  if (animationId !== null) {
+    cancelAnimationFrame(animationId)
+    animationId = null
   }
 }
 
@@ -327,10 +339,16 @@ onBeforeUnmount(() => {
   }
   
   window.removeEventListener('resize', resizeCanvas)
-  
-  const obs = window.__heroObserver
-  if (obs && typeof obs.disconnect === 'function') obs.disconnect()
-  try { delete window.__heroObserver } catch (e) { }
+
+  if (themeObserver) {
+    themeObserver.disconnect()
+    themeObserver = null
+  }
+
+  if (fadeObserver) {
+    fadeObserver.disconnect()
+    fadeObserver = null
+  }
 })
 
 const scrollToSection = (sectionId) => {

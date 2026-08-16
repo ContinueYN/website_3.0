@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowUp } from 'lucide-vue-next'
 
@@ -142,41 +142,61 @@ const loadPoem = () => {
 
 // 动态加载诗词SDK
 const loadPoemSDK = () => {
+  // 防止组件重复挂载时重复注入脚本
+  if (window.jinrishici || document.querySelector('script[data-poem-sdk]')) {
+    loadPoem()
+    return
+  }
+
   const script = document.createElement('script')
   script.src = 'https://sdk.jinrishici.com/v2/browser/jinrishici.js'
   script.charset = 'utf-8'
+  script.dataset.poemSdk = ''
   script.onload = () => {
     loadPoem()
+  }
+  script.onerror = () => {
+    // 加载失败时保持默认文案，不阻塞导航栏
   }
   document.head.appendChild(script)
 }
 
+let headerEl = null
+
+const onScroll = () => {
+  if (headerEl) {
+    if (window.scrollY > 10) {
+      headerEl.classList.add('scrolled')
+    } else {
+      headerEl.classList.remove('scrolled')
+    }
+  }
+
+  // 控制回到顶部按钮显示
+  if (window.scrollY > 300) {
+    showBackToTop.value = true
+  } else {
+    showBackToTop.value = false
+  }
+
+  // 计算滚动进度
+  const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+  const scrolled = (window.scrollY / windowHeight) * 100
+  scrollProgress.value = Math.min(100, Math.max(0, scrolled))
+}
+
 onMounted(() => {
   loadPoemSDK()
-  
+
+  headerEl = document.querySelector('.header')
+
   // 滚动时添加阴影和控制回到顶部按钮
-  window.addEventListener('scroll', () => {
-    const header = document.querySelector('.header')
-    if (header) {
-      if (window.scrollY > 10) {
-        header.classList.add('scrolled')
-      } else {
-        header.classList.remove('scrolled')
-      }
-    }
-    
-    // 控制回到顶部按钮显示
-    if (window.scrollY > 300) {
-      showBackToTop.value = true
-    } else {
-      showBackToTop.value = false
-    }
-    
-    // 计算滚动进度
-    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
-    const scrolled = (window.scrollY / windowHeight) * 100
-    scrollProgress.value = Math.min(100, Math.max(0, scrolled))
-  })
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 

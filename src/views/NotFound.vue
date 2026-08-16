@@ -16,22 +16,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
+// 复用全局主题逻辑：直接读写 localStorage 会因序列化格式不一致导致主题判断失效
+import { useTheme } from '../composables/useTheme'
 
-const isDark = ref(false)
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-}
-
-onMounted(() => {
-  const savedTheme = localStorage.getItem('theme')
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  isDark.value = savedTheme ? savedTheme === 'dark' : systemPrefersDark
-})
+const { isDark, toggleTheme } = useTheme()
 </script>
 
 <style scoped>
