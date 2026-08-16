@@ -367,12 +367,15 @@ const handleSubmit = async () => {
 }
 
 .section-title {
-  font-size: 2.5rem;
-  background: linear-gradient(135deg, #ffb7c5, #c9a8ff);
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 1rem;
+  margin-bottom: 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;

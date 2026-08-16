@@ -1,7 +1,7 @@
 <template>
   <div id="app" :class="{ 'dark': isDark }">
-    <!-- 粒子背景 - 所有页面都显示 -->
-    <ParticleBackground 
+    <!-- 艺术背景 - 所有页面都显示 -->
+    <ArtBackground 
       :particle-count="isDark ? 120 : 60" 
       :connect-distance="isDark ? 150 : 100"
       :is-dark="isDark"
@@ -48,7 +48,7 @@ import Skills from './components/Skills.vue'
 import Projects from './components/Projects.vue'
 import Contact from './components/Contact.vue'
 import Footer from './components/Footer.vue'
-import ParticleBackground from './components/ParticleBackground.vue'
+import ArtBackground from './components/ArtBackground.vue'
 import AOS from 'aos'
 import { useTheme } from './composables/useTheme'
 

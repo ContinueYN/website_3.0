@@ -186,7 +186,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--bg-primary);
+  background: transparent;
   z-index: 3000;
   transition: all 0.3s ease;
 }
@@ -218,7 +218,9 @@ onMounted(() => {
 
 .header.scrolled {
   box-shadow: var(--shadow);
-  background: var(--bg-primary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .nav {

@@ -1,113 +1,123 @@
-/* 全局样式和CSS变量 - 基于原配色的微调优化 */
+/* ============================================================
+   全局样式与设计令牌 —— 「湖畔昼夜」艺术方向
+   浅色=晨曦湖岸（奶油白 → 雾青 → 桃色地平线）
+   深色=星月夜（深蓝夜穹 → 靛紫 → 山脚暖灯村落）
+   ============================================================ */
+
 :root {
-  /* 主色调 - 保持原有青绿色系，增强饱和度 */
-  --primary-color: #a7fed7;
-  --primary-dark: #42efac;
-  --primary-light: #c7fee8;
+  /* 主色：晨光青碧 */
+  --primary-color: #14b8a6;
+  --primary-dark: #0f766e;
+  --primary-light: #5eead4;
 
   /* 博客左右颜色 */
   --blog-left: #faf8e9;
-  --blog-right:#bde9e8;
+  --blog-right: #bde9e8;
 
-  /* 辅助色 - 保持原有灰色系 */
+  /* 辅助色 */
   --secondary-color: #64748b;
   --secondary-light: #94a3b8;
-  
-  /* 强调色 - 保持原有橙色系，增强亮度 */
-  --accent-color: #f59e0b;
-  --accent-light: #fbbf24;
-  
-  /* 文字颜色 - 保持原有色系，优化对比度 */
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --text-main: #121213;
-  
-  /* 背景渐变 - 保持原有风格，优化层次 */
-  --bg-primary: linear-gradient(135deg, #f1f1f1 0%, #e0f7fa 50%, #fff9e6 100%);
-  --bg-secondary: linear-gradient(135deg, #ffffff 0%, #f0fdfa 50%, #fef3c7 100%);
-  --bg-card: rgba(255, 255, 255, 0.95);
 
-  --about-card:linear-gradient(135deg, #ffffff 0%, #f0fdfa 50%, #fef3c7 100%);
-  
-  /* 玻璃拟态效果 */
-  --glass-bg: rgb(225 246 249);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-blur: blur(20px);
-  
-  /* 边框和阴影 - 优化效果 */
-  --border-color: rgba(0, 0, 0, 0.08);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 4px 20px rgba(167, 254, 215, 0.3);
-  
-  /* 渐变 - 保持原有风格，优化过渡 */
-  --gradient-primary: linear-gradient(135deg, #a7fed7 0%, #42efac 100%);
-  --gradient-accent: radial-gradient(circle, #a7fed7 0%, #42efac 100%);
-  --gradient-mesh: 
-    radial-gradient(at 0% 0%, rgba(167, 254, 215, 0.1) 0px, transparent 50%),
+  /* 强调色：晨曦鎏金 */
+  --accent-color: #f59e0b;
+  --accent-light: #fcd34d;
+
+  /* 文字色 */
+  --text-primary: #23303c;
+  --text-secondary: #5c6b77;
+  --text-muted: #93a3ad;
+  --text-main: #17222c;
+
+  /* 背景渐变：晨光（自上而下 = 天空 → 湖面） */
+  --bg-primary: linear-gradient(180deg, #fdf9f0 0%, #e9f4f2 55%, #ffe9d6 100%);
+  --bg-secondary: linear-gradient(180deg, #ffffff 0%, #f0f8f6 50%, #fdf3df 100%);
+  --bg-card: rgba(255, 255, 255, 0.68);
+
+  --about-card: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(238, 247, 245, 0.94) 45%, rgba(253, 241, 220, 0.94) 100%);
+
+  /* 玻璃拟态 */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(18px);
+
+  /* 边框与阴影 */
+  --border-color: rgba(23, 34, 44, 0.08);
+  --shadow: 0 8px 30px rgba(30, 64, 60, 0.1);
+  --shadow-lg: 0 20px 60px rgba(30, 64, 60, 0.16);
+  --shadow-glow: 0 4px 24px rgba(20, 184, 166, 0.28);
+
+  /* 渐变：晨曦 → 鎏金 */
+  --gradient-primary: linear-gradient(120deg, #0e9f8e 0%, #22c3a6 45%, #f6b93b 100%);
+  --gradient-accent: radial-gradient(circle, #fcd34d 0%, #f59e0b 100%);
+  --gradient-mesh:
+    radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.1) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(167, 254, 215, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.08) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
-  
-  /* 博客卡片背景颜色 - 统一所有文章的颜色 */
+
+  /* 博客卡片 */
   --blog-card-bg: rgba(0, 0, 0, 0.15);
 
   /* 滚动条 */
-  --scrollbar-thumb: rgba(167, 254, 215, 0.7);
-  --scrollbar-thumb-hover: rgba(66, 239, 172, 0.9);
+  --scrollbar-thumb: rgba(20, 184, 166, 0.55);
+  --scrollbar-thumb-hover: rgba(15, 118, 110, 0.85);
   --scrollbar-track: rgba(0, 0, 0, 0.03);
+
+  /* 字体 */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Georgia', 'Noto Serif SC', 'Songti SC', 'SimSun', 'Times New Roman', serif;
 }
 
-/* 深色模式变量 - 保持原有风格 */
+/* 深色模式 —— 星月夜 */
 .dark {
-  --primary-color: #aa7ef7;
-  --primary-dark: #7d3bf6;
-  --primary-light: #c4a7ff;
+  --primary-color: #a78bfa;
+  --primary-dark: #8b5cf6;
+  --primary-light: #c4b5fd;
 
-  /* 博客左右颜色 */
   --blog-left: #2f2e79;
-  --blog-right:#161719;
-  
+  --blog-right: #161719;
+
   --secondary-color: #94a3b8;
   --secondary-light: #cbd5e1;
-  
+
   --accent-color: #fbbf24;
   --accent-light: #fcd34d;
-  
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-main: #f8f8f9;
-  
-  --bg-primary: linear-gradient(135deg, #161616 0%, #1e293b 50%, #312e81 100%);
-  --bg-secondary: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #4c1d95 100%);
-  --bg-card: rgba(30, 41, 59, 0.95);
 
-  --about-card: linear-gradient(135deg, #161616 0%, #1e293b 50%, #312e81 100%);
-  
-  --glass-bg: rgba(30, 41, 59, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  
+  --text-primary: #e8ebf7;
+  --text-secondary: #a9b1d2;
+  --text-muted: #7d86ac;
+  --text-main: #f4f5fc;
+
+  /* 夜空：深蓝 → 靛紫 */
+  --bg-primary: linear-gradient(180deg, #0a0f26 0%, #141a3c 60%, #241f52 100%);
+  --bg-secondary: linear-gradient(180deg, #0f1530 0%, #1b2147 55%, #2e2760 100%);
+  --bg-card: rgba(18, 23, 52, 0.66);
+
+  --about-card: linear-gradient(160deg, rgba(18, 23, 52, 0.9) 0%, rgba(26, 32, 68, 0.94) 50%, rgba(46, 39, 96, 0.92) 100%);
+
+  --glass-bg: rgba(17, 22, 50, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.12);
+
   --border-color: rgba(255, 255, 255, 0.1);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 4px 20px rgba(170, 126, 247, 0.3);
-  
-  --gradient-primary: linear-gradient(135deg, #aa7ef7 0%, #7d3bf6 100%);
-  --gradient-accent: radial-gradient(circle, #aa7ef7 0%, #7d3bf6 100%);
-  --gradient-mesh: 
-    radial-gradient(at 0% 0%, rgba(170, 126, 247, 0.15) 0px, transparent 50%),
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 4px 24px rgba(167, 139, 250, 0.3);
+
+  /* 渐变：紫罗兰 → 鎏金（梵高的夜空） */
+  --gradient-primary: linear-gradient(120deg, #8b5cf6 0%, #a78bfa 45%, #fbbf24 100%);
+  --gradient-accent: radial-gradient(circle, #a78bfa 0%, #7c3aed 100%);
+  --gradient-mesh:
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(251, 191, 36, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(170, 126, 247, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(251, 191, 36, 0.08) 0px, transparent 50%);
-  
-  --scrollbar-thumb: rgba(170, 126, 247, 0.6);
-  --scrollbar-thumb-hover: rgba(125, 59, 246, 0.8);
-  --scrollbar-track: rgba(255, 255, 255, 0.05);
+
+  --scrollbar-thumb: rgba(167, 139, 250, 0.55);
+  --scrollbar-thumb-hover: rgba(139, 92, 246, 0.85);
+  --scrollbar-track: rgba(255, 255, 255, 0.04);
 }
 
-html{
+html {
   user-select: none;
 }
 
@@ -123,13 +133,23 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
   line-height: 1.6;
   color: var(--text-primary);
   background: var(--bg-primary);
   transition: all 0.3s ease;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(20, 184, 166, 0.25);
+  color: var(--text-main);
+}
+
+.dark ::selection {
+  background: rgba(167, 139, 250, 0.3);
+  color: var(--text-main);
 }
 
 /* 容器 */
@@ -139,7 +159,11 @@ body {
   padding: 0 1rem;
 }
 
-/* 工具类 */
+/* ============================================================
+   通用艺术组件
+   ============================================================ */
+
+/* 渐变文字 */
 .text-gradient {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -147,36 +171,98 @@ body {
   background-clip: text;
 }
 
+/* 区块标题：衬线大字 + 渐变 + 鎏金短划 */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-main);
+  position: relative;
+  text-align: center;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.55em;
+  transform: translateX(-50%);
+  width: 3.2em;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--gradient-primary);
+  opacity: 0.85;
+  box-shadow: 0 0 14px rgba(246, 185, 59, 0.35);
+}
+
+.section-title.gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 玻璃卡片 */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+/* 按钮：艺术胶囊 + 渐变 + 柔光 */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 2rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 999px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--primary-color);
-  color: white;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(20, 184, 166, 0.3);
+  background-size: 160% 160%;
+  background-position: 0% 50%;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  background: var(--primary-dark);
+  transform: translateY(-3px);
+  background-position: 100% 50%;
+  box-shadow: 0 12px 36px rgba(20, 184, 166, 0.42);
+}
+
+.dark .btn {
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.35);
+}
+
+.dark .btn:hover {
+  box-shadow: 0 12px 36px rgba(139, 92, 246, 0.5);
 }
 
 .btn-outline {
   background: transparent;
-  border: 2px solid var(--primary-color);
+  border: 1.5px solid var(--primary-color);
   color: var(--primary-color);
+  box-shadow: none;
 }
 
 .btn-outline:hover {
   background: var(--primary-color);
-  color: white;
+  color: #fff;
+  box-shadow: 0 8px 30px var(--shadow-glow);
+  transform: translateY(-3px);
+}
+
+.dark .btn-outline:hover {
+  background: var(--primary-color);
+  color: #12162e;
 }
 
 /* 动画 */
@@ -202,8 +288,13 @@ body {
   }
 }
 
+/* ============================================================
+   滚动条
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
-/* 针对 Webkit 浏览器 */
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 6px;
@@ -220,13 +311,13 @@ body {
 
 /* 深色模式滚动条覆盖 */
 html.dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(170, 126, 247, 0.8) 0%, rgba(125, 59, 246, 0.7) 100%);
-  border: 1px solid rgba(196, 167, 255, 0.3);
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.75) 0%, rgba(139, 92, 246, 0.65) 100%);
+  border: 1px solid rgba(196, 181, 253, 0.25);
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(196, 167, 255, 0.9) 0%, rgba(170, 126, 247, 0.8) 100%);
-  border-color: rgba(196, 167, 255, 0.5);
+  background: linear-gradient(180deg, rgba(196, 181, 253, 0.9) 0%, rgba(167, 139, 250, 0.75) 100%);
+  border-color: rgba(196, 181, 253, 0.45);
 }
 
 html.dark ::-webkit-scrollbar-track {
@@ -245,6 +336,6 @@ html.dark ::-webkit-scrollbar-track {
 /* Firefox 深色模式覆盖 */
 @supports (scrollbar-width: thin) {
   html.dark * {
-    scrollbar-color: rgba(170, 126, 247, 0.6) rgba(255, 255, 255, 0.05);
+    scrollbar-color: rgba(167, 139, 250, 0.6) rgba(255, 255, 255, 0.04);
   }
 }

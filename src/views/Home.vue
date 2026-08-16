@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <ParticleBackground 
+    <ArtBackground 
       :particle-count="isDark ? 120 : 60" 
       :connect-distance="isDark ? 150 : 100"
       :is-dark="isDark"
@@ -27,7 +27,7 @@ import Skills from '../components/Skills.vue'
 import Projects from '../components/Projects.vue'
 import Contact from '../components/Contact.vue'
 import Footer from '../components/Footer.vue'
-import ParticleBackground from '../components/ParticleBackground.vue'
+import ArtBackground from '../components/ArtBackground.vue'
 import { useTheme } from '../composables/useTheme'
 
 const { isDark, toggleTheme } = useTheme()

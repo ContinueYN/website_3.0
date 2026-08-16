@@ -466,12 +466,12 @@ onBeforeUnmount(() => {
 .section-title {
   display: flex;
   justify-content: center;
-  font-size: 3rem;
-  font-family: Impact, sans-serif;
-  font-weight: 800;
-  margin-bottom: 1rem;
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 1.4rem;
   color: var(--text-main);
-  letter-spacing: 0.5rem;
+  letter-spacing: 0.12em;
   user-select: none;
 }
 

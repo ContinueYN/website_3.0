@@ -5,7 +5,8 @@
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title fade-in-up">
-            HELLO~,I'm <span class="text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            <span class="hello-line">HELLO, I'M</span>
+            <span class="calligraphy-line text-gradient"><svg class="yu animated-svg" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 160 160">
                 <g transform="translate(0,0) scale(0.303,0.303)">
                   <path fill="#6c91ee"
@@ -32,8 +33,9 @@
               </svg>
             </span>
           </h1>
+          <p class="hero-role fade-in-up" style="animation-delay: 0.15s">一名 AI 应用全栈开发者，专注创造优雅高效的数字作品</p>
           <p class="hero-description fade-in-up" style="animation-delay: 0.2s">
-            一名AI应用全栈开发者，专注于创造优雅、高效的数字化解决方案。
+            从界面到算法，把每一个想法打磨成会呼吸的作品。
           </p>
           <div class="hero-actions fade-in-up" style="animation-delay: 0.4s">
             <a href="#projects" class="btn" @click.prevent="scrollToSection('#projects')">Show</a>
@@ -373,10 +375,7 @@ const scrollToSection = (sectionId) => {
   opacity: 0.1;
 }
 
-.text-gradient{
-  display: flex;
-  justify-content: flex-end
-}
+
 
 .yu, .nuo {
     display: inline-block;
@@ -463,48 +462,89 @@ const scrollToSection = (sectionId) => {
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3.4rem;
   font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.hello-line {
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: var(--text-secondary);
+}
+
+.calligraphy-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-role {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.2rem;
 }
 
 .hero-description {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: var(--text-secondary);
   margin-bottom: 2rem;
-  line-height: 1.6;
+  line-height: 1.7;
+  max-width: 30em;
 }
 
 .hero-actions {
   display: flex;
   gap: 1rem;
-  margin-bottom: 3rem;
-  flex-direction: row-reverse;
+  margin-bottom: 2.6rem;
   flex-wrap: wrap;
-  align-content: space-between;
-  justify-content: flex-start;
 }
 
 .hero-stats {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .stat {
   text-align: center;
+  padding: 0.9rem 1.6rem;
+  border-radius: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
 }
 
 .stat-number {
   display: block;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-size: 1.9rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
   color: var(--text-secondary);
 }
 
@@ -526,6 +566,35 @@ const scrollToSection = (sectionId) => {
   overflow: visible;
 }
 
+/* 画框般的环绕光环 */
+.avatar-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--primary-color);
+  opacity: 0.35;
+  animation: art-spin 48s linear infinite;
+  pointer-events: none;
+}
+
+.avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--shadow-glow) 0%, transparent 70%);
+  opacity: 0.55;
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+@keyframes art-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .wave-canvas {
   position: absolute;
   top: 50%;
@@ -540,11 +609,15 @@ const scrollToSection = (sectionId) => {
 }
 
 .avatar {
-  width: 350px;
-  height: 350px;
+  width: 330px;
+  height: 330px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    0 0 0 5px var(--bg-card),
+    0 0 0 7px rgba(255, 255, 255, 0.35),
+    0 18px 50px rgba(30, 64, 60, 0.22),
+    0 0 60px var(--shadow-glow);
   position: relative;
   z-index: 2;
 }
@@ -749,11 +822,7 @@ const scrollToSection = (sectionId) => {
   background: radial-gradient(circle, rgba(170, 126, 247, 0.2) 0%, transparent 70%);
 }
 
-.text-gradient {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px; /* 添加间距 */
-}
+
 
 .yu, .nuo {
   display: inline-block;
@@ -806,6 +875,7 @@ const scrollToSection = (sectionId) => {
   
   .hero-title {
     font-size: 2.5rem;
+    align-items: center;
   }
   
   .avatar {
