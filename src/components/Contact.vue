@@ -86,7 +86,17 @@
           <div class="form-header">
             <h3>发送消息</h3>
           </div>
-          
+
+          <!-- Honeypot 反垃圾字段：真实用户不可见，机器人填写后提交会被 Web3Forms 丢弃 -->
+          <input
+            type="text"
+            name="botcheck"
+            v-model="form.botcheck"
+            class="hp-field"
+            tabindex="-1"
+            autocomplete="off"
+          >
+
           <div class="form-group">
             <label for="name">
               姓名 *
@@ -183,13 +193,15 @@ interface ContactForm {
   email: string
   subject: string
   message: string
+  botcheck: string
 }
 
 const form = reactive<ContactForm>({
   name: '',
   email: '',
   subject: '',
-  message: ''
+  message: '',
+  botcheck: ''
 })
 
 // Web3Forms 访问密钥：https://web3forms.com/ 用你的邮箱确认后免费获取（密钥公开，可放心放在前端）
@@ -216,7 +228,8 @@ const handleSubmit = async () => {
         name: form.name,
         email: form.email,
         subject: form.subject,
-        message: form.message
+        message: form.message,
+        botcheck: form.botcheck
       })
     })
 
@@ -229,7 +242,8 @@ const handleSubmit = async () => {
         name: '',
         email: '',
         subject: '',
-        message: ''
+        message: '',
+        botcheck: ''
       })
     } else {
       alert(result.message || '发送失败，请重试')
@@ -245,6 +259,16 @@ const handleSubmit = async () => {
 
 
 <style scoped>
+/* Honeypot 字段对用户完全不可见 */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* 二次元风格配色方案 */
 :root {
   --sakura-pink: #ffb7c5;
