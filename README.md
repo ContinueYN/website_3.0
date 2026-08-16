@@ -10,7 +10,7 @@
 - 🎯 **粒子背景**：动态粒子效果，增强视觉体验
 - 📈 **滚动动画**：平滑的滚动触发动画效果
 - 📋 **项目展示**：作品集展示区域
-- 📞 **联系表单**：集成服务器端表单处理
+- 📞 **联系表单**：集成 Web3Forms，邮件直达收件箱（无需后端）
 - 🌐 **单页应用**：流畅的页面切换体验
 
 ## 技术栈
@@ -22,16 +22,11 @@
 - **样式**：原生 CSS + CSS 变量
 - **动画**：AOS (Animate On Scroll) 2.3.4
 
-### 后端
-- **服务器**：Node.js
-- **API**：TypeScript 后端处理
-
 ## 项目结构
 
 ```
 website_3.0/
 ├── public/            # 公共静态资源
-├── server/            # 服务器端代码
 ├── src/               # 源代码
 │   ├── assets/        # 静态资源
 │   │   ├── audio/     # 音频文件
@@ -130,26 +125,6 @@ npm run preview
 yarn preview
 ```
 
-## 服务器端设置
-
-### 安装服务器依赖
-
-```bash
-cd server
-npm install
-```
-
-### 配置环境变量
-
-在 `server/.env` 文件中配置必要的环境变量：
-
-```env
-# 服务器端口
-PORT=3000
-
-# 其他环境变量...
-```
-
 ## 部署指南
 
 ### 前端部署
@@ -160,18 +135,12 @@ PORT=3000
    ```
 
 2. 将 `dist` 目录部署到静态网站托管服务，如：
-   - GitHub Pages
+   - GitHub Pages（本项目使用 GitHub Actions 自动构建部署）
    - Vercel
    - Netlify
    - AWS S3 + CloudFront
 
-### 后端部署
-
-将 `server` 目录部署到支持 Node.js 的服务器，如：
-- Vercel
-- Heroku
-- AWS EC2
-- DigitalOcean Droplet
+> 本项目为纯静态站点（GitHub Pages），联系表单通过 Web3Forms 服务直发邮件，无需自建后端。
 
 ## 开发规范
 
@@ -230,7 +199,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 - 实现基本布局和组件
 - 添加主题切换功能
 - 集成粒子背景效果
-- 实现联系表单服务器端处理
+- 集成 Web3Forms 联系表单（静态部署，无需后端）
 
 ---
 

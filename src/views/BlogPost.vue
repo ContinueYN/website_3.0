@@ -104,19 +104,17 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, onMounted, onUnmounted } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import { useBlogPosts } from '../composables/useBlogPosts'
-import { useReadingTime } from '../composables/useReadingTime'
 
 const route = useRoute()
 const router = useRouter()
 
 const { isDark, toggleTheme } = inject('theme')
 const { getPostById, getPrevPost, getNextPost } = useBlogPosts()
-const { startTracking, stopTracking } = useReadingTime()
 
 const currentPostId = computed(() => Number(route.params.id))
 
@@ -130,14 +128,6 @@ const prevPost = computed(() => {
 
 const nextPost = computed(() => {
   return getNextPost(currentPostId.value)
-})
-
-onMounted(() => {
-  startTracking()
-})
-
-onUnmounted(() => {
-  stopTracking()
 })
 </script>
 

@@ -24,10 +24,6 @@ coverage
 .env.*
 !.env.example
 
-# Server-side files
-server/.env
-server/node_modules
-
 # Media files (uncomment to ignore)
 # src/assets/audio/
 # src/assets/images/

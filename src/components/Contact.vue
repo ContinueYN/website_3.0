@@ -192,6 +192,10 @@ const form = reactive<ContactForm>({
   message: ''
 })
 
+// Web3Forms 访问密钥：https://web3forms.com/ 用你的邮箱确认后免费获取（密钥公开，可放心放在前端）
+// 也可以放入环境变量 VITE_WEB3FORMS_ACCESS_KEY（.env.development / .env.production）
+const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '096a318a-081f-403d-8087-bf1501030837'
+
 const loading = ref(false)
 
 const handleSubmit = async () => {
@@ -200,20 +204,26 @@ const handleSubmit = async () => {
   loading.value = true
 
   try {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-    
-    const response = await fetch(`${API_URL}/contact`, {
+    // Web3Forms：无需后端，直接向表单服务提交，邮件会发到你在 web3forms.com 确认过的收件邮箱
+    const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      body: JSON.stringify(form)
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        name: form.name,
+        email: form.email,
+        subject: form.subject,
+        message: form.message
+      })
     })
 
     const result = await response.json()
 
     if (result.success) {
-      alert(result.message)
+      alert('消息发送成功！我会尽快回复您。')
       // 重置表单
       Object.assign(form, {
         name: '',
