@@ -48,8 +48,9 @@
 import { ref, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
 
-// 懒加载 3D 模型组件：three.js / @pixiv/three-vrm 拆分为独立 chunk，
-// 只有当页脚进入视口附近时才下载 JS 和 18MB 的 VRM 模型
+// 懒挂载 3D 组件：进入视口附近时才初始化 WebGL 场景。
+// 模型二进制与组件 chunk 已在页面加载时预取（utils/vrmPreload.ts），
+// 滚到这里通常无需再等待下载
 const VRoidViewer = defineAsyncComponent(() => import('./VRoidViewer.vue'))
 
 const viewerZone = ref(null)

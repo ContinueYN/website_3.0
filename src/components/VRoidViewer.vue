@@ -17,6 +17,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
+import { preloadVrmModel } from '../utils/vrmPreload'
 
 const container = ref(null)
 const loading = ref(true)
@@ -132,61 +133,64 @@ function initScene() {
 function loadModel() {
   const loader = new GLTFLoader()
   loader.register((parser) => new VRMLoaderPlugin(parser))
-  
-  const modelPath = new URL('/src/assets/3D/loi.vrm', import.meta.url).href
-  
-  loader.load(
-    modelPath,
-    (gltf) => {
-      // 组件已卸载时放弃迟到的加载结果，避免向已销毁的场景注入对象
+
+  // 消费页面启动时就开始的预下载（utils/vrmPreload.ts），
+  // 滚到页脚时模型通常已就绪，无需现场等待大文件下载
+  preloadVrmModel()
+    .then((buffer) => {
       if (disposed) return
-
-      vrm = gltf.userData.vrm
-      
-      if (!vrm) {
-        error.value = 'VRM 数据未找到，请确保文件是 VRM 格式'
-        loading.value = false
-        return
-      }
-      
-      VRMUtils.removeUnnecessaryVertices(gltf.scene)
-      VRMUtils.combineSkeletons(gltf.scene)
-      
-      vrm.scene.rotation.y = 0
-      vrm.scene.position.y = 0.6
-      
-      scene.add(vrm.scene)
-
-      mixer = new THREE.AnimationMixer(vrm.scene)
-
-      // 设置微笑表情
-      if (vrm.blendShapeProxy) {
-        // 尝试笑脸相关名称
-        const smileCandidates = ['joy', 'fun', 'happy', 'smile', 'laugh', 'grin', 'Joy', 'Fun', 'Happy', 'Smile']
-        let found = false
-        for (const name of smileCandidates) {
-          try {
-            vrm.blendShapeProxy.setValue(name, 0.25)
-            found = true
-            break
-          } catch (e) { /* 静默 */ }
-        }
-      }
-
-      loading.value = false
-    },
-    (progress) => {
-      const percent = Math.round((progress.loaded / progress.total * 100))
-    },
-    (err) => {
+      loader.parse(buffer, '', handleModelLoaded, handleModelError)
+    })
+    .catch(() => {
       if (disposed) return
+      handleModelError()
+    })
+}
 
-      error.value = '请将 .vroid 文件转换为 .vrm 格式'
-      loading.value = false
+function handleModelLoaded(gltf) {
+  // 组件已卸载时放弃迟到的加载结果，避免向已销毁的场景注入对象
+  if (disposed) return
 
-      createPlaceholderModel()
+  vrm = gltf.userData.vrm
+
+  if (!vrm) {
+    error.value = 'VRM 数据未找到，请确保文件是 VRM 格式'
+    loading.value = false
+    return
+  }
+
+  VRMUtils.removeUnnecessaryVertices(gltf.scene)
+  VRMUtils.combineSkeletons(gltf.scene)
+
+  vrm.scene.rotation.y = 0
+  vrm.scene.position.y = 0.6
+
+  scene.add(vrm.scene)
+
+  mixer = new THREE.AnimationMixer(vrm.scene)
+
+  // 设置微笑表情
+  if (vrm.blendShapeProxy) {
+    // 尝试笑脸相关名称
+    const smileCandidates = ['joy', 'fun', 'happy', 'smile', 'laugh', 'grin', 'Joy', 'Fun', 'Happy', 'Smile']
+    let found = false
+    for (const name of smileCandidates) {
+      try {
+        vrm.blendShapeProxy.setValue(name, 0.25)
+        found = true
+        break
+      } catch (e) { /* 静默 */ }
     }
-  )
+  }
+
+  loading.value = false
+}
+
+function handleModelError() {
+  error.value = '模型加载失败，请稍后刷新重试'
+  loading.value = false
+
+  createPlaceholderModel()
 }
 
 function createPlaceholderModel() {

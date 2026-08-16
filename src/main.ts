@@ -6,6 +6,12 @@ import router from './router'
 // 导入 AOS 样式
 import 'aos/dist/aos.css'
 
+// 页脚 3D 模型：页面一打开就并行预取（低优先级 fetch，不影响 load 事件
+// 与首屏加载动画时长），滚到页脚时直接消费缓存
+import { preloadVrmModel, prefetchViewerChunk } from './utils/vrmPreload'
+preloadVrmModel()
+prefetchViewerChunk()
+
 // 主题初始化.
 function applyThemeClass(isDark: boolean) {
 	const root = document.documentElement;
