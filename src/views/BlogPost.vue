@@ -2,202 +2,347 @@
   <div class="blog-post" :class="{ 'dark': isDark }">
     <Header :isDark="isDark" @toggle-theme="toggleTheme" />
     <main>
-      <!-- 博客文章内容 -->
-      <section v-if="currentPost" class="blog-post-content">
-        <!-- 文章头部 -->
-        <div class="blog-post-hero">
-          <div class="container">
-            <div class="blog-post-hero-content">
-              <div class="blog-post-meta" data-aos="fade-up" data-aos-duration="800">
-                <span class="blog-post-date">{{ currentPost.date }}</span>
-                <span class="blog-post-category">{{ currentPost.category }}</span>
-                <span class="blog-post-reading-time">{{ currentPost.readingTime }} 分钟阅读</span>
-              </div>
-              <h1 data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">{{ currentPost.title }}</h1>
-              <div class="blog-post-author" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
-                <img src="@/assets/images/user.webp" alt="Author" class="author-avatar" />
-                <div class="author-info">
-                  <span class="author-name">余诺</span>
-                  <span class="author-title">全栈开发者</span>
-                </div>
+      <!-- ==================== 文章头部 ==================== -->
+      <section v-if="currentPost" class="post-hero" :class="toneFor(currentPost.category)">
+        <!-- 装饰光斑 -->
+        <div class="hero-orb orb-a" aria-hidden="true"></div>
+        <div class="hero-orb orb-b" aria-hidden="true"></div>
+        <span class="star star-1" aria-hidden="true">✦</span>
+        <span class="star star-2" aria-hidden="true">✧</span>
+
+        <div class="container">
+          <div class="hero-inner">
+            <router-link to="/blog" class="back-link" data-aos="fade-up" data-aos-duration="600">
+              <span class="back-arrow" aria-hidden="true">←</span> 返回文章列表
+            </router-link>
+
+            <div class="hero-meta" data-aos="fade-up" data-aos-delay="80" data-aos-duration="600">
+              <span class="hero-cat">{{ currentPost.category }}</span>
+              <span class="hero-date">{{ formatDate(currentPost.date) }}</span>
+              <span class="hero-read">
+                <Clock3 :size="14" stroke-width="2.2" />
+                {{ currentPost.readingTime }} 分钟阅读
+              </span>
+            </div>
+
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="160" data-aos-duration="700">
+              {{ currentPost.title }}
+            </h1>
+
+            <div class="hero-author" data-aos="fade-up" data-aos-delay="240" data-aos-duration="700">
+              <img src="@/assets/images/user.webp" alt="余诺的头像" class="author-avatar" width="56" height="56" loading="eager" decoding="async" />
+              <div class="author-info">
+                <span class="author-name">余诺</span>
+                <span class="author-title">全栈开发者 · 记录成长</span>
               </div>
             </div>
           </div>
         </div>
-        
-        <!-- 文章主体 -->
-        <div class="blog-post-body-wrapper">
-          <div class="container">
-            <div class="blog-post-body" data-aos="fade-up" data-aos-duration="800">
-              <div v-html="currentPost.content"></div>
-            </div>
-            
-            <!-- 文章底部 -->
-            <div class="blog-post-footer" data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
-              <div class="blog-post-tags">
-                <span v-for="tag in currentPost.tags" :key="tag" class="blog-post-tag">#{{ tag }}</span>
-              </div>
-              <div class="blog-post-share">
-                <span>分享到：</span>
-                <div class="share-buttons">
-                  <button class="share-button" title="分享到微信">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      </section>
+
+      <!-- ==================== 文章主体 ==================== -->
+      <section v-if="currentPost" class="post-body-wrap">
+        <div class="container">
+          <div class="post-layout">
+            <!-- 正文 -->
+            <article class="post-article glass-card" data-aos="fade-up" data-aos-duration="650">
+              <div ref="bodyRef" class="post-content" v-html="currentPost.content"></div>
+
+              <!-- 标签 + 分享 -->
+              <footer class="post-footer">
+                <div class="post-tags">
+                  <span v-for="tag in currentPost.tags" :key="tag" class="post-tag">#{{ tag }}</span>
+                </div>
+
+                <div class="post-share">
+                  <span class="share-label">分享</span>
+                  <button class="share-btn wechat" title="复制链接分享到微信" @click="copyLink">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M8.5 16.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"></path>
                       <path d="M15.5 16.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"></path>
                       <path d="M12 20c-3.5 0-7-1-7-3.5V6c0-1.38.5-2.63 1.36-3.5C7.5 1 9.63 1.5 11 1.5h2c1.37 0 3.5.5 4.64 1C19 3.37 19.5 4.62 19.5 6v10.5c0 2.5-3.5 3.5-7.5 3.5z"></path>
                     </svg>
                   </button>
-                  <button class="share-button" title="分享到微博">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <button class="share-btn weibo" title="复制链接分享到微博" @click="copyLink">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                       <circle cx="12" cy="12" r="10"></circle>
                       <path d="M8 12h8"></path>
                       <path d="M12 8v8"></path>
                     </svg>
                   </button>
-                  <button class="share-button" title="分享到知乎">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <button class="share-btn zhihu" title="复制链接分享到知乎" @click="copyLink">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                       <path d="M2 17l10 5 10-5"></path>
                       <path d="M2 12l10 5 10-5"></path>
                     </svg>
                   </button>
                 </div>
+              </footer>
+            </article>
+
+            <!-- 目录（仅桌面） -->
+            <aside v-if="toc.length > 1" class="post-toc" data-aos="fade-left" data-aos-duration="650">
+              <div class="toc-inner">
+                <p class="toc-title">目录</p>
+                <nav>
+                  <a
+                    v-for="item in toc"
+                    :key="item.id"
+                    class="toc-link"
+                    :class="{ active: activeHeading === item.id }"
+                    :href="`#${item.id}`"
+                    @click.prevent="scrollToHeading(item.id)"
+                  >{{ item.text }}</a>
+                </nav>
               </div>
-            </div>
-            
-            <!-- 文章导航 -->
-            <div class="blog-post-navigation" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
-              <div v-if="prevPost" class="blog-post-nav-item prev">
-                <router-link :to="`/blog/${prevPost.id}`">
-                  <div class="nav-item-arrow">←</div>
-                  <div class="nav-item-content">
-                    <span class="nav-item-label">上一篇</span>
-                    <h3 class="nav-item-title">{{ prevPost.title }}</h3>
-                  </div>
-                </router-link>
-              </div>
-              <div v-if="nextPost" class="blog-post-nav-item next">
-                <router-link :to="`/blog/${nextPost.id}`">
-                  <div class="nav-item-content">
-                    <span class="nav-item-label">下一篇</span>
-                    <h3 class="nav-item-title">{{ nextPost.title }}</h3>
-                  </div>
-                  <div class="nav-item-arrow">→</div>
-                </router-link>
-              </div>
-            </div>
+            </aside>
           </div>
+
+          <!-- 上一篇 / 下一篇 -->
+          <nav class="post-nav" data-aos="fade-up" data-aos-duration="650">
+            <div v-if="prevPost" class="nav-item prev">
+              <router-link :to="`/blog/${prevPost.id}`">
+                <span class="nav-arrow" aria-hidden="true">←</span>
+                <div class="nav-body">
+                  <span class="nav-label">上一篇</span>
+                  <h3 class="nav-title">{{ prevPost.title }}</h3>
+                </div>
+              </router-link>
+            </div>
+            <div v-if="nextPost" class="nav-item next">
+              <router-link :to="`/blog/${nextPost.id}`">
+                <div class="nav-body">
+                  <span class="nav-label">下一篇</span>
+                  <h3 class="nav-title">{{ nextPost.title }}</h3>
+                </div>
+                <span class="nav-arrow" aria-hidden="true">→</span>
+              </router-link>
+            </div>
+          </nav>
         </div>
       </section>
-      
-      <!-- 文章未找到 -->
-      <section v-else class="blog-post-not-found">
+
+      <!-- ==================== 文章未找到 ==================== -->
+      <section v-else class="post-not-found">
         <div class="container">
-          <h1 data-aos="fade-up">文章未找到</h1>
-          <p data-aos="fade-up" data-aos-delay="200">抱歉，您访问的文章不存在或已被删除。</p>
-          <router-link to="/blog" class="btn" data-aos="fade-up" data-aos-delay="300">返回博客首页</router-link>
+          <span class="nf-star" aria-hidden="true">✧</span>
+          <h1>文章未找到</h1>
+          <p>抱歉，您访问的文章不存在或已被删除。</p>
+          <router-link to="/blog" class="btn">返回博客首页</router-link>
         </div>
       </section>
     </main>
     <Footer />
+
+    <!-- 返回顶部 -->
+    <transition name="totop">
+      <button v-if="showTopBtn" class="to-top" title="回到顶部" aria-label="回到顶部" @click="scrollTop">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 19V5"></path>
+          <path d="M5 12l7-7 7 7"></path>
+        </svg>
+      </button>
+    </transition>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, inject } from 'vue'
-import { useRoute, useRouter, RouterLink } from 'vue-router'
+<script setup lang="ts">
+import { ref, computed, inject, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { Clock3 } from 'lucide-vue-next'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import { useBlogPosts } from '../composables/useBlogPosts'
 
 const route = useRoute()
-const router = useRouter()
 
-const { isDark, toggleTheme } = inject('theme')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { isDark, toggleTheme } = inject<any>('theme')
 const { getPostById, getPrevPost, getNextPost } = useBlogPosts()
 
 const currentPostId = computed(() => Number(route.params.id))
+const currentPost = computed(() => getPostById(currentPostId.value))
+const prevPost = computed(() => getPrevPost(currentPostId.value))
+const nextPost = computed(() => getNextPost(currentPostId.value))
 
-const currentPost = computed(() => {
-  return getPostById(currentPostId.value)
+/** 2026-01-30 → 2026.01.30 */
+const formatDate = (date: string) => date.replace(/-/g, '.')
+
+/* ---------------- 分类色调 ---------------- */
+const CATEGORY_TONES: Record<string, string> = {
+  架构: 'tone-violet',
+  设计: 'tone-pink',
+  性能: 'tone-gold',
+  团队: 'tone-teal'
+}
+const toneFor = (category: string) => CATEGORY_TONES[category] || 'tone-teal'
+
+/* ---------------- 目录 TOC ---------------- */
+const bodyRef = ref<HTMLElement | null>(null)
+const toc = ref<{ id: string; text: string }[]>([])
+const activeHeading = ref('')
+let tocObserver: IntersectionObserver | null = null
+
+const buildToc = async () => {
+  await nextTick()
+  if (tocObserver) {
+    tocObserver.disconnect()
+    tocObserver = null
+  }
+  const root = bodyRef.value
+  if (!root) return
+  const h2s = Array.from(root.querySelectorAll<HTMLElement>('h2'))
+  toc.value = h2s.map((el, i) => {
+    const id = `heading-${currentPostId.value}-${i}`
+    el.id = id
+    return { id, text: el.textContent || '' }
+  })
+  if (toc.value.length > 1 && 'IntersectionObserver' in window) {
+    tocObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) activeHeading.value = entry.target.id
+        })
+      },
+      { rootMargin: '-15% 0px -75% 0px' }
+    )
+    h2s.forEach((el) => tocObserver!.observe(el))
+  }
+}
+
+const scrollToHeading = (id: string) => {
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+/* ---------------- 分享：复制链接 ---------------- */
+const copyLink = async () => {
+  const url = window.location.href
+  try {
+    await navigator.clipboard.writeText(url)
+    alert('链接已复制，快去分享吧！')
+  } catch {
+    alert(`请手动复制链接：${url}`)
+  }
+}
+
+/* ---------------- 返回顶部 ---------------- */
+const showTopBtn = ref(false)
+const onScroll = () => {
+  showTopBtn.value = window.scrollY > 480
+}
+const scrollTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+watch(currentPost, buildToc, { immediate: true })
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
 })
 
-const prevPost = computed(() => {
-  return getPrevPost(currentPostId.value)
-})
-
-const nextPost = computed(() => {
-  return getNextPost(currentPostId.value)
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  if (tocObserver) tocObserver.disconnect()
 })
 </script>
 
 <style scoped>
+/* ============================================================
+   「湖畔昼夜」艺术风格 —— 文章阅读页
+   ============================================================ */
+
 .blog-post {
   min-height: 100vh;
-  background: var(--bg-primary);
-  transition: background-color 0.3s ease;
 }
 
-/* 文章头部英雄区 */
-.blog-post-hero {
+/* ---------------- Hero ---------------- */
+.post-hero {
   position: relative;
-  padding: 6rem 0;
-  background: var(--bg-secondary);
+  padding: 8.5rem 0 4.5rem;
   overflow: hidden;
+  background:
+    radial-gradient(1000px 420px at 50% -8%, var(--hero-halo, rgba(20, 184, 166, 0.14)) 0%, transparent 70%),
+    transparent;
 }
 
-.blog-post-hero::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 100px;
-  background-color: var(--blog-card-bg, var(--primary-color));
-  z-index: 1;
+.dark .post-hero {
+  --hero-halo: rgba(139, 92, 246, 0.18);
 }
 
-.blog-post-hero-content {
+.hero-inner {
   position: relative;
   z-index: 2;
-  color: var(--text-primary);
-  max-width: 800px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.blog-post-meta {
-  display: flex;
-  gap: 1.5rem;
-  font-size: 0.875rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.9;
-}
-
-.blog-post-meta span {
-  display: flex;
+.back-link {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.blog-post-title {
-  font-size: 3rem;
-  font-weight: 700;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-decoration: none;
   margin-bottom: 2rem;
-  line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: color 0.25s ease, transform 0.25s ease;
 }
 
-.blog-post-author {
+.back-link:hover {
+  color: var(--primary-color);
+  transform: translateX(-3px);
+}
+
+.hero-meta {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.hero-cat {
+  padding: 0.24rem 0.85rem;
+  border-radius: 999px;
+  background: var(--cat-bg);
+  color: var(--cat-color);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.hero-date, .hero-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1.28;
+  color: var(--text-main);
+  margin-bottom: 1.8rem;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.06);
+}
+
+.hero-author {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
 }
 
 .author-avatar {
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid white;
+  border: 2.5px solid var(--glass-border);
+  box-shadow: var(--shadow);
 }
 
 .author-info {
@@ -207,324 +352,504 @@ const nextPost = computed(() => {
 
 .author-name {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  color: var(--text-primary);
 }
 
 .author-title {
-  font-size: 0.875rem;
-  opacity: 0.9;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
-/* 文章主体 */
-.blog-post-body-wrapper {
-  background: var(--bg-primary);
-  position: relative;
-  margin-top: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+/* 光斑与星星 */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.blog-post-body {
-  line-height: 1.8;
+.orb-a {
+  width: 300px;
+  height: 300px;
+  top: -110px;
+  left: -70px;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.15) 0%, transparent 65%);
+}
+
+.orb-b {
+  width: 260px;
+  height: 260px;
+  top: -50px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.13) 0%, transparent 65%);
+}
+
+.dark .orb-a { background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 65%); }
+.dark .orb-b { background: radial-gradient(circle, rgba(251, 191, 36, 0.14) 0%, transparent 65%); }
+
+.star {
+  position: absolute;
+  z-index: 1;
+  color: var(--primary-color);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: floatY 5s ease-in-out infinite;
+}
+
+.star-1 { top: 6.5rem; left: 10%; font-size: 1rem; }
+.star-2 { top: 9rem; right: 14%; font-size: 0.8rem; animation-delay: 1.4s; }
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(16deg); }
+}
+
+/* 分类色调变量：浅色模式淡雅，深色模式饱和 */
+.tone-teal {
+  --cat-bg: rgba(45, 212, 191, 0.09);
+  --cat-color: #0d9488;
+}
+.tone-violet {
+  --cat-bg: rgba(167, 139, 250, 0.09);
+  --cat-color: #8b5cf6;
+}
+.tone-pink {
+  --cat-bg: rgba(249, 168, 212, 0.11);
+  --cat-color: #ec4899;
+}
+.tone-gold {
+  --cat-bg: rgba(252, 211, 77, 0.11);
+  --cat-color: #d97706;
+}
+
+.dark .tone-teal { --cat-bg: rgba(20, 184, 166, 0.16); --cat-color: #5eead4; }
+.dark .tone-violet { --cat-bg: rgba(139, 92, 246, 0.16); --cat-color: #c4b5fd; }
+.dark .tone-pink { --cat-bg: rgba(244, 114, 182, 0.16); --cat-color: #f9a8d4; }
+.dark .tone-gold { --cat-bg: rgba(245, 158, 11, 0.16); --cat-color: #fcd34d; }
+
+/* ---------------- 主体布局 ---------------- */
+.post-body-wrap {
+  padding: 1.5rem 0 4.5rem;
+}
+
+.post-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.post-article {
+  padding: 2.6rem clamp(1.4rem, 3.5vw, 3rem);
+  border-radius: 1.25rem;
+}
+
+/* ---------------- 正文排版 ---------------- */
+.post-content {
+  line-height: 1.95;
   color: var(--text-primary);
-  max-width: 800px;
-  margin: 0 auto;
+  font-size: 1.02rem;
+  word-break: break-word;
 }
 
-.blog-post-body h2 {
-  font-size: 2rem;
+.post-content :deep(h2) {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 2.6rem 0 1.2rem;
+  padding-left: 0.85rem;
+  border-left: 4px solid;
+  border-image: var(--gradient-primary) 1;
+  scroll-margin-top: 90px;
+}
+
+.post-content :deep(h3) {
+  font-size: 1.2rem;
   font-weight: 600;
-  margin: 2.5rem 0 1.5rem;
-  color: var(--text-primary);
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--primary-color);
+  color: var(--text-main);
+  margin: 2rem 0 0.9rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--primary-color);
+  opacity: 0.92;
+  scroll-margin-top: 90px;
 }
 
-.blog-post-body h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 2rem 0 1rem;
-  color: var(--text-primary);
+.post-content :deep(p) {
+  margin-bottom: 1.4rem;
 }
 
-.blog-post-body p {
-  margin-bottom: 1.5rem;
-  font-size: 1.05rem;
+.post-content :deep(strong) {
+  color: var(--text-main);
 }
 
-.blog-post-body pre {
-  background: var(--bg-secondary);
-  padding: 1.5rem;
-  border-radius: 10px;
-  overflow-x: auto;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.post-content :deep(a) {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--primary-color);
+  transition: opacity 0.2s ease;
 }
 
-.blog-post-body code {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-  color: var(--code-color);
+.post-content :deep(a:hover) {
+  opacity: 0.75;
 }
 
-.blog-post-body ul {
-  margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
+.post-content :deep(ul),
+.post-content :deep(ol) {
+  margin: 0 0 1.4rem;
+  padding-left: 1.6rem;
 }
 
-.blog-post-body li {
-  margin-bottom: 0.75rem;
+.post-content :deep(li) {
+  margin-bottom: 0.55rem;
 }
 
-/* 文章底部 */
-.blog-post-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
-  flex-wrap: wrap;
-  gap: 1.5rem;
+.post-content :deep(li)::marker {
+  color: var(--primary-color);
 }
 
-.blog-post-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.blog-post-tag {
-  font-size: 0.875rem;
-  color: var(--text-primary);
+.post-content :deep(blockquote) {
+  margin: 1.6rem 0;
+  padding: 0.9rem 1.3rem;
+  border-left: 4px solid var(--primary-color);
   background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  padding: 0.375rem 1rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  border-radius: 0 0.75rem 0.75rem 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* 代码块：macOS 风格窗口 */
+.post-content :deep(pre) {
+  position: relative;
+  margin: 1.6rem 0;
+  padding: 2.6rem 1.4rem 1.4rem;
+  border-radius: 0.9rem;
+  background: #1e2330;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
+  overflow-x: auto;
+}
+
+.post-content :deep(pre)::before {
+  content: '';
+  position: absolute;
+  top: 0.95rem;
+  left: 1.1rem;
+  width: 44px;
+  height: 11px;
+  background:
+    radial-gradient(circle at 6px 6px, #ff5f57 0 5.5px, transparent 6px),
+    radial-gradient(circle at 22px 6px, #febc2e 0 5.5px, transparent 6px),
+    radial-gradient(circle at 38px 6px, #28c840 0 5.5px, transparent 6px);
+}
+
+.post-content :deep(code) {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Menlo', monospace;
+  font-size: 0.85rem;
+  color: #e6e9f5;
+}
+
+.post-content :deep(:not(pre) > code) {
+  background: var(--cat-bg, rgba(20, 184, 166, 0.14));
+  color: var(--cat-color, var(--primary-dark));
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.4rem;
+  font-size: 0.85em;
+}
+
+.post-content :deep(img) {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  margin: 1.2rem 0;
   box-shadow: var(--shadow);
 }
 
-.blog-post-tag:hover {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+.post-content :deep(hr) {
+  border: none;
+  border-top: 1px dashed var(--border-color);
+  margin: 2rem 0;
 }
 
-.blog-post-share {
+/* ---------------- 底部：标签 + 分享 ---------------- */
+.post-footer {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 2.4rem;
+  padding-top: 1.6rem;
+  border-top: 1px dashed var(--border-color);
 }
 
-.share-buttons {
+.post-tags {
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.55rem;
 }
 
-.share-button {
+.post-tag {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 0.26rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
   background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  padding: 0.75rem;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.post-tag:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.post-share {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.share-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-right: 0.2rem;
+}
+
+.share-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow);
-}
-
-.share-button:hover {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
   background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-/* 文章导航 */
-.blog-post-navigation {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4rem;
-  padding-top: 2.5rem;
-  border-top: 1px solid var(--border-color);
-  gap: 2rem;
+.share-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-.blog-post-nav-item {
-  flex: 1;
+.share-btn.wechat:hover { background: #07c160; color: #fff; border-color: #07c160; }
+.share-btn.weibo:hover { background: #e6162d; color: #fff; border-color: #e6162d; }
+.share-btn.zhihu:hover { background: #0084ff; color: #fff; border-color: #0084ff; }
+
+/* ---------------- 目录 TOC ---------------- */
+.post-toc {
+  position: sticky;
+  top: 6rem;
 }
 
-.blog-post-nav-item a {
+.toc-inner {
+  padding: 1.2rem 1.2rem 1.1rem;
+  border-radius: 1rem;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+.toc-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px dashed var(--border-color);
+  letter-spacing: 0.2em;
+}
+
+.toc-link {
+  display: block;
+  padding: 0.42rem 0.6rem;
+  margin-bottom: 0.15rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 0.5rem;
+  border-left: 2.5px solid transparent;
+  transition: all 0.22s ease;
+}
+
+.toc-link:hover {
+  color: var(--primary-color);
+  background: var(--glass-bg);
+}
+
+.toc-link.active {
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  background: var(--glass-bg);
+  font-weight: 600;
+}
+
+/* ---------------- 上一篇 / 下一篇 ---------------- */
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin-top: 2.6rem;
+}
+
+.nav-item a {
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 1.25rem 1.4rem;
+  border-radius: 1rem;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
   text-decoration: none;
-  color: var(--text-primary);
-  transition: all 0.3s ease;
-  padding: 1.5rem;
-  background: var(--bg-secondary);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.blog-post-nav-item a:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+.nav-item a:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-lg);
 }
 
-.blog-post-nav-item.prev a {
-  justify-content: flex-start;
-}
-
-.blog-post-nav-item.next a {
+.nav-item.next a {
   justify-content: flex-end;
+  text-align: right;
 }
 
-.nav-item-arrow {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-item-content {
+.nav-body {
   flex: 1;
+  min-width: 0;
 }
 
-.nav-item-label {
-  font-size: 0.875rem;
-  opacity: 0.8;
+.nav-label {
   display: block;
-  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
 }
 
-.nav-item-title {
-  font-size: 1rem;
+.nav-title {
+  font-size: 0.98rem;
   font-weight: 600;
-  line-height: 1.3;
-  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 文章未找到 */
-.blog-post-not-found {
-  padding: 8rem 0;
+.nav-arrow {
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+/* ---------------- 未找到 ---------------- */
+.post-not-found {
+  padding: 9rem 0 7rem;
   text-align: center;
 }
 
-.blog-post-not-found h1 {
-  font-size: 3rem;
+.nf-star {
+  display: block;
+  font-size: 2.6rem;
+  color: var(--primary-color);
+  opacity: 0.5;
+  margin-bottom: 1.2rem;
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.post-not-found h1 {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
   color: var(--text-primary);
+  margin-bottom: 1rem;
 }
 
-.blog-post-not-found p {
-  font-size: 1.25rem;
+.post-not-found p {
   color: var(--text-secondary);
-  margin-bottom: 2.5rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 2.2rem;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .blog-post-title {
-    font-size: 2.5rem;
+/* ---------------- 返回顶部 ---------------- */
+.to-top {
+  position: fixed;
+  right: 1.6rem;
+  bottom: 1.6rem;
+  z-index: 2000;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--primary-color);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.to-top:hover {
+  transform: translateY(-4px);
+  color: #fff;
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.totop-enter-active, .totop-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.totop-enter-from, .totop-leave-to {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1024px) {
+  .post-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .post-toc {
+    display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .blog-post-hero {
-    height: 60vh;
-    min-height: 400px;
+  .post-hero { padding: 7rem 0 3.2rem; }
+
+  .hero-title { font-size: 1.75rem; }
+
+  .post-article { padding: 1.7rem 1.25rem; }
+
+  .post-nav {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  
-  .blog-post-title {
-    font-size: 2rem;
-  }
-  
-  .blog-post-body {
-    padding: 3rem 0;
-  }
-  
-  .blog-post-body-wrapper {
-    margin-top: -80px;
-  }
-  
-  .blog-post-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
-  }
-  
-  .blog-post-navigation {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .blog-post-nav-item a {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.75rem;
-  }
-  
-  .nav-item-arrow {
-    display: none;
-  }
-  
-  .blog-post-not-found h1 {
-    font-size: 2.5rem;
-  }
+
+  .star { display: none; }
 }
 
-@media (max-width: 480px) {
-  .blog-post-hero {
-    height: 50vh;
-    min-height: 350px;
-  }
-  
-  .blog-post-title {
-    font-size: 1.75rem;
-  }
-  
-  .blog-post-meta {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .blog-post-body {
-    padding: 2.5rem 0;
-  }
-  
-  .blog-post-body h2 {
-    font-size: 1.5rem;
-  }
-  
-  .blog-post-body h3 {
-    font-size: 1.25rem;
-  }
-  
-  .blog-post-body-wrapper {
-    margin-top: -60px;
-    border-radius: 12px 12px 0 0;
-  }
-  
-  .blog-post-not-found {
-    padding: 6rem 0;
-  }
-  
-  .blog-post-not-found h1 {
-    font-size: 2rem;
-  }
+/* ---------------- 减少动态效果偏好 ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .star, .nf-star { animation: none; }
+  .to-top { transition: opacity 0.2s ease; }
 }
 </style>
