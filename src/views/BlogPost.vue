@@ -15,7 +15,7 @@
               </div>
               <h1 data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">{{ currentPost.title }}</h1>
               <div class="blog-post-author" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
-                <img src="@/assets/images/user.jpg" alt="Author" class="author-avatar" />
+                <img src="@/assets/images/user.webp" alt="Author" class="author-avatar" />
                 <div class="author-info">
                   <span class="author-name">余诺</span>
                   <span class="author-title">全栈开发者</span>

@@ -35,10 +35,7 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- 注：字体使用系统字体栈（Inter/Georgia），无需加载 Google Fonts -->
     
 </head>
 <body>
@@ -124,8 +121,8 @@
           }, 1000);
         }
 
-        // 页面加载完成后结束（但保证最短展示时间至少覆盖前两条消息 ~6s）
-        var minDisplayTime = 6200;
+        // 页面加载完成后结束（但保证最短展示时间至少覆盖第一条消息 ~2s）
+        var minDisplayTime = 2000;
         var loadFired = false;
         var startTime = Date.now();
 
@@ -136,12 +133,12 @@
           setTimeout(finishLoading, remaining);
         });
 
-        // 兜底：最长12秒后强制结束
+        // 兜底：最长8秒后强制结束
         setTimeout(function() {
           if (!window.__loadingComplete) {
             finishLoading();
           }
-        }, 12000);
+        }, 8000);
       })();
     </script>
     <div id="app"></div>

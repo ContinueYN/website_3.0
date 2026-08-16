@@ -4,9 +4,8 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3 class="footer-logo">Portfolio</h3>
-          <div class="footer-description-wrapper">
-            <VRoidViewer />
-            
+          <div class="footer-description-wrapper" ref="viewerZone">
+            <VRoidViewer v-if="showViewer" />
           </div>
           
         </div>
@@ -27,9 +26,13 @@
           </div>
           <br>
           <h3>友情链接</h3>
-          <div class="friend-links">
-            <a href="https://qqhamburger.top" class="friend-link" target="_blank" rel="noopener">QQ</a>
-            <a href="https://mypresentboxes.com" class="friend-link" target="_blank" rel="noopener">PresentBox</a>
+          <div class="friend-links" ref="friendLinksRef">
+            <div class="friend-links-track" ref="trackRef">
+              <div v-for="n in trackCopies" :key="n" class="friend-links-group" :aria-hidden="n > 1 ? 'true' : undefined">
+                <a v-for="link in links" :key="link.name" :href="link.url" class="friend-link"
+                  target="_blank" rel="noopener" :tabindex="n > 1 ? -1 : undefined">{{ link.name }}</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -42,8 +45,119 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
-import VRoidViewer from './VRoidViewer.vue'
+
+// 懒加载 3D 模型组件：three.js / @pixiv/three-vrm 拆分为独立 chunk，
+// 只有当页脚进入视口附近时才下载 JS 和 18MB 的 VRM 模型
+const VRoidViewer = defineAsyncComponent(() => import('./VRoidViewer.vue'))
+
+const viewerZone = ref(null)
+const showViewer = ref(false)
+let viewerObserver = null
+
+// ===== 友情链接：无缝横向滚动 =====
+const friendLinksRef = ref(null)
+const trackRef = ref(null)
+const trackCopies = ref(2)
+
+const links = [
+  { name: 'QQ', url: 'https://qqhamburger.top' },
+  { name: 'PresentBox', url: 'https://mypresentboxes.com' },
+  { name: 'xrk', url: 'https://xrk-hhh.github.io/starlight/' },
+  { name: 'Jizen', url: 'https://jizen-066.github.io/Jizen066/' }
+]
+
+const REDUCED_MOTION = typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// rAF 驱动：offset 持续累加，取模后渲染，循环点无任何跳变
+const marquee = { offset: 0, raf: 0, lastTs: 0, setW: 0, running: false, paused: false }
+const MARQUEE_SPEED = 45 // px/s
+
+function setupMarquee() {
+  const track = trackRef.value
+  if (!track) return
+  const group = track.querySelector('.friend-links-group')
+  if (!group) return
+  const groupW = group.getBoundingClientRect().width
+  const containerW = track.parentElement ? track.parentElement.getBoundingClientRect().width : 0
+  if (groupW <= 0 || containerW <= 0) return
+  marquee.setW = groupW
+  // 复制份数：保证任意滚动位置都有内容覆盖、右侧不露底
+  trackCopies.value = Math.max(2, Math.ceil(containerW / groupW) + 1)
+  if (REDUCED_MOTION) return
+  if (marquee.running) return
+  marquee.running = true
+  marquee.lastTs = 0
+  marquee.raf = requestAnimationFrame(marqueeStep)
+}
+
+function marqueeStep(ts) {
+  if (!marquee.running) return
+  if (!marquee.lastTs) marquee.lastTs = ts
+  const dt = Math.min((ts - marquee.lastTs) / 1000, 0.1)
+  marquee.lastTs = ts
+  if (!marquee.paused) {
+    marquee.offset += MARQUEE_SPEED * dt
+  }
+  const track = trackRef.value
+  if (track) {
+    track.style.transform = `translate3d(${-(marquee.offset % marquee.setW)}px, 0, 0)`
+  }
+  marquee.raf = requestAnimationFrame(marqueeStep)
+}
+
+function pauseMarquee() {
+  if (marquee.running) {
+    marquee.paused = true
+    marquee.lastTs = 0
+  }
+}
+
+function resumeMarquee() {
+  if (marquee.running) {
+    marquee.paused = false
+    marquee.lastTs = 0
+  }
+}
+
+function handleResize() {
+  if (marquee.running) {
+    cancelAnimationFrame(marquee.raf)
+    marquee.running = false
+  }
+  setupMarquee()
+}
+
+onMounted(() => {
+  if (!viewerZone.value) return
+  viewerObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        showViewer.value = true
+        viewerObserver?.disconnect()
+      }
+    })
+  }, { rootMargin: '400px 0px' })
+  viewerObserver.observe(viewerZone.value)
+
+  setupMarquee()
+  friendLinksRef.value?.addEventListener('mouseenter', pauseMarquee)
+  friendLinksRef.value?.addEventListener('mouseleave', resumeMarquee)
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  viewerObserver?.disconnect()
+  viewerObserver = null
+
+  marquee.running = false
+  if (marquee.raf) cancelAnimationFrame(marquee.raf)
+  friendLinksRef.value?.removeEventListener('mouseenter', pauseMarquee)
+  friendLinksRef.value?.removeEventListener('mouseleave', resumeMarquee)
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>
@@ -134,23 +248,52 @@ import VRoidViewer from './VRoidViewer.vue'
   transform: translateY(-5px) scale(1.1);
 }
 
+/* 友情链接：四个并行 + JS 无缝横向滚动（悬停暂停、边缘淡出） */
 .friend-links {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.friend-links-track {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  width: max-content;
+  will-change: transform;
+}
+
+.friend-links-group {
+  display: flex;
+  align-items: center;
 }
 
 .friend-link {
-  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.35rem 0;
+  margin-right: 1.6rem;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .friend-link:hover {
   color: var(--primary-color);
-  transform: translateY(-5px) scale(1.1);
+  transform: translateY(-2px);
+}
+
+/* 系统开启"减少动态效果"时：停止自动滚动，改为手动横向滑动 */
+@media (prefers-reduced-motion: reduce) {
+  .friend-links {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 
 .contact-info {

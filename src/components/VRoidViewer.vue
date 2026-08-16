@@ -156,23 +156,15 @@ function loadModel() {
 
       // 设置微笑表情
       if (vrm.blendShapeProxy) {
-        // 打印所有可用的 blend shape 名称
-        const availableBlends = vrm.blendShapeProxy.getPresetNames()
-        console.log('可用 BlendShapes:', availableBlends)
-
         // 尝试笑脸相关名称
         const smileCandidates = ['joy', 'fun', 'happy', 'smile', 'laugh', 'grin', 'Joy', 'Fun', 'Happy', 'Smile']
         let found = false
         for (const name of smileCandidates) {
           try {
             vrm.blendShapeProxy.setValue(name, 0.25)
-            console.log('✅ 成功设置表情:', name)
             found = true
             break
           } catch (e) { /* 静默 */ }
-        }
-        if (!found) {
-          console.log('❌ 未找到笑脸表情，可用列表:', availableBlends)
         }
       }
 

@@ -61,7 +61,7 @@
           <div class="avatar-wrapper">
             <canvas ref="waveCanvas" class="wave-canvas"></canvas>
             <div class="avatar" ref="avatarElement">
-              <img src="@/assets/images/user.jpg" alt="个人头像" loading="lazy" />
+              <img src="@/assets/images/user.webp" alt="个人头像" fetchpriority="high" />
             </div>
             <button class="audio-control" @click="toggleAudio" :class="{ 'playing': isPlaying }">
               <div class="audio-control-inner">
