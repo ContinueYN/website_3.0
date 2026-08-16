@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
+    <!--
+      内容安全策略（GitHub Pages 无法设置 HTTP 响应头，只能用 meta 标签）：
+      - script-src 限制为自身 + 加载动画内联脚本 + 诗词 SDK 的 CDN
+      - connect-src 限制为自身 + Web3Forms / 今日诗词 API
+      - img-src / connect-src 里的 blob: 是必须的：
+        three.js GLTFLoader 会把 VRM 模型的内嵌贴图转成 blob: URL 再解码，缺了会报"模型加载失败"
+      - style-src 需要 'unsafe-inline'（Vite 构建产物与 Vue 内联样式绑定）
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://sdk.jinrishici.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self'; font-src 'self' data:; connect-src 'self' blob: https://api.web3forms.com https://v2.jinrishici.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+
     <!-- 基础 SEO -->
     <title>余诺 - 全栈开发者 | 个人作品集</title>
     <meta name="description" content="余诺的个人作品集网站 - 全栈开发者，专注于前端开发、后端开发、编程竞赛。展示我的项目作品、技术博客和技能经验。">
@@ -37,11 +47,11 @@
     
     <!-- 注：字体使用系统字体栈（Inter/Georgia），无需加载 Google Fonts -->
     
-  <script type="module" crossorigin src="/assets/index-DlFYeC5J.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/vendor-BfvfUFVv.js">
-  <link rel="modulepreload" crossorigin href="/assets/lucide-CRPWHBpm.js">
+  <script type="module" crossorigin src="/assets/index-CvvKeoTY.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-CofKqqax.js">
+  <link rel="modulepreload" crossorigin href="/assets/lucide-DtK9GmnU.js">
   <link rel="modulepreload" crossorigin href="/assets/aos-B5LL9sPA.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-CwhNOexj.css">
+  <link rel="stylesheet" crossorigin href="/assets/index-Xgw_TL_S.css">
 </head>
 <body>
     <!-- 加载动画覆盖层 -->
