@@ -63,10 +63,11 @@ const trackRef = ref(null)
 const trackCopies = ref(2)
 
 const links = [
-  { name: 'QQ', url: 'https://qqhamburger.top' },
+  { name: 'QQHamburger', url: 'https://qqhamburger.top' },
   { name: 'PresentBox', url: 'https://mypresentboxes.com' },
   { name: 'xrk', url: 'https://xrk-hhh.github.io/starlight/' },
   { name: 'Jizen', url: 'https://jizen-066.github.io/Jizen066/' },
+  { name: 'chijysmile', url: 'https://chijysmile.github.io/duanmw01/' },
   { name: 'qikiil', url: 'https://qikiil.github.io/blog/' }
 ]
 
