@@ -7,12 +7,12 @@
       <div class="header" :ref="(el) => setHeaderRef(el, 3)">About</div>
     </div>
     <div class="container">
-      <div 
-        v-for="(card, index) in cards" 
+      <div
+        v-for="(card, index) in cards"
         :key="index"
         ref="pokerRefs"
         class="poker"
-        :class="`poker${index + 1}`"
+        :class="[`poker${index + 1}`, { pulling: pullingIndex === index }]"
         @click="handleCardClick(index)"
       >
         <div class="card-content">
@@ -28,13 +28,13 @@
         @click="handleTopClick"
       >
         <div class="mount">
-          <div class="strip">
+          <div class="strip strip-left">
             <img src="@/assets/images/承因果.png" alt="承因果" draggable="false" />
           </div>
           <div class="seal" aria-hidden="true">
             <img src="@/assets/images/受命于天.png" alt="受命于天" draggable="false" />
           </div>
-          <div class="strip">
+          <div class="strip strip-right">
             <img src="@/assets/images/顺天命.png" alt="顺天命" draggable="false" />
           </div>
         </div>
@@ -69,6 +69,7 @@ const pokerEles = ref([])
 const imgIndex = ref(0)
 const showModal = ref(false)
 const clickedCardIndex = ref(0)
+const pullingIndex = ref(-1)
 const headerRefs = ref([])
 const faultPlayer = ref(null)
 
@@ -162,6 +163,15 @@ const move = () => {
 
 const handleCardClick = (index) => {
   clickedCardIndex.value = index
+  pullingIndex.value = index
+  // 沿卡片自身朝向（法向）抽出一小段距离，保留原有旋转姿态
+  const el = pokerEles.value[index]
+  if (el) {
+    el.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)'
+    const base = el.style.transform || transformDatas[el.nums] || transformDatas[index]
+    el.style.transform = `${base} translate(0, -3rem)`
+  }
+  // 抽出与 macOS 缩放弹窗同时进行
   showModal.value = true
 }
 
@@ -171,6 +181,14 @@ const handleTopClick = () => {
 
 const closeModal = () => {
   showModal.value = false
+  // 让抽出的卡片滑回原位
+  const idx = pullingIndex.value
+  const el = pokerEles.value[idx]
+  if (el && el.nums !== undefined) {
+    el.style.transition = 'transform 0.3s ease'
+    el.style.transform = transformDatas[el.nums]
+  }
+  pullingIndex.value = -1
 }
 
 const triggerFault = () => {
@@ -284,17 +302,26 @@ onMounted(() => {
   box-shadow: -5px -7px 5px rgba(130, 130, 130, 0.5);
   border-radius: 1.5rem;
   background: var(--about-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transform-origin: bottom left;
   overflow: hidden;
 }
 
 .poker {
   cursor: pointer;
-  transition: filter 0.3s ease;
+  transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .poker:hover {
   filter: brightness(1.2);
+}
+
+/* 抽出中：保留原有层级优先级，加深投影并保留主题光晕（位移由 JS 沿卡片自身朝向设置） */
+.poker.pulling {
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.28),
+    0 0 28px var(--primary-light);
 }
 
 .poker .card-content {
@@ -325,7 +352,6 @@ onMounted(() => {
   transition: 0.3s ease;
   cursor: pointer;
   z-index: 1000;
-  background: var(--poker-top-bg);
 }
 
 /* 顶牌上的书法条幅装饰（装裱卷轴风，跟随主题色） */
@@ -340,6 +366,7 @@ onMounted(() => {
   pointer-events: none;
 }
 
+/* 去掉横幅边框与黄条，书法图片直接浮在牌面上 */
 .strip {
   position: relative;
   display: flex;
@@ -347,32 +374,15 @@ onMounted(() => {
   justify-content: center;
   height: 74%;
   max-width: 42%;
-  padding: 1rem 0.6rem;
-  background: var(--poker-strip-bg);
-  border: 1px solid var(--primary-color);
-  border-radius: 0.45rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  padding: 0;
 }
 
-/* 卷轴轴头（鎏金） */
-.strip::before,
-.strip::after {
-  content: "";
-  position: absolute;
-  left: 0.6rem;
-  right: 0.6rem;
-  height: 0.6rem;
-  border-radius: 0.3rem;
-  background: linear-gradient(180deg, var(--accent-light), var(--accent-color));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+.strip-left {
+  transform: translateY(-1.5rem);
 }
 
-.strip::before {
-  top: 0.3rem;
-}
-
-.strip::after {
-  bottom: 0.3rem;
+.strip-right {
+  transform: translateY(1.5rem);
 }
 
 .strip img {
@@ -457,17 +467,19 @@ onMounted(() => {
     var(--shadow-lg),
     0 0 40px rgba(167, 254, 215, 0.2);
   border: 2px solid var(--primary-color);
-  animation: slideUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: 50% 100%;
+  animation: macOpen 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes slideUp {
+/* macOS 打开应用式缩放：从小尺寸放大到完整大小，带轻微回弹 */
+@keyframes macOpen {
   from {
-    transform: translateY(50px);
     opacity: 0;
+    transform: scale(0.55) translateY(30px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -583,14 +595,14 @@ onMounted(() => {
 
   .strip {
     height: 66%;
-    padding: 0.6rem 0.5rem;
   }
 
-  .strip::before,
-  .strip::after {
-    left: 0.5rem;
-    right: 0.5rem;
-    height: 0.4rem;
+  .strip-left {
+    transform: translateY(-1rem);
+  }
+
+  .strip-right {
+    transform: translateY(1rem);
   }
 
   /* 小屏时缩小印章，保证两条幅并排放得下 */

@@ -1,7 +1,6 @@
 /**
  * clusterIntro —— 3D 碎片球开场转场
  *
- * 完整复刻 codrops dark-cluster 教程（https://github.com/kekkorider/codrops-tutorial-dark-cluster）：
  *  - WebGPU 渲染器 + TSL 节点材质
  *  - IcosahedronGeometry(1,1) 拆解为 80 个外扩三棱柱面（BatchedMesh）
  *  - matcap 贴图着色 + 自旋 + 悬停扩散
