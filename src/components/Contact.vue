@@ -204,7 +204,7 @@ const form = reactive<ContactForm>({
   botcheck: ''
 })
 
-// Web3Forms 访问密钥：https://web3forms.com/ 用你的邮箱确认后免费获取（密钥公开，可放心放在前端）
+// Web3Forms 访问密钥：https://web3forms.com/ 
 // 也可以放入环境变量 VITE_WEB3FORMS_ACCESS_KEY（.env.development / .env.production）
 const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '096a318a-081f-403d-8087-bf1501030837'
 

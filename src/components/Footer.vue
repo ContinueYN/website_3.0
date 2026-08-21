@@ -66,7 +66,8 @@ const links = [
   { name: 'QQ', url: 'https://qqhamburger.top' },
   { name: 'PresentBox', url: 'https://mypresentboxes.com' },
   { name: 'xrk', url: 'https://xrk-hhh.github.io/starlight/' },
-  { name: 'Jizen', url: 'https://jizen-066.github.io/Jizen066/' }
+  { name: 'Jizen', url: 'https://jizen-066.github.io/Jizen066/' },
+  { name: 'qikiil', url: 'https://qikiil.github.io/blog/' }
 ]
 
 const REDUCED_MOTION = typeof window !== 'undefined' &&
