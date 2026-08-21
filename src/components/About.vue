@@ -325,16 +325,7 @@ onMounted(() => {
   transition: 0.3s ease;
   cursor: pointer;
   z-index: 1000;
-}
-
-.poker_top:hover {
-  box-shadow:
-    -5px -7px 5px rgba(130, 130, 130, 0.5),
-    0 0 22px var(--primary-light);
-}
-
-.poker_top:hover .strip img {
-  transform: scale(1.02);
+  background: var(--poker-top-bg);
 }
 
 /* 顶牌上的书法条幅装饰（装裱卷轴风，跟随主题色） */
@@ -357,7 +348,7 @@ onMounted(() => {
   height: 74%;
   max-width: 42%;
   padding: 1rem 0.6rem;
-  background: var(--bg-card);
+  background: var(--poker-strip-bg);
   border: 1px solid var(--primary-color);
   border-radius: 0.45rem;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
@@ -602,9 +593,10 @@ onMounted(() => {
     height: 0.4rem;
   }
 
-  /* 小屏空间有限，隐藏印章保证两条幅并排放得下 */
+  /* 小屏时缩小印章，保证两条幅并排放得下 */
   .seal {
-    display: none;
+    width: 2.2rem;
+    height: 2.2rem;
   }
   
   .modal-content {

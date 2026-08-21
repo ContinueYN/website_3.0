@@ -35,6 +35,10 @@
 
   --about-card: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(238, 247, 245, 0.94) 45%, rgba(253, 241, 220, 0.94) 100%);
 
+  /* 顶牌不透明底色（无玻璃透明效果） */
+  --poker-top-bg: linear-gradient(160deg, #ffffff 0%, #eef7f5 45%, #fdf1dc 100%);
+  --poker-strip-bg: #ffffff;
+
   /* 玻璃拟态 */
   --glass-bg: rgba(255, 255, 255, 0.5);
   --glass-border: rgba(255, 255, 255, 0.6);
@@ -94,6 +98,10 @@
   --bg-card: rgba(18, 23, 52, 0.66);
 
   --about-card: linear-gradient(160deg, rgba(18, 23, 52, 0.9) 0%, rgba(26, 32, 68, 0.94) 50%, rgba(46, 39, 96, 0.92) 100%);
+
+  /* 顶牌不透明底色（无玻璃透明效果） */
+  --poker-top-bg: linear-gradient(160deg, #121734 0%, #1a2044 50%, #2e2760 100%);
+  --poker-strip-bg: #1a1f45;
 
   --glass-bg: rgba(17, 22, 50, 0.5);
   --glass-border: rgba(255, 255, 255, 0.12);
