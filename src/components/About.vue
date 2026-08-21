@@ -22,11 +22,23 @@
           </div>
         </div>
       </div>
-      <div 
+      <div
         class="poker_top"
         :class="`poker5`"
         @click="handleTopClick"
-      ></div>
+      >
+        <div class="mount">
+          <div class="strip">
+            <img src="@/assets/images/承因果.png" alt="承因果" draggable="false" />
+          </div>
+          <div class="seal" aria-hidden="true">
+            <img src="@/assets/images/受命于天.png" alt="受命于天" draggable="false" />
+          </div>
+          <div class="strip">
+            <img src="@/assets/images/顺天命.png" alt="顺天命" draggable="false" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="modal" v-if="showModal" @click="closeModal">
@@ -310,14 +322,93 @@ onMounted(() => {
 }
 
 .poker_top {
-  background-color: #fff;
   transition: 0.3s ease;
   cursor: pointer;
   z-index: 1000;
 }
 
 .poker_top:hover {
-  background-color: #aaa;
+  box-shadow:
+    -5px -7px 5px rgba(130, 130, 130, 0.5),
+    0 0 22px var(--primary-light);
+}
+
+.poker_top:hover .strip img {
+  transform: scale(1.02);
+}
+
+/* 顶牌上的书法条幅装饰（装裱卷轴风，跟随主题色） */
+.mount {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+
+.strip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 74%;
+  max-width: 42%;
+  padding: 1rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--primary-color);
+  border-radius: 0.45rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* 卷轴轴头（鎏金） */
+.strip::before,
+.strip::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  height: 0.6rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(180deg, var(--accent-light), var(--accent-color));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.strip::before {
+  top: 0.3rem;
+}
+
+.strip::after {
+  bottom: 0.3rem;
+}
+
+.strip img {
+  height: 100%;
+  max-width: 100%;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+/* 朱红印章（受命于天图片） */
+.seal {
+  flex-shrink: 0;
+  width: 3.6rem;
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.28));
+}
+
+.seal img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
 }
 
 .poker1 {
@@ -492,6 +583,28 @@ onMounted(() => {
   
   .poker .vertical-text span {
     font-size: 15vw;
+  }
+
+  .mount {
+    gap: 0.8rem;
+    padding: 0 0.6rem;
+  }
+
+  .strip {
+    height: 66%;
+    padding: 0.6rem 0.5rem;
+  }
+
+  .strip::before,
+  .strip::after {
+    left: 0.5rem;
+    right: 0.5rem;
+    height: 0.4rem;
+  }
+
+  /* 小屏空间有限，隐藏印章保证两条幅并排放得下 */
+  .seal {
+    display: none;
   }
   
   .modal-content {
