@@ -12,7 +12,9 @@
         :key="index"
         ref="pokerRefs"
         class="poker"
-        :class="[`poker${index + 1}`, { pulling: pullingIndex === index }]"
+        :class="`poker${index + 1}`"
+        @mouseenter="handleCardHover(index)"
+        @mouseleave="handleCardLeave(index)"
         @click="handleCardClick(index)"
       >
         <div class="card-content">
@@ -69,7 +71,6 @@ const pokerEles = ref([])
 const imgIndex = ref(0)
 const showModal = ref(false)
 const clickedCardIndex = ref(0)
-const pullingIndex = ref(-1)
 const headerRefs = ref([])
 const faultPlayer = ref(null)
 
@@ -161,17 +162,28 @@ const move = () => {
   })
 }
 
-const handleCardClick = (index) => {
-  clickedCardIndex.value = index
-  pullingIndex.value = index
-  // 沿卡片自身朝向（法向）抽出一小段距离，保留原有旋转姿态
+const handleCardHover = (index) => {
+  // 鼠标移入：沿卡片自身朝向抽出一小段距离
   const el = pokerEles.value[index]
   if (el) {
     el.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)'
     const base = el.style.transform || transformDatas[el.nums] || transformDatas[index]
     el.style.transform = `${base} translate(0, -3rem)`
   }
-  // 抽出与 macOS 缩放弹窗同时进行
+}
+
+const handleCardLeave = (index) => {
+  // 鼠标移出：卡片滑回原位
+  const el = pokerEles.value[index]
+  if (el && el.nums !== undefined) {
+    el.style.transition = 'transform 0.3s ease'
+    el.style.transform = transformDatas[el.nums]
+  }
+}
+
+const handleCardClick = (index) => {
+  // 点击：以 macOS 缩放动画弹出详情弹窗
+  clickedCardIndex.value = index
   showModal.value = true
 }
 
@@ -181,14 +193,6 @@ const handleTopClick = () => {
 
 const closeModal = () => {
   showModal.value = false
-  // 让抽出的卡片滑回原位
-  const idx = pullingIndex.value
-  const el = pokerEles.value[idx]
-  if (el && el.nums !== undefined) {
-    el.style.transition = 'transform 0.3s ease'
-    el.style.transform = transformDatas[el.nums]
-  }
-  pullingIndex.value = -1
 }
 
 const triggerFault = () => {
@@ -315,10 +319,7 @@ onMounted(() => {
 
 .poker:hover {
   filter: brightness(1.2);
-}
-
-/* 抽出中：保留原有层级优先级，加深投影并保留主题光晕（位移由 JS 沿卡片自身朝向设置） */
-.poker.pulling {
+  /* 悬浮抽出时的主题光晕（位移由 JS 沿卡片自身朝向设置） */
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.28),
     0 0 28px var(--primary-light);
