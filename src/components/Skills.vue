@@ -48,72 +48,90 @@
       </div>
     </div>
 
-    <!-- 技能详情弹窗：紧凑卡片，从中心向四周展开（非全屏，不锁滚动） -->
+    <!-- 技能详情弹窗：卷轴展开（非全屏，不锁滚动） -->
     <Teleport to="body">
-      <Transition name="pop" :duration="{ enter: 280, leave: 200 }">
+      <Transition name="pop" :duration="{ enter: 360, leave: 240 }">
         <div v-if="modalVisible" class="skill-pop-root">
-          <!-- 透明点击层：点击空白处关闭，不遮挡页面、不产生滚动条 -->
+          <!-- 毛玻璃点击层：点击空白处关闭 -->
           <div class="skill-pop-mask" @click="closeModal" aria-hidden="true"></div>
 
-          <div
-            class="skill-pop"
-            role="dialog"
-            aria-modal="true"
-            aria-label="技能详情"
-          >
-            <button
-              type="button"
-              class="skill-pop-close"
-              @click="closeModal"
-              aria-label="关闭"
+          <!-- 樱花飘落（围绕弹窗周围，始终在卡片背后） -->
+          <div class="sakura-layer" aria-hidden="true">
+            <span
+              v-for="(p, i) in sakuraPetals"
+              :key="i"
+              class="petal"
+              :style="{
+                left: p.left + '%',
+                width: p.size + 'px',
+                height: (p.size * 1.15).toFixed(1) + 'px',
+                '--petal-drift': p.drift + 'px',
+                '--petal-spin': p.spin + 'deg',
+                '--petal-opacity': p.opacity,
+                animationDelay: p.delay + 's',
+                animationDuration: p.duration + 's',
+              }"
+            ></span>
+          </div>
+
+          <!-- 卷轴主体：上下卷轴杆 + 展开的画卷 -->
+          <div class="skill-pop-scroll">
+            <div class="scroll-roller scroll-roller-top" aria-hidden="true"></div>
+            <div
+              class="skill-pop"
+              role="dialog"
+              aria-modal="true"
+              aria-label="技能详情"
             >
-              ×
-            </button>
-
-            <header class="modal-header">
-              <h3 class="modal-title">SKILL · 技能栈</h3>
-              <p class="modal-subtitle">AI 时代全栈开发与智能体构建能力</p>
-            </header>
-
-            <div class="modal-tabs">
               <button
-                v-for="cat in skillCategories"
-                :key="cat.id"
                 type="button"
-                class="modal-tab"
-                :class="{ active: activeTab === cat.id }"
-                @click="activeTab = cat.id"
+                class="skill-pop-close"
+                @click="closeModal"
+                aria-label="关闭"
               >
-                {{ cat.name }}
+                ×
               </button>
-            </div>
 
-            <div class="modal-body">
-              <div
-                v-for="cat in skillCategories"
-                :key="cat.id"
-                v-show="activeTab === cat.id"
-                class="modal-category"
-              >
-                <p class="modal-category-desc">{{ cat.description }}</p>
-                <ol class="skill-list">
-                  <li
-                    v-for="(item, i) in cat.skills"
-                    :key="i"
-                    class="skill-item"
-                  >
-                    <span class="skill-item-index">{{ pad(i + 1) }}</span>
-                    <p class="skill-item-text">{{ item }}</p>
-                  </li>
-                </ol>
+              <header class="modal-header">
+                <h3 class="modal-title">SKILL · 技能栈</h3>
+                <p class="modal-subtitle">AI 时代全栈开发与智能体构建能力</p>
+              </header>
+
+              <div class="modal-tabs">
+                <button
+                  v-for="cat in skillCategories"
+                  :key="cat.id"
+                  type="button"
+                  class="modal-tab"
+                  :class="{ active: activeTab === cat.id }"
+                  @click="activeTab = cat.id"
+                >
+                  {{ cat.name }}
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <div
+                  v-for="cat in skillCategories"
+                  :key="cat.id"
+                  v-show="activeTab === cat.id"
+                  class="modal-category"
+                >
+                  <p class="modal-category-desc">{{ cat.description }}</p>
+                  <ol class="skill-list">
+                    <li
+                      v-for="(item, i) in cat.skills"
+                      :key="i"
+                      class="skill-item"
+                    >
+                      <span class="skill-item-index">{{ pad(i + 1) }}</span>
+                      <p class="skill-item-text">{{ item }}</p>
+                    </li>
+                  </ol>
+                </div>
               </div>
             </div>
-
-            <footer class="modal-footer">
-              <button type="button" class="modal-close-btn" @click="closeModal">
-                关闭
-              </button>
-            </footer>
+            <div class="scroll-roller scroll-roller-bottom" aria-hidden="true"></div>
           </div>
         </div>
       </Transition>
@@ -123,12 +141,20 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useScrollLock } from '../composables/useScrollLock'
+
+const { lock: lockScroll, unlock: unlockScroll } = useScrollLock()
 
 const stageRef = ref(null)
 const isOpen = ref(false)
 const isVisible = ref(false)
 const modalVisible = ref(false)
 const activeTab = ref('dev')
+
+// 樱花花瓣配置：每次打开弹窗时重新生成（见 openModal）
+const sakuraPetals = ref([])
+
+const pad = (n) => String(n).padStart(2, '0')
 
 const skillCategories = ref([
   {
@@ -158,8 +184,6 @@ const skillCategories = ref([
   }
 ])
 
-const pad = (n) => String(n).padStart(2, '0')
-
 const toggleCurtain = () => {
   isOpen.value = !isOpen.value
 }
@@ -167,10 +191,22 @@ const toggleCurtain = () => {
 const openModal = (tabIndex = 0) => {
   activeTab.value = skillCategories.value[tabIndex].id
   modalVisible.value = true
+  lockScroll()
+  // 每次打开重新生成樱花花瓣配置，让飘落轨迹每次都不同
+  sakuraPetals.value = Array.from({ length: 14 }, () => ({
+    left: Math.random() * 100,
+    delay: Math.random() * 4,
+    duration: 4 + Math.random() * 3,
+    size: 8 + Math.random() * 8,
+    drift: -160 + Math.random() * 320,
+    spin: 360 + Math.random() * 720,
+    opacity: +(0.4 + Math.random() * 0.4).toFixed(2)
+  }))
 }
 
 const closeModal = () => {
   modalVisible.value = false
+  unlockScroll()
 }
 
 const onKeydown = (e) => {
@@ -384,6 +420,8 @@ onBeforeUnmount(() => {
 
 /* ============ 技能详情弹窗（紧凑卡片，非全屏） ============ */
 .skill-pop-root {
+  --rod-a: #8a6a4f;
+  --rod-b: #c9a06c;
   position: fixed;
   inset: 0;
   z-index: 4000;
@@ -394,6 +432,11 @@ onBeforeUnmount(() => {
   pointer-events: none; /* 根容器不拦截事件 */
 }
 
+.dark .skill-pop-root {
+  --rod-a: #6b4f96;
+  --rod-b: #9a7bd8;
+}
+
 .skill-pop-mask {
   position: absolute;
   inset: 0;
@@ -402,6 +445,48 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(8px) saturate(120%);
   -webkit-backdrop-filter: blur(8px) saturate(120%);
   pointer-events: auto; /* 点击空白处关闭 */
+}
+
+/* ============ 樱花飘落层 ============ */
+.sakura-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.petal {
+  position: absolute;
+  top: -30px;
+  background: linear-gradient(135deg, #ffc1cf, #ff93ab);
+  border-radius: 50% 0 50% 50%;
+  box-shadow: 0 0 6px rgba(255, 155, 180, 0.5);
+  opacity: var(--petal-opacity, 0.7);
+  animation: petal-fall linear infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -2vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--petal-opacity, 0.7);
+  }
+  85% {
+    opacity: var(--petal-opacity, 0.7);
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 80px), 112vh, 0) rotate(var(--petal-spin, 540deg));
+    opacity: 0;
+  }
+}
+
+/* ============ 卷轴主体 ============ */
+.skill-pop-scroll {
+  position: relative;
+  pointer-events: none;
 }
 
 .skill-pop {
@@ -418,23 +503,80 @@ onBeforeUnmount(() => {
   padding: 2.2rem;
   box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.18);
   transform-origin: center;
+  /* 隐式滚动条：保留滚动能力，隐藏滚动条（Firefox / 旧 Edge / WebKit） */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* 进入 / 关闭动画（卡片自身从中心扩散，不遮全屏、不产生滚动条） */
+.skill-pop::-webkit-scrollbar {
+  display: none;
+}
+
+/* 卷轴杆：上下两根木杆，略宽于画卷 */
+.scroll-roller {
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  height: 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 3;
+  background: linear-gradient(90deg, var(--rod-a), var(--rod-b) 30%, var(--rod-a) 55%, var(--rod-b) 80%, var(--rod-a));
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-roller::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 2px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.scroll-roller-top {
+  top: -6px;
+}
+
+.scroll-roller-bottom {
+  top: calc(100% + 6px);
+}
+
+/* ============ 进入 / 关闭动画：卷轴展开 ============ */
 .pop-enter-active {
-  animation: popMaskIn 0.18s ease;
+  animation: popMaskIn 0.16s ease;
 }
 
+/* 画卷：从中间横线向上下两端展开（clip-path 横向收拢线） */
 .pop-enter-active .skill-pop {
-  animation: popBurst 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: scrollUnroll 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 卷轴杆：从中央汇合处滑向上下两端 */
+.pop-enter-active .scroll-roller-top {
+  animation: rollerTopOut 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.pop-enter-active .scroll-roller-bottom {
+  animation: rollerBottomOut 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .pop-leave-active {
-  animation: popMaskOut 0.22s ease forwards;
+  animation: popMaskOut 0.24s ease forwards;
 }
 
 .pop-leave-active .skill-pop {
-  animation: popShrink 0.22s ease forwards;
+  animation: scrollRoll 0.24s ease forwards;
+}
+
+.pop-leave-active .scroll-roller-top {
+  animation: rollerTopIn 0.24s ease forwards;
+}
+
+.pop-leave-active .scroll-roller-bottom {
+  animation: rollerBottomIn 0.24s ease forwards;
 }
 
 .skill-pop-close {
@@ -582,62 +724,87 @@ onBeforeUnmount(() => {
   text-align: justify;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: center;
-  padding-top: 1.2rem;
-  border-top: 1px solid var(--border-color);
-}
-
-.modal-close-btn {
-  padding: 0.7rem 2.2rem;
-  border-radius: 999px;
-  border: none;
-  background: var(--gradient-primary);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-glow);
-}
-
-.modal-close-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
 /* ============ 关键帧 ============ */
-@keyframes popBurst {
+/* 卷轴展开：从中央横线向上下两端铺开画卷 */
+@keyframes scrollUnroll {
   0% {
     opacity: 0;
-    transform: scale(0.6);
-    border-radius: 50%;
-    clip-path: circle(0% at 50% 50%);
+    transform: scaleY(0.02) scaleX(0.96);
+    clip-path: inset(50% 0 50% 0);
   }
-  60% {
+  30% {
     opacity: 1;
   }
   100% {
     opacity: 1;
-    transform: scale(1);
-    border-radius: 1.25rem;
-    clip-path: circle(150% at 50% 50%);
+    transform: scaleY(1) scaleX(1);
+    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes popShrink {
+/* 卷轴收起：画卷向中央横线收拢 */
+@keyframes scrollRoll {
   0% {
     opacity: 1;
-    transform: scale(1);
-    border-radius: 1.25rem;
-    clip-path: circle(150% at 50% 50%);
+    transform: scaleY(1) scaleX(1);
+    clip-path: inset(0 0 0 0);
   }
   100% {
     opacity: 0;
-    transform: scale(0.5);
-    border-radius: 50%;
-    clip-path: circle(0% at 50% 50%);
+    transform: scaleY(0.02) scaleX(0.96);
+    clip-path: inset(50% 0 50% 0);
+  }
+}
+
+/* 卷轴杆：上下两根杆从中央汇合处滑向画卷两端 */
+@keyframes rollerTopOut {
+  0% {
+    top: 50%;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    top: -6px;
+    opacity: 1;
+  }
+}
+
+@keyframes rollerBottomOut {
+  0% {
+    top: 50%;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% + 6px);
+    opacity: 1;
+  }
+}
+
+/* 卷轴杆收起：两根杆退回中央 */
+@keyframes rollerTopIn {
+  0% {
+    top: -6px;
+    opacity: 1;
+  }
+  100% {
+    top: 50%;
+    opacity: 0;
+  }
+}
+
+@keyframes rollerBottomIn {
+  0% {
+    top: calc(100% + 6px);
+    opacity: 1;
+  }
+  100% {
+    top: 50%;
+    opacity: 0;
   }
 }
 
@@ -704,9 +871,20 @@ onBeforeUnmount(() => {
   .curtain-panel,
   .curtain-title,
   .skill-pop-root,
-  .skill-pop {
+  .skill-pop,
+  .scroll-roller,
+  .petal {
     animation: none !important;
     transition: none !important;
+  }
+
+  /* 关闭动画时让卷轴杆复位到正常位置，避免停在中间 */
+  .scroll-roller-top {
+    top: -6px !important;
+  }
+
+  .scroll-roller-bottom {
+    top: calc(100% + 6px) !important;
   }
 }
 </style>

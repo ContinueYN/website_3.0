@@ -275,53 +275,16 @@ body {
 }
 
 /* ============================================================
-   滚动条
+   滚动条：全局隐藏（保留滚动能力）
+   隐藏后滚动条不占布局宽度，打开模态框锁滚动时页面不会左右跳动
    ============================================================ */
-::-webkit-scrollbar {
-  width: 10px;
+* {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* 旧 Edge / IE */
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-/* 深色模式滚动条覆盖 */
-html.dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(167, 139, 250, 0.75) 0%, rgba(139, 92, 246, 0.65) 100%);
-  border: 1px solid rgba(196, 181, 253, 0.25);
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(196, 181, 253, 0.9) 0%, rgba(167, 139, 250, 0.75) 100%);
-  border-color: rgba(196, 181, 253, 0.45);
-}
-
-html.dark ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-}
-
-/* 针对 Firefox */
-@supports (scrollbar-width: thin) {
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-  }
-}
-
-/* Firefox 深色模式覆盖 */
-@supports (scrollbar-width: thin) {
-  html.dark * {
-    scrollbar-color: rgba(167, 139, 250, 0.6) rgba(255, 255, 255, 0.04);
-  }
+*::-webkit-scrollbar {
+  display: none;                  /* Chromium / Safari / WebKit */
+  width: 0;
+  height: 0;
 }

@@ -65,6 +65,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { X } from 'lucide-vue-next'
+import { useScrollLock } from '../composables/useScrollLock'
+
+const { lock: lockScroll, unlock: unlockScroll } = useScrollLock()
 
 const pokerRefs = ref([])
 const pokerEles = ref([])
@@ -185,6 +188,7 @@ const handleCardClick = (index) => {
   // 点击：以 macOS 缩放动画弹出详情弹窗
   clickedCardIndex.value = index
   showModal.value = true
+  lockScroll()
 }
 
 const handleTopClick = () => {
@@ -193,6 +197,7 @@ const handleTopClick = () => {
 
 const closeModal = () => {
   showModal.value = false
+  unlockScroll()
 }
 
 const triggerFault = () => {
