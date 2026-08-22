@@ -47,11 +47,11 @@
     
     <!-- 注：字体使用系统字体栈（Inter/Georgia），无需加载 Google Fonts -->
     
-  <script type="module" crossorigin src="/assets/index-TdxkQGD-.js"></script>
+  <script type="module" crossorigin src="/assets/index-B6TGxJgj.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/vendor-CofKqqax.js">
   <link rel="modulepreload" crossorigin href="/assets/lucide-DtK9GmnU.js">
   <link rel="modulepreload" crossorigin href="/assets/aos-B5LL9sPA.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-DQDyzd2T.css">
+  <link rel="stylesheet" crossorigin href="/assets/index-CnDhik1x.css">
 </head>
 <body>
     <!-- 加载动画覆盖层 -->
@@ -121,19 +121,26 @@
           setTimeout(function() { lb.style.backgroundColor = '#000'; }, 5000);
         }, 10000);
 
-        // 结束加载动画的函数
-        function finishLoading() {
-          if (window.__loadingComplete) return; // 防止重复调用
-          window.__loadingComplete = true;
-          clearInterval(bcci);
-          // ① 先通知 Vue 开始挂载（遮罩仍覆盖在上面，重计算被遮罩挡住）
-          window.dispatchEvent(new Event('loading-complete'));
-          // ② 遮罩开始淡出
+        // 淡出加载遮罩（幂等）。等 Vue 侧发出 'intro-ready' 才执行：
+        // 即 3D 碎片球首帧已渲染（或降级直接显示内容），避免中间出现黑屏空档。
+        function revealSite() {
+          if (window.__revealDone) return;
+          window.__revealDone = true;
           lb.style.opacity = 0;
           lb.style.pointerEvents = 'none';
           setTimeout(function() {
             lb.style.display = 'none';
           }, 1000);
+        }
+
+        // 结束加载动画：只通知 Vue 开始挂载转场/内容，不再直接淡出遮罩
+        function finishLoading() {
+          if (window.__loadingComplete) return; // 防止重复调用
+          window.__loadingComplete = true;
+          clearInterval(bcci);
+          // ① 先通知 Vue 开始挂载（遮罩仍覆盖在上面，转场初始化被遮罩挡住）
+          window.dispatchEvent(new Event('loading-complete'));
+          // ② 遮罩淡出改由 'intro-ready' 触发（见下方监听）
         }
 
         // 页面加载完成后结束（但保证最短展示时间至少覆盖第一条消息 ~2s）
@@ -148,11 +155,15 @@
           setTimeout(finishLoading, remaining);
         });
 
-        // 兜底：最长8秒后强制结束
+        // Vue 侧就绪信号：intro 首帧渲染完成 / 内容已直接显示 → 淡出遮罩
+        window.addEventListener('intro-ready', revealSite);
+
+        // 兜底：最长8秒后强制结束（无论 intro 是否就绪都淡出，避免站点被永久遮住）
         setTimeout(function() {
           if (!window.__loadingComplete) {
             finishLoading();
           }
+          revealSite();
         }, 8000);
       })();
     </script>
