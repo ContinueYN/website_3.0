@@ -10,6 +10,7 @@
     <!-- 3D 碎片球开场转场（加载动画结束后、首页内容前） -->
     <ClusterIntro
       v-if="showIntro"
+      @ready="onIntroReady"
       @reveal="onIntroReveal"
       @fading="onIntroFading"
       @done="onIntroDone"
@@ -113,14 +114,21 @@ function initAOS() {
   })
 }
 
+// 通知 index.html 淡出加载遮罩（intro 首帧已渲染 / 内容已直接显示），避免黑屏空档
+function notifyIntroReady() {
+  window.dispatchEvent(new Event('intro-ready'))
+}
+
 // intro 事件：马赛克盖满屏幕 → 挂载内容；开始淡出 → 播 AOS；结束 → 卸载
+const onIntroReady = () => notifyIntroReady()
 const onIntroReveal = () => revealContent()
 const onIntroFading = () => initAOS()
 const onIntroDone = () => {
   showIntro.value = false
-  // 兜底：intro 中途失败/降级时也保证内容出现并播动画
+  // 兜底：intro 中途失败/降级时也保证内容出现并播动画、遮罩淡出
   if (!showContent.value) revealContent()
   initAOS()
+  notifyIntroReady()
 }
 
 onMounted(() => {
@@ -128,11 +136,16 @@ onMounted(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const win: any = window
   const onLoadComplete = () => {
-    if (isBlogPath.value) return
+    if (isBlogPath.value) {
+      // 博客路径不经 intro：直接让加载遮罩淡出
+      notifyIntroReady()
+      return
+    }
     if (shouldSkipCluster()) {
       // 不支持 WebGPU / 移动端：跳过 3D 转场，直接显示内容（保持原行为）
       revealContent()
       initAOS()
+      notifyIntroReady()
     } else {
       showIntro.value = true
       // 预热 three/webgpu 大 chunk，让转场尽快就绪

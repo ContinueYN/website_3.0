@@ -13,6 +13,7 @@ import type { ClusterIntroHandle } from '../utils/clusterIntro'
  * ClusterIntro —— 3D 碎片球开场转场覆盖层
  *
  * 事件时序：
+ *  - ready：首帧渲染完成（小球可见），宿主此时让加载遮罩淡出
  *  - reveal：马赛克盖满屏幕（宿主挂载内容 + 内容淡入）
  *  - fading：马赛克开始整层淡出（宿主此时初始化 AOS，入场动画随遮罩揭起播放）
  *  - done：淡出完成（宿主卸载本组件）
@@ -20,6 +21,7 @@ import type { ClusterIntroHandle } from '../utils/clusterIntro'
  * 本组件动态 import clusterIntro.ts（含 three/webgpu，体积大），只在需要时加载。
  */
 const emit = defineEmits<{
+  (e: 'ready'): void
   (e: 'reveal'): void
   (e: 'fading'): void
   (e: 'done'): void
@@ -46,6 +48,10 @@ onMounted(async () => {
     }
 
     handle = await mod.createClusterIntro(mount.value, {
+      onReady: () => {
+        if (disposed) return
+        emit('ready')
+      },
       onReveal: () => {
         if (disposed) return
         emit('reveal')

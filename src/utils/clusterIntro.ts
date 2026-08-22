@@ -43,6 +43,8 @@ import { gsap } from 'gsap'
 export interface ClusterIntroOptions {
   /** 马赛克盖满屏幕时回调（宿主在此挂载内容） */
   onReveal: () => void
+  /** 首帧渲染完成回调（宿主让加载遮罩淡出，露出已开始旋转的小球） */
+  onReady?: () => void
 }
 
 export interface ClusterIntroHandle {
@@ -69,17 +71,12 @@ type IntroState = 'spin' | 'explode' | 'flatten' | 'done'
  * 超时直接 reject，由组件 catch 后降级到「跳过转场直接进网站」，避免站点被黑屏卡死。
  */
 function withTimeout<T>(label: string, promise: Promise<T>, ms: number): Promise<T> {
-  let timer = 0
-  try {
-    return Promise.race([
-      promise,
-      new Promise<T>((_, reject) => {
-        timer = window.setTimeout(() => reject(new Error(`[ClusterIntro] ${label} 超时（${ms}ms）`)), ms)
-      }),
-    ])
-  } finally {
-    window.clearTimeout(timer)
-  }
+  // 注意：定时器必须在 race 结束后再清除（.finally 回调），
+  // 不能在函数末尾的 finally 块里 clearTimeout——那样会同步清掉刚创建的定时器，超时永不触发。
+  return new Promise<T>((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error(`[ClusterIntro] ${label} 超时（${ms}ms）`)), ms)
+    promise.then(resolve, reject).finally(() => window.clearTimeout(timer))
+  })
 }
 
 export async function createClusterIntro(
@@ -478,9 +475,15 @@ export async function createClusterIntro(
 
   // ---------- 动画循环 ----------
   let lastT = performance.now()
+  let readyNotified = false
   renderer.setAnimationLoop(() => {
     if (disposed.current) return
     if (document.hidden) return
+    if (!readyNotified) {
+      // 首帧已渲染（小球可见），通知宿主淡出加载遮罩，避免黑屏空档
+      readyNotified = true
+      opts.onReady?.()
+    }
     const now = performance.now()
     const dt = Math.min((now - lastT) / 1000, 0.05)
     lastT = now
