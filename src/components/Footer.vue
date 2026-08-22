@@ -185,9 +185,13 @@ onBeforeUnmount(() => {
 .footer-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 1.5rem;
   margin-bottom: 2rem;
   align-items: start;
+  /* 收窄并居中：让左右两个区域互相贴近 */
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .footer-section {
@@ -356,6 +360,7 @@ onBeforeUnmount(() => {
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+    max-width: none;
   }
   
   .footer-section {
