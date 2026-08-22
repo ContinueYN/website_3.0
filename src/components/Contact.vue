@@ -19,22 +19,19 @@
     </div>
 
     <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="title-icon">✦</span>
-          ~~Contact~~
-          <span class="title-icon">✦</span>
-        </h2>
-        <p class="section-subtitle">有项目想讨论？欢迎联系！</p>
-        <div class="title-decoration">
-          <span class="deco-line"></span>
-          <span class="deco-star">✦</span>
-          <span class="deco-line"></span>
-        </div>
-      </div>
-
       <div class="contact-content">
         <div class="contact-info">
+          <h2 class="section-title">
+            <span class="title-icon">✦</span>
+            ~~Contact~~
+            <span class="title-icon">✦</span>
+          </h2>
+          <p class="section-subtitle">想跟我聊聊天？欢迎联系！</p>
+          <div class="title-decoration">
+            <span class="deco-line"></span>
+            <span class="deco-star">✦</span>
+            <span class="deco-line"></span>
+          </div>
           <div class="info-card">
             <div class="card-header">
               <h3>通过右边可以发送到我QQ邮箱</h3>
