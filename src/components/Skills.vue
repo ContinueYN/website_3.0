@@ -50,7 +50,7 @@
 
     <!-- 技能详情弹窗：紧凑卡片，从中心向四周展开（非全屏，不锁滚动） -->
     <Teleport to="body">
-      <Transition name="pop" :duration="{ enter: 360, leave: 220 }">
+      <Transition name="pop" :duration="{ enter: 280, leave: 200 }">
         <div v-if="modalVisible" class="skill-pop-root">
           <!-- 透明点击层：点击空白处关闭，不遮挡页面、不产生滚动条 -->
           <div class="skill-pop-mask" @click="closeModal" aria-hidden="true"></div>
@@ -397,6 +397,10 @@ onBeforeUnmount(() => {
 .skill-pop-mask {
   position: absolute;
   inset: 0;
+  /* 毛玻璃：主题色半透明底 + 背景模糊，展开时给周围「结霜」 */
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
   pointer-events: auto; /* 点击空白处关闭 */
 }
 
@@ -418,11 +422,11 @@ onBeforeUnmount(() => {
 
 /* 进入 / 关闭动画（卡片自身从中心扩散，不遮全屏、不产生滚动条） */
 .pop-enter-active {
-  animation: popMaskIn 0.2s ease;
+  animation: popMaskIn 0.18s ease;
 }
 
 .pop-enter-active .skill-pop {
-  animation: popBurst 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: popBurst 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .pop-leave-active {
