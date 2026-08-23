@@ -98,10 +98,10 @@
             <label for="name">
               姓名 *
             </label>
-            <div class="input-wrapper">
-              <input 
-                type="text" 
-                id="name" 
+            <div class="input-wrapper input-grow">
+              <input
+                type="text"
+                id="name"
                 v-model="form.name"
                 :disabled="loading"
                 required 
@@ -116,10 +116,10 @@
             <label for="email">
               邮箱 *
             </label>
-            <div class="input-wrapper">
-              <input 
-                type="email" 
-                id="email" 
+            <div class="input-wrapper input-grow">
+              <input
+                type="email"
+                id="email"
                 v-model="form.email"
                 :disabled="loading"
                 required 
@@ -134,10 +134,10 @@
             <label for="subject">
               主题 *
             </label>
-            <div class="input-wrapper">
-              <input 
-                type="text" 
-                id="subject" 
+            <div class="input-wrapper input-grow">
+              <input
+                type="text"
+                id="subject"
                 v-model="form.subject"
                 :disabled="loading"
                 required 
@@ -759,6 +759,46 @@ const handleSubmit = async () => {
 .form-group input:focus ~ .input-highlight,
 .form-group textarea:focus ~ .input-highlight {
   opacity: 1;
+}
+
+/* 可伸展输入框：姓名/邮箱/主题初始收窄，悬浮、聚焦或已填写时平滑拉长。
+   宽度加在 wrapper 上（而非 input），让渐变下划线与高光层跟随输入框一起伸缩。
+   仅在支持悬浮的设备启用，触屏保持全宽以免损失可用宽度。 */
+@media (hover: hover) {
+  .input-grow {
+    width: 85%;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .input-grow:hover,
+  .input-grow:focus-within,
+  .input-grow:has(input:not(:placeholder-shown)) {
+    width: 100%;
+  }
+
+  /* 悬浮时输入框先染上一层淡樱色，暗示可以展开（聚焦时以聚焦态为准） */
+  .input-grow:hover:not(:focus-within) input {
+    border-color: rgba(255, 183, 197, 0.35);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  /* 下划线与输入框同曲线同步生长：悬浮时半透明预告，聚焦时完全点亮 */
+  .input-grow .input-border {
+    opacity: 0;
+    transition:
+      width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.35s ease;
+  }
+
+  .input-grow:hover .input-border {
+    width: 100%;
+    opacity: 0.45;
+  }
+
+  .input-grow:focus-within .input-border {
+    width: 100%;
+    opacity: 1;
+  }
 }
 
 /* 提交按钮 */
