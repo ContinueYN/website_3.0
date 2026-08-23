@@ -60,6 +60,11 @@ const { isDark, toggleTheme } = useTheme()
 }
 
 @media (max-width: 768px) {
+  .not-found {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
   .not-found-content h1 {
     font-size: 4rem;
   }

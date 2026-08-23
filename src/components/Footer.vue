@@ -67,7 +67,7 @@ const links = [
   { name: 'PresentBox', url: 'https://mypresentboxes.com' },
   { name: 'xrk', url: 'https://xrk-hhh.github.io/starlight/' },
   { name: 'Jizen', url: 'https://jizen-066.github.io/Jizen066/' },
-  { name: 'chijysmile', url: 'https://chijysmile.github.io/duanmw01/' },
+  { name: 'DMW', url: 'https://chijysmile.github.io/duanmw01/' },
   { name: 'qikiil', url: 'https://qikiil.github.io/blog/' }
 ]
 
@@ -358,21 +358,43 @@ onBeforeUnmount(() => {
 
 @media (max-width: 768px) {
   .footer-content {
-    grid-template-columns: 1fr;
+    /* 移动端改为纵向弹性布局，每个区块显式水平居中，杜绝任何偏左/偏右 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 2rem;
     max-width: none;
+    width: 100%;
   }
-  
+
   .footer-section {
     text-align: center;
+    width: 100%;
+    align-items: center;
   }
-  
+
   .footer-social {
     justify-content: center;
   }
 
   .footer-description-wrapper {
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact-info {
+    align-items: center;
+  }
+
+  .friend-links {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    width: 100%;
   }
 }
 </style>

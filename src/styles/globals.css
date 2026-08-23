@@ -272,6 +272,41 @@ body {
   .container {
     padding: 0 1.5rem;
   }
+
+  /* 移动端地址栏收起/展开时避免首屏高度跳动 */
+  body {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  /* 修复移动端横向溢出：html + body 双层裁切（仅 body 在 iOS 上不可靠）。
+     ⚠️ 不要改用 overflow-x: clip：在移动浏览器上它会让 body 退化成滚动容器，
+     导致 fixed 导航栏在滚动时被压缩/藏起，页面也被撑开。hidden 即可。 */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* 消除 .home-content 对 fixed 导航栏的包含块影响：
+     opacity 过渡会让 header 退化成相对 .home-content 定位，
+     滚动时导航栏被顶走/半隐藏。移动端直接取消该过渡，
+     保证导航栏始终相对视口固定（遮罩淡出已覆盖入场过渡） */
+  .home-content {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  /* 触摸体验：去掉点击灰色闪影 + 消除双击缩放延迟 */
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
 }
 
 /* ============================================================

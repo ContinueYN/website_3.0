@@ -845,6 +845,71 @@ onBeforeUnmount(() => {
   .modal-title {
     letter-spacing: 0.08em;
   }
+
+  /* ============ 弹窗改为底部弹层 bottom sheet ============ */
+  .skill-pop-root {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .skill-pop-scroll {
+    width: 100%;
+  }
+
+  .skill-pop {
+    width: 100%;
+    max-height: 78dvh;
+    max-height: 78vh;
+    border-radius: 1.5rem 1.5rem 0 0;
+    padding: 1.6rem 1.25rem calc(1.6rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 卷轴杆收窄，避免超出屏幕横向溢出 */
+  .scroll-roller {
+    left: 6px;
+    right: 6px;
+  }
+
+  /* 进入：从底部滑入 */
+  .pop-enter-active .skill-pop {
+    animation: sheetUp 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* 退出：滑回底部 */
+  .pop-leave-active .skill-pop {
+    animation: sheetDown 0.24s ease forwards;
+  }
+
+  /* 卷轴杆改为淡入淡出，不再做中央汇聚动画 */
+  .pop-enter-active .scroll-roller-top,
+  .pop-enter-active .scroll-roller-bottom {
+    animation: rollerFade 0.36s ease forwards;
+  }
+
+  .pop-leave-active .scroll-roller-top,
+  .pop-leave-active .scroll-roller-bottom {
+    animation: rollerFadeOut 0.24s ease forwards;
+  }
+
+  @keyframes sheetUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  @keyframes sheetDown {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+  }
+
+  @keyframes rollerFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes rollerFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
 }
 
 @media (max-width: 480px) {

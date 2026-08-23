@@ -39,7 +39,7 @@
           <div class="back-to-top-glow"></div>
         </button>
         
-        <button class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="切换菜单">
+        <button class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="切换菜单" :class="{ open: mobileMenuOpen }">
           <span></span>
           <span></span>
           <span></span>
@@ -47,19 +47,24 @@
       </div>
     </nav>
     
-    <div v-if="mobileMenuOpen" class="mobile-menu">
-      <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu()">首页</router-link>
-      <a href="#about" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#about'); closeMobileMenu(); }">关于</a>
-      <a href="#skills" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#skills'); closeMobileMenu(); }">技能</a>
-      <a href="#projects" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#projects'); closeMobileMenu(); }">项目</a>
-      <a href="#contact" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#contact'); closeMobileMenu(); }">联系</a>
-      <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu()">博客</router-link>
-    </div>
+    <Transition name="menu-backdrop">
+      <div v-if="mobileMenuOpen" class="mobile-menu-backdrop" @click="closeMobileMenu()"></div>
+    </Transition>
+    <Transition name="menu-drop">
+      <div v-if="mobileMenuOpen" class="mobile-menu">
+        <router-link to="/" class="mobile-nav-link" @click="closeMobileMenu()">首页</router-link>
+        <a href="#about" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#about'); closeMobileMenu(); }">关于</a>
+        <a href="#skills" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#skills'); closeMobileMenu(); }">技能</a>
+        <a href="#projects" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#projects'); closeMobileMenu(); }">项目</a>
+        <a href="#contact" class="mobile-nav-link" @click.prevent="() => { scrollToSection('#contact'); closeMobileMenu(); }">联系</a>
+        <router-link to="/blog" class="mobile-nav-link" @click="closeMobileMenu()">博客</router-link>
+      </div>
+    </Transition>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowUp } from 'lucide-vue-next'
 
@@ -118,6 +123,11 @@ const handleThemeToggle = () => {
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
+
+// 菜单打开时锁定 body 滚动，避免背景跟着滚
+watch(mobileMenuOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
@@ -601,23 +611,150 @@ onBeforeUnmount(() => {
   
   .mobile-menu-btn {
     display: flex;
+    width: 20px;
+    height: 14px;
+    padding: 0;
   }
-  
-  .mobile-menu {
-    display: flex;
+
+  .mobile-menu-btn span {
+    transition: all 0.45s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
-  
+
+  /* 展开状态：三条横线折叠成朝左的三角形 ◀ */
+  .mobile-menu-btn.open span:nth-child(1) {
+    transform: translateY(2.5px) rotate(-19.3deg);
+  }
+
+  .mobile-menu-btn.open span:nth-child(2) {
+    transform: translateX(9px) rotate(90deg) scaleX(0.7);
+  }
+
+  .mobile-menu-btn.open span:nth-child(3) {
+    transform: translateY(-2.5px) rotate(19.3deg);
+  }
+
+  /* 提升为独立合成层，规避 iOS 上 fixed + backdrop-filter 的滚动错位 */
+  .header {
+    transform: translateZ(0);
+  }
+
+  /* logo 占满剩余空间，诗句尽量完整显示 */
+  .logo {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
   .logo-text {
-    font-size: 1rem;
+    display: block;
+    font-size: clamp(0.82rem, 4.6vw, 1rem);
+    line-height: 1.5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: none;
+  }
+
+  /* 回到顶部按钮在移动端隐藏：
+     否则它常驻占位会挤压 logo 与按钮，滚动到 300px 后还会在
+     主题按钮与汉堡包之间凭空多出一个按钮，造成导航"被压进去" */
+  .back-to-top {
+    display: none;
+  }
+
+  /* 按钮组不收缩，挤占由 logo 让出；与汉堡包贴紧 */
+  .nav-actions {
+    flex-shrink: 0;
+    gap: 0.5rem;
+  }
+
+  /* 导航本身可收缩，避免内容把导航栏撑宽 */
+  .nav {
+    min-width: 0;
+  }
+
+  /* 下拉菜单：毛玻璃面板，从顶栏下方滑入 */
+  .mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 2900;
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    padding: 0.75rem 1.5rem 1rem;
+    max-height: calc(100dvh - 4rem);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  /* 点击遮罩：关闭菜单 */
+  .mobile-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2800;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* 菜单容器：下滑 + 淡入 */
+  .menu-drop-enter-active,
+  .menu-drop-leave-active {
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .menu-drop-enter-from,
+  .menu-drop-leave-to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+
+  /* 遮罩：淡入淡出 */
+  .menu-backdrop-enter-active,
+  .menu-backdrop-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .menu-backdrop-enter-from,
+  .menu-backdrop-leave-to {
+    opacity: 0;
+  }
+
+  /* 菜单链接逐个淡入 */
+  .menu-drop-enter-active .mobile-nav-link {
+    animation: menuLinkIn 0.45s ease both;
+  }
+
+  .menu-drop-enter-active .mobile-nav-link:nth-child(1) { animation-delay: 0.04s; }
+  .menu-drop-enter-active .mobile-nav-link:nth-child(2) { animation-delay: 0.09s; }
+  .menu-drop-enter-active .mobile-nav-link:nth-child(3) { animation-delay: 0.14s; }
+  .menu-drop-enter-active .mobile-nav-link:nth-child(4) { animation-delay: 0.19s; }
+  .menu-drop-enter-active .mobile-nav-link:nth-child(5) { animation-delay: 0.24s; }
+  .menu-drop-enter-active .mobile-nav-link:nth-child(6) { animation-delay: 0.29s; }
+
+  @keyframes menuLinkIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
-  /* 移动端调整图标大小 */
+  /* 移动端调整图标大小：贴合汉堡包、保持可点 */
   .theme-icon-image {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
   }
 }
 </style>

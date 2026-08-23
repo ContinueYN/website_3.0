@@ -192,4 +192,21 @@ watch(route, () => {
   position: relative;
   z-index: 1;
 }
+
+/* 移动端地址栏收起/展开时避免首屏高度跳动 */
+@media (max-width: 768px) {
+  #app {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  /* 主页内容整体横向裁切，从根上杜绝移动端左右滚动：
+     - clip 不产生滚动容器，body 不会退化成滚动容器，fixed 导航栏仍相对视口固定（不被压缩/藏起）
+     - 导航栏 / 弹窗的包含块是视口，本规则不会裁掉它们
+     - hidden 作为旧浏览器（<iOS16）回退，clip 覆盖它 */
+  .home-content {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+}
 </style>

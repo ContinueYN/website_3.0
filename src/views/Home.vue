@@ -93,4 +93,12 @@ onBeforeUnmount(() => {
   z-index: 0 !important;
   pointer-events: none !important;
 }
+
+/* 移动端地址栏收起/展开时避免首屏高度跳动 */
+@media (max-width: 768px) {
+  .home {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+}
 </style>

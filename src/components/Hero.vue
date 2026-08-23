@@ -41,20 +41,7 @@
             <a href="#projects" class="btn" @click.prevent="scrollToSection('#projects')">Show</a>
             <a href="#contact" class="btn btn-outline" @click.prevent="scrollToSection('#contact')">Contact</a>
           </div>
-          <div class="hero-stats fade-in-up" style="animation-delay: 0.6s">
-            <div class="stat">
-              <span class="stat-number">99+</span>
-              <span class="stat-label">年经验</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number">99+</span>
-              <span class="stat-label">项目完成</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number">100%</span>
-              <span class="stat-label">客户满意</span>
-            </div>
-          </div>
+          
         </div>
 
         <div class="hero-visual">
@@ -926,6 +913,12 @@ const scrollToSection = (sectionId) => {
 }
 
 @media (max-width: 768px) {
+  /* 移动端地址栏收起/展开时避免首屏高度跳动 */
+  .hero {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
   .hero-actions {
     flex-direction: column;
     align-items: center;

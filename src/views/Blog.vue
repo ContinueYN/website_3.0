@@ -623,6 +623,11 @@ const toneFor = (category: string) => CATEGORY_TONES[category] || 'tone-teal'
 
 /* ---------------- 响应式 ---------------- */
 @media (max-width: 768px) {
+  .blog {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
   .blog-hero { padding: 7.5rem 0 3.5rem; }
 
   .hero-stats { gap: 1.2rem; padding: 0.7rem 1.5rem; }

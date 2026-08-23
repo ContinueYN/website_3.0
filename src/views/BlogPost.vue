@@ -837,6 +837,11 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .blog-post {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
   .post-hero { padding: 7rem 0 3.2rem; }
 
   .hero-title { font-size: 1.75rem; }

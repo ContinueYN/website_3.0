@@ -45,7 +45,7 @@
 
     <div class="modal" v-if="showModal" @click="closeModal">
       <div class="modal-content" @click.stop>
-        <button class="modal-close" @click="closeModal">
+        <button type="button" class="modal-close" @click="closeModal">
           <X :size="24" />
         </button>
         <h3 class="modal-title">{{ activeCard.title }}</h3>
@@ -575,6 +575,12 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  /* 移动端地址栏收起/展开时避免高度跳动 */
+  .about {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
   .header {
     font-size: 2.5rem;
   }
@@ -619,6 +625,18 @@ onMounted(() => {
   
   .modal-content {
     padding: 30px 20px;
+  }
+
+  /* 修复移动端 × 关闭按钮点击无响应：
+     iOS Safari 上全屏 fixed 遮罩层的 backdrop-filter 会截获子按钮的点击命中
+     （已知浏览器 bug），移动端移除毛玻璃、改用纯色半透明底，并给按钮提升层级 */
+  .modal {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .modal-close {
+    z-index: 20;
   }
   
   .modal-title {
